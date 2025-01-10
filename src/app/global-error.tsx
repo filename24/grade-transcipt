@@ -3,7 +3,7 @@
 import Image from 'next/image'
 
 export default function RootErrorHandler({
-  error
+  error,
 }: {
   error: Error & { digest?: string }
   reset: () => void
@@ -62,7 +62,7 @@ export default function RootErrorHandler({
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '2rem'
+            gap: '2rem',
           }}
         >
           <Image

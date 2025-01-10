@@ -2,7 +2,7 @@ import {
   ClassInfo,
   ResponseData,
   SemesterInfo,
-  StudentGrade
+  StudentGrade,
 } from '@/types/ESIS'
 import * as esis from '@/utils/esis'
 import { Prisma } from '@prisma/client'
@@ -15,7 +15,7 @@ export async function GET(_request: Request) {
 
   const semesterInfo = await esis.api
     .get<ResponseData<SemesterInfo[]>>(
-      `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`
+      `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`,
     )
     .then((res) => res.data.RESULT)
 
@@ -23,7 +23,7 @@ export async function GET(_request: Request) {
 
   const gradeInfo = await esis.api
     .get<ResponseData<ClassInfo[]>>(
-      `/journal/group/list/${esis.userData?.institutionId}/${STUDENT_GROUP_ID}/${currectSemester.termId}`
+      `/journal/group/list/${esis.userData?.institutionId}/${STUDENT_GROUP_ID}/${currectSemester.termId}`,
     )
     .then((res) => res.data.RESULT)
 
@@ -33,7 +33,7 @@ export async function GET(_request: Request) {
     gradeInfo.map(async (classInfo) => {
       const gradeList = await esis.api
         .get<ResponseData<StudentGrade[]>>(
-          `/journal/group/student/list/${esis.userData?.institutionId}/${classInfo.classId}/${STUDENT_GROUP_ID}/${esis.userData?.academicYear}/${currectSemester.termId}`
+          `/journal/group/student/list/${esis.userData?.institutionId}/${classInfo.classId}/${STUDENT_GROUP_ID}/${esis.userData?.academicYear}/${currectSemester.termId}`,
         )
         .then((res) => res.data.RESULT)
       if (!gradeList) return console.log('No grade list')
@@ -50,19 +50,19 @@ export async function GET(_request: Request) {
           grade: Number(student.gradeMark),
           registerNumber: student.primaryNidNumber,
           status: student.approvalStatus,
-          termId: student.termId
+          termId: student.termId,
         }
       })
 
       studentGrades.push(...grades)
-    })
+    }),
   )
   for (const student of studentGrades) {
     try {
       await prisma.grade.upsert({
         where: { gradeId: student.gradeId },
         update: { grade: student.grade, status: student.status },
-        create: student
+        create: student,
       })
     } catch (e) {
       console.error(e)
@@ -72,10 +72,10 @@ export async function GET(_request: Request) {
   return Response.json(
     {
       data: {
-        size: studentGrades.length
+        size: studentGrades.length,
       },
-      message: 'Success'
+      message: 'Success',
     },
-    { status: 200 }
+    { status: 200 },
   )
 }

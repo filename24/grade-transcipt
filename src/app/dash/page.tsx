@@ -12,7 +12,7 @@ export default async function DashboardPage() {
         <p className="text-base">
           Өнөөдөр{' '}
           {Intl.DateTimeFormat('mn', {
-            dateStyle: 'full'
+            dateStyle: 'full',
           }).format(Date.now())}
         </p>
       </div>

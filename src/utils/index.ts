@@ -10,13 +10,13 @@ export function cn(...inputs: ClassValue[]) {
 export async function getGradeData(registerNumber: string) {
   return await prisma.grade.findMany({
     where: {
-      registerNumber
+      registerNumber,
     },
     select: {
       classCode: true,
       grade: true,
-      status: true
-    }
+      status: true,
+    },
   })
 }
 

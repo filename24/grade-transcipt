@@ -9,18 +9,18 @@ export const metadata: Metadata = {
   description: 'Knea - Grade transcript',
   authors: {
     name: '__filename',
-    url: 'https://github.com/filename24'
-  }
+    url: 'https://github.com/filename24',
+  },
 }
 
 export const viewport: Viewport = {
   colorScheme: 'dark light',
   width: 'device-width',
-  initialScale: 1
+  initialScale: 1,
 }
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {

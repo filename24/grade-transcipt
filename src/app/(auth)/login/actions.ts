@@ -6,15 +6,15 @@ import { GradeError } from '@/utils/error'
 
 export async function login(
   _state: LoginFormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<LoginFormState> {
   const loginData = LoginSchema.safeParse({
-    registerNumber: formData.get('registerNumber')
+    registerNumber: formData.get('registerNumber'),
   })
 
   if (!loginData.success) {
     return {
-      errors: loginData.error.flatten().fieldErrors
+      errors: loginData.error.flatten().fieldErrors,
     }
   }
 
@@ -23,7 +23,7 @@ export async function login(
   } catch (error) {
     if (GradeError.isAuthError(error)) {
       return {
-        message: error.message
+        message: error.message,
       }
     } else {
       throw error

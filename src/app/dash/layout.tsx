@@ -1,5 +1,5 @@
 export default function DashboardLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {

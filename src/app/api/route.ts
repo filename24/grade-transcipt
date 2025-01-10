@@ -1,8 +1,8 @@
 export async function GET() {
   return Response.json(
     {
-      data: 'Hello World'
+      data: 'Hello World',
     },
-    { status: 200 }
+    { status: 200 },
   )
 }
