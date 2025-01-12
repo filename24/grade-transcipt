@@ -56,7 +56,7 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
       </head>
-      <body className="h-auto min-h-screen w-full max-w-[100vw] font-pretendard">
+      <body className="min-h-svh w-full max-w-[100vw] font-pretendard">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
