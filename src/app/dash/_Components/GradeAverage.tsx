@@ -2,9 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
 import { getStudentGrade } from '@/utils/fetch'
-import { Session } from 'inspector/promises'
+import { Session } from 'next-auth'
 
-export default async function GradeAverage({ session }: { session: Session }) {
+export default async function GradeAverage({
+  session
+}: {
+  session: Session | null
+}) {
   const semester1Grade = await getStudentGrade(
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-extra-non-null-assertion
     session?.user?.registerNumber!!,
