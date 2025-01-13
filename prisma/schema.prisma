@@ -12,15 +12,18 @@ model Grade {
   // studentClassGradeId	
   id             String @id @default(uuid())
   gradeId        String @unique
+  teacherName    String
   // Semester
   termId         String
+  semester       Int
   displayName    String
   // primaryNidNumber	
   registerNumber String
   classCode      String
   className      String
+  classGrade     String
   // gradeId	
-  grade          Float
+  grade          Int
   status         String
 }
 

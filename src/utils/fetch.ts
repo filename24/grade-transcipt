@@ -5,7 +5,7 @@ import {
   StudentGrade
 } from '@/types/ESIS'
 import * as esis from '@/utils/esis'
-import { Prisma } from '@prisma/client'
+import { Grade, Prisma } from '@prisma/client'
 
 export async function getGradeData(groupId: string) {
   await esis.tryLogin()
@@ -47,7 +47,10 @@ export async function getGradeData(groupId: string) {
           grade: Number(student.gradeMark),
           registerNumber: student.primaryNidNumber,
           status: student.approvalStatus,
-          termId: student.termId
+          termId: student.termId,
+          teacherName: classInfo.instructorName,
+          classGrade: student.studentGroupName,
+          semester: Number(currectSemester.termSeq)
         }
       })
 
@@ -89,7 +92,10 @@ export async function fetchGradeData(
         grade: true,
         registerNumber: true,
         status: true,
-        termId: true
+        termId: true,
+        classGrade: true,
+        semester: true,
+        teacherName: true
       }
     })
 
@@ -156,4 +162,19 @@ export async function fetchGradeData(
   }
 
   return fetchedData
+}
+
+export async function getStudentGrade(
+  registerNumber: string,
+  semester: number
+): Promise<Grade[]> {
+  const data = await prisma.grade.findMany({
+    where: { registerNumber: registerNumber, semester },
+    orderBy: {
+      grade: 'desc'
+    }
+  })
+
+  // console.log(data)
+  return data
 }
