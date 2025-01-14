@@ -1,8 +1,19 @@
 import { auth } from '@/utils/auth'
 import GradeAverage from './_Components/GradeAverage'
+import { redirect } from 'next/navigation'
+import { getStudentGrade } from '@/utils/fetch'
+import Top5GradeChart from './_Components/Top5GradeChart'
 
 export default async function DashboardPage() {
   const session = await auth()
+
+  if (!session?.user?.name) {
+    return redirect('/login')
+  }
+
+  const semester1Grade = await getStudentGrade(session.user.name, 1)
+
+  const semester2Grade = await getStudentGrade(session.user.name, 2)
 
   return (
     <div className="p-2">
@@ -18,8 +29,12 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <GradeAverage session={session} />
+      <div className="grid gap-4">
+        <GradeAverage semester1={semester1Grade} semester2={semester2Grade} />
+      </div>
+
+      <div className="grid gap-4 mt-4 md:grid-cols-2">
+        <Top5GradeChart semester1={semester1Grade} semester2={semester2Grade} />
       </div>
     </div>
   )

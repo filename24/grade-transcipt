@@ -1,47 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
-import { getStudentGrade } from '@/utils/fetch'
-import { Session } from 'next-auth'
-import { redirect } from 'next/navigation'
+import { Grade } from '@prisma/client'
 
-export default async function GradeAverage({
-  session
+export default function GradeAverage({
+  semester1,
+  semester2
 }: {
-  session: Session | null
+  semester1: Grade[]
+  semester2: Grade[]
 }) {
-  if (!session?.user?.name) {
-    return redirect('/login')
-  }
-  const semester1Grade = await getStudentGrade(session.user.name, 1)
-
-  const semester2Grade = await getStudentGrade(session.user.name, 2)
-
   return (
-    <Card className="w-min">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-nowrap">Дүнгийн дундаж</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid w-full items-center gap-4">
+        <div className="grid w-full items-center gap-4 grid-flow-col">
           <div>
             <Label className="text-nowrap">1-р хагас жилийн дундаж</Label>
             <p className="text-lg md:text-xl font-bold text-nowrap">
-              {semester1Grade.length === 0
+              {semester1.length === 0
                 ? 'Дүн гараагүй'
-                : `${calcAverageGrade(semester1Grade)}% (GPA ${calcGPA(
-                    semester1Grade
-                  )})`}
+                : `${calcAverageGrade(semester1)}% (GPA ${calcGPA(semester1)})`}
             </p>
           </div>
           <div>
             <Label className="text-nowrap">2-р хагас жилийн дундаж</Label>
             <p className="text-lg md:text-xl font-bold text-nowrap">
-              {semester2Grade.length === 0
+              {semester2.length === 0
                 ? 'Дүн гараагүй'
-                : `${calcAverageGrade(semester2Grade)}% (GPA ${calcGPA(
-                    semester2Grade
-                  )})`}
+                : `${calcAverageGrade(semester2)}% (GPA ${calcGPA(semester2)})`}
             </p>
           </div>
         </div>

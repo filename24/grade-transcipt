@@ -25,7 +25,7 @@ const Navbar = () => {
       <div className="flex items-center h-14">
         <div className="px-4 container max-w-4xl mx-auto flex justify-between items-center">
           <Link href="/dash" className="flex items-center gap-x-3">
-            <Image width={32} height={32} alt="" src="/knea@128px.png" />
+            <Image width={32} height={32} alt="" src="/knea.png" />
             <span className="font-bold text-lg sm:text-xl">Knea</span>
           </Link>
           <div className={'hidden md:flex gap-x-4 items-center'} id="main-menu">
