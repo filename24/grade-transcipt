@@ -11,7 +11,7 @@ export default function GradeAverage({
   semester2: Grade[]
 }) {
   return (
-    <Card className="w-full">
+    <Card className="w-auto">
       <CardHeader>
         <CardTitle className="text-nowrap">Дүнгийн дундаж</CardTitle>
       </CardHeader>
