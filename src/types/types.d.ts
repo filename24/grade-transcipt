@@ -2,9 +2,7 @@ import type { Role } from '@prisma/client'
 
 declare module 'next-auth' {
   interface User {
-    id: string
     name: string
-    registerNumber: string
     role: Role
   }
 }

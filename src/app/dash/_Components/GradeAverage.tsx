@@ -3,23 +3,19 @@ import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
 import { getStudentGrade } from '@/utils/fetch'
 import { Session } from 'next-auth'
+import { redirect } from 'next/navigation'
 
 export default async function GradeAverage({
   session
 }: {
   session: Session | null
 }) {
-  const semester1Grade = await getStudentGrade(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-extra-non-null-assertion
-    session?.user?.registerNumber!!,
-    1
-  )
+  if (!session?.user?.name) {
+    return redirect('/login')
+  }
+  const semester1Grade = await getStudentGrade(session.user.name, 1)
 
-  const semester2Grade = await getStudentGrade(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-extra-non-null-assertion
-    session?.user?.registerNumber!!,
-    2
-  )
+  const semester2Grade = await getStudentGrade(session.user.name, 2)
 
   return (
     <Card className="w-min">
