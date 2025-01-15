@@ -2,7 +2,7 @@
 import {
   Card,
   CardContent,
-  CardFooter,
+  CardDescription,
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
@@ -24,11 +24,13 @@ export default function Top5GradeChart({
   semester2: Grade[]
 }) {
   const topFiveSemester1 = semester1.slice(0, 5)
-  const _topFiveSemester2 = semester2.slice(0, 5)
+  const topFiveSemester2 = semester2.slice(0, 5)
 
+  const topFiveGrade =
+    topFiveSemester2.length === 0 ? topFiveSemester1 : topFiveSemester2
   const gradeChartConfig = Object.assign(
     {},
-    ...topFiveSemester1.map((grade) => {
+    ...topFiveGrade.map((grade) => {
       const classCode = resolveClassCode(grade.classCode)
       return {
         [classCode]: {
@@ -38,17 +40,17 @@ export default function Top5GradeChart({
     })
   )
 
-  const chartData = topFiveSemester1.map((grade, index) => {
+  const chartData = topFiveGrade.map((grade, index) => {
     const classCode = resolveClassCode(grade.classCode)
 
     return {
       className: classCode,
-      grade: grade.grade,
+      point: grade.point,
       fill: `hsl(var(--chart-${index + 1}))`
     }
   })
   const chartConfig: ChartConfig = {
-    grade: {
+    point: {
       label: 'Дүн'
     },
     ...gradeChartConfig
@@ -58,6 +60,11 @@ export default function Top5GradeChart({
     <Card className="col-span-full md:col-span-1">
       <CardHeader>
         <CardTitle>Хамгийн өндөр 5 дүн</CardTitle>
+        <CardDescription>
+          {topFiveSemester1.length === 0
+            ? '2-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'
+            : '1-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -82,7 +89,7 @@ export default function Top5GradeChart({
               hide
             />
             <XAxis
-              dataKey="grade"
+              dataKey="point"
               type="number"
               domain={[0, 100]}
               tickFormatter={(value) => `${value}%`}
@@ -91,7 +98,7 @@ export default function Top5GradeChart({
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
-            <Bar dataKey="grade" layout="vertical" radius={7} barSize={30}>
+            <Bar dataKey="point" layout="vertical" radius={7} barSize={30}>
               <LabelList
                 dataKey="className"
                 position="insideLeft"
@@ -100,7 +107,7 @@ export default function Top5GradeChart({
                 fontSize={12}
               />
               <LabelList
-                dataKey="grade"
+                dataKey="point"
                 position="right"
                 offset={8}
                 className="fill-foreground"
@@ -110,7 +117,6 @@ export default function Top5GradeChart({
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   )
 }

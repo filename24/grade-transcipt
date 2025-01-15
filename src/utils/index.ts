@@ -4,6 +4,8 @@ import prisma from '@/utils/prisma'
 import { ClassCode } from '@/types/ESIS'
 import { Grade } from '@prisma/client'
 
+export * from './fetch'
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -34,7 +36,7 @@ export function calcGPA(grades: Grade[]): number {
   let totalGradePoints = 0
 
   grades.forEach((grade) => {
-    const gradeScale = getGradeScale(grade.grade)
+    const gradeScale = getGradeScale(grade.point)
     if (gradeScale) {
       totalGradePoints += gradeScale * 1 // 각 학점을 100점 만점으로 계산
     }
@@ -61,7 +63,7 @@ export function getGradeScale(grade: number): number | undefined {
 export function calcAverageGrade(grades: Grade[]): number {
   if (grades.length === 0) return 0
 
-  const sum = grades.reduce((total, grade) => total + grade.grade, 0)
+  const sum = grades.reduce((total, grade) => total + grade.point, 0)
   const average = sum / grades.length
 
   return Number(average.toFixed(1))

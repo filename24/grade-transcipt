@@ -45,7 +45,8 @@ export async function getGradeData(groupId: string) {
             .pop()}`,
           displayName: student.displayName,
           gradeId: student.studentClassGradeId,
-          grade: Number(student.gradeMark),
+          grade: student.gradeCode,
+          point: Number(student.gradeMark),
           registerNumber: student.primaryNidNumber,
           status: student.approvalStatus,
           termId: student.termId,
@@ -86,6 +87,7 @@ export async function fetchGradeData(
         }
       },
       select: {
+        point: true,
         className: true,
         classCode: true,
         displayName: true,
@@ -172,7 +174,7 @@ export async function getStudentGrade(
   const data = await prisma.grade.findMany({
     where: { displayName, semester },
     orderBy: {
-      grade: 'desc'
+      point: 'desc'
     }
   })
 

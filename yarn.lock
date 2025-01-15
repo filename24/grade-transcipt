@@ -705,6 +705,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@number-flow/react@npm:^0.5.5":
+  version: 0.5.5
+  resolution: "@number-flow/react@npm:0.5.5"
+  dependencies:
+    esm-env: "npm:^1.1.4"
+    number-flow: "npm:0.5.3"
+  peerDependencies:
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 10c0/9fc6c46bef1a75e15fd3752fd58edab05bc76e971ce4a34c6eeb2aefffa58b18f6f590f822ceb9b1e66cc9922d844d112d286148b0ceb5435af9d22eed228aea
+  languageName: node
+  linkType: hard
+
 "@panva/hkdf@npm:^1.2.1":
   version: 1.2.1
   resolution: "@panva/hkdf@npm:1.2.1"
@@ -2934,6 +2947,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esm-env@npm:^1.1.4":
+  version: 1.2.2
+  resolution: "esm-env@npm:1.2.2"
+  checksum: 10c0/3d25c973f2fd69c25ffff29c964399cea573fe10795ecc1d26f6f957ce0483d3254e1cceddb34bf3296a0d7b0f1d53a28992f064ba509dfe6366751e752c4166
+  languageName: node
+  linkType: hard
+
 "espree@npm:^10.0.1, espree@npm:^10.3.0":
   version: 10.3.0
   resolution: "espree@npm:10.3.0"
@@ -3313,6 +3333,7 @@ __metadata:
     "@biomejs/biome": "npm:1.9.4"
     "@eslint/eslintrc": "npm:^3.2.0"
     "@next/eslint-plugin-next": "npm:^15.1.4"
+    "@number-flow/react": "npm:^0.5.5"
     "@prisma/client": "npm:^6.2.1"
     "@radix-ui/react-dropdown-menu": "npm:^2.1.4"
     "@radix-ui/react-label": "npm:^2.1.1"
@@ -4322,6 +4343,15 @@ __metadata:
   version: 3.0.0
   resolution: "normalize-path@npm:3.0.0"
   checksum: 10c0/e008c8142bcc335b5e38cf0d63cfd39d6cf2d97480af9abdbe9a439221fd4d749763bab492a8ee708ce7a194bb00c9da6d0a115018672310850489137b3da046
+  languageName: node
+  linkType: hard
+
+"number-flow@npm:0.5.3":
+  version: 0.5.3
+  resolution: "number-flow@npm:0.5.3"
+  dependencies:
+    esm-env: "npm:^1.1.4"
+  checksum: 10c0/1c52b64a5dc12198998ef3671fa73c0e61ebc06ab9ff5574c67b2f712d3e839a9dc98e0b919c12be56c0585dd3625a1439b8708cfa8a32cee9d6ab23e732723c
   languageName: node
   linkType: hard
 

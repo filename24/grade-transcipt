@@ -23,7 +23,8 @@ model Grade {
   className      String
   classGrade     String
   // gradeId	
-  grade          Int
+  grade          String
+  point          Int
   status         String
 }
 
