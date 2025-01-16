@@ -1,16 +1,18 @@
+import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
 
 export default function DashboardLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <div className="border-grid flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col border-grid">
       <Navbar />
-      <main className="flex-grow w-full max-w-6xl mx-auto py-4">
+      <main className="mx-auto w-full max-w-6xl flex-grow py-4">
         {children}
       </main>
+      <Footer />
     </div>
   )
 }

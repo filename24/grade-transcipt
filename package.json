@@ -6,7 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev --turbo",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint && biome format --write ./src/",
+    "lint": "next lint && biome lint --write ./src/ && biome format --write ./src/",
     "generate": "prisma generate",
     "migrate": "prisma migrate dev"
   },
@@ -48,6 +48,7 @@
     "eslint-config-next": "15.1.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "postcss": "^8.4.49",
+    "prettier-plugin-tailwindcss": "^0.6.10",
     "prisma": "^6.2.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"

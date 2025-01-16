@@ -2,15 +2,15 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
-import { SessionProvider } from 'next-auth/react'
 import { Analytics } from '@vercel/analytics/react'
+import { SessionProvider } from 'next-auth/react'
 
 export const metadata: Metadata = {
   title: 'Knea - Grade transcript',
   description: 'Knea - Grade transcript',
   authors: {
     name: '__filename',
-    url: 'https://github.com/filename24'
+    url: 'https://github.com/filename24',
   },
   openGraph: {
     type: 'website',
@@ -18,18 +18,18 @@ export const metadata: Metadata = {
     url: 'https://knea-gt.vercel.app',
     siteName: 'Knea - Grade transcript',
     title: 'Knea - Grade transcript',
-    description: 'Сурагчын дүнгийн систем'
-  }
+    description: 'Сурагчын дүнгийн систем',
+  },
 }
 
 export const viewport: Viewport = {
   colorScheme: 'dark light',
   width: 'device-width',
-  initialScale: 1
+  initialScale: 1,
 }
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {

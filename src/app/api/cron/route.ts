@@ -9,9 +9,9 @@ export async function GET(req: Request) {
     return Response.json(
       {
         data: null,
-        message: 'Unauthorized'
+        message: 'Unauthorized',
       },
-      { status: 401 }
+      { status: 401 },
     )
   }
 
@@ -20,10 +20,10 @@ export async function GET(req: Request) {
   return Response.json(
     {
       data: {
-        size: studentGrades
+        size: studentGrades,
       },
-      message: 'Success'
+      message: 'Success',
     },
-    { status: 200 }
+    { status: 200 },
   )
 }

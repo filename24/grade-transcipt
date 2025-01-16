@@ -3,6 +3,7 @@ import GradeAverage from './_Components/GradeAverage'
 import { redirect } from 'next/navigation'
 import { getStudentGrade } from '@/utils/fetch'
 import Top5GradeChart from './_Components/Top5GradeChart'
+import GradePieChart from './_Components/GradePieChart'
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -18,13 +19,13 @@ export default async function DashboardPage() {
   return (
     <div className="p-2">
       <div className="mb-4">
-        <h3 className="text-2xl font-semibold tracking-tight">
+        <h3 className="font-semibold text-2xl tracking-tight">
           Тавтай морилно уу, {session?.user?.name}
         </h3>
         <p className="">
           Өнөөдөр{' '}
           {Intl.DateTimeFormat('mn', {
-            dateStyle: 'full'
+            dateStyle: 'full',
           }).format(Date.now())}
         </p>
       </div>
@@ -33,8 +34,9 @@ export default async function DashboardPage() {
         <GradeAverage semester1={semester1Grade} semester2={semester2Grade} />
       </div>
 
-      <div className="grid gap-4 mt-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Top5GradeChart semester1={semester1Grade} semester2={semester2Grade} />
+        <GradePieChart semester1={semester1Grade} semester2={semester2Grade} />
       </div>
     </div>
   )

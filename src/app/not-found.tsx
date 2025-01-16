@@ -6,8 +6,8 @@ export default function NotFound() {
   return (
     <>
       <Navbar />
-      <main className="min-h-[90vh] p-4 w-full h-full flex flex-col items-center justify-center gap-8">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+      <main className="flex h-full min-h-[90vh] w-full flex-col items-center justify-center gap-8 p-4">
+        <h1 className="scroll-m-20 font-extrabold text-4xl tracking-tight lg:text-5xl">
           404
         </h1>
         <p>Уучлаарай, хуудас олдсонгүй</p>

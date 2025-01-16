@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import prisma from '@/utils/prisma'
 import { ClassCode } from '@/types/ESIS'
-import { Grade } from '@prisma/client'
+import type { Grade } from '@prisma/client'
 
 export * from './fetch'
 
@@ -13,13 +13,13 @@ export function cn(...inputs: ClassValue[]) {
 export async function getGradeData(registerNumber: string) {
   return await prisma.grade.findMany({
     where: {
-      registerNumber
+      registerNumber,
     },
     select: {
       classCode: true,
       grade: true,
-      status: true
-    }
+      status: true,
+    },
   })
 }
 
@@ -67,4 +67,33 @@ export function calcAverageGrade(grades: Grade[]): number {
   const average = sum / grades.length
 
   return Number(average.toFixed(1))
+}
+
+export const grades = [
+  'VIII',
+  'VII',
+  'VI',
+  'V',
+  'IV',
+  'III',
+  'II',
+  'I',
+] as const
+export interface GradeCounts {
+  VIII: number
+  VII: number
+  VI: number
+  V: number
+  IV: number
+  III: number
+  II: number
+  I: number
+}
+
+export function countGrades(gradesArray: Grade[]): GradeCounts {
+  return grades.reduce<GradeCounts>((acc, grade) => {
+    acc[grade] =
+      (acc[grade] || 0) + gradesArray.filter((g) => g.grade === grade).length
+    return acc
+  }, {} as GradeCounts)
 }

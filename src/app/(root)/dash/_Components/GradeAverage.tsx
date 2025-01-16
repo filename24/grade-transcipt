@@ -3,16 +3,16 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
-import { Grade } from '@prisma/client'
+import type { Grade } from '@prisma/client'
 import NumberFlow from '@number-flow/react'
 
 export default function GradeAverage({
   semester1,
-  semester2
+  semester2,
 }: {
   semester1: Grade[]
   semester2: Grade[]
@@ -23,10 +23,10 @@ export default function GradeAverage({
         <CardTitle className="text-nowrap">Дүнгийн дундаж</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid w-full items-center gap-4 grid-flow-col">
+        <div className="grid w-full grid-flow-col items-center gap-4">
           <div>
             <Label className="text-nowrap">1-р хагас жилийн дундаж</Label>
-            <p className="text-lg md:text-xl font-bold text-nowrap">
+            <p className="text-nowrap font-bold text-lg md:text-xl">
               {semester1.length === 0 ? (
                 'Дүн гараагүй'
               ) : (
@@ -47,7 +47,7 @@ export default function GradeAverage({
           </div>
           <div>
             <Label className="text-nowrap">2-р хагас жилийн дундаж</Label>
-            <p className="text-lg md:text-xl font-bold text-nowrap">
+            <p className="text-nowrap font-bold text-lg md:text-xl">
               {semester2.length === 0 ? (
                 'Дүн гараагүй'
               ) : (

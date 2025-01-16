@@ -1,5 +1,5 @@
-import { UserData } from '@/types/ESIS'
-import axios, { RawAxiosRequestHeaders } from 'axios'
+import type { UserData } from '@/types/ESIS'
+import axios, { type RawAxiosRequestHeaders } from 'axios'
 
 export let isLoggedIn = false
 export let userData: UserData | null = null
