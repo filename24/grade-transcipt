@@ -17,9 +17,8 @@ export default function Home() {
     }
   }, [status, router])
 
-  // Loading state while checking authentication
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="flex items-center gap-2">
         <Loader2 className="animate-spin" />
         <p className="text-xl">Түр хүлээнэ үү...</p>

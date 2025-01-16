@@ -4,6 +4,25 @@
 		"ignoreUnknown": false,
 		"ignore": []
 	},
+	"linter": {
+		"rules": {
+			"recommended": false,
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"fix": "safe",
+					"options": {
+						"attributes": [
+							"className"
+						],
+						"functions": [
+							"cn"
+						]
+					}
+				}
+			}
+		}
+	},
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,
