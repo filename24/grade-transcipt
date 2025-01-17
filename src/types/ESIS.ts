@@ -92,8 +92,23 @@ export interface StudentGrade {
   /**
    * 상태
    */
-  approvalStatus: string
+  approvalStatus: GradeStatus
   approvalStatusName: string
+}
+
+/**
+ * NEW - 등록함
+ * REJECTED - 취소함
+ * PENDING - 심사받는중
+ * APPROVED - 심사받음
+ */
+export type GradeStatusType = 'APPROVED' | 'PENDING' | 'REJECTED' | 'NEW'
+
+export enum GradeStatus {
+  APPROVED = 'Батлагдсан',
+  PENDING = 'Хянагдаж байгаа',
+  REJECTED = 'Цуцлагдсан',
+  NEW = 'Бүртгэсэн'
 }
 
 export enum ClassCode {

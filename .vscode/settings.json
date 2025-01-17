@@ -6,5 +6,11 @@
     "**/node_modules": true,
     "**/.yarn": true,
     "**/.next": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }
