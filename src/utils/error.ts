@@ -6,14 +6,14 @@ export enum ErrorCode {
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
   SERVER_ERROR = 'SERVER_ERROR',
-  NOT_REGISTERED = 'NOT_REGISTERED',
+  NOT_REGISTERED = 'NOT_REGISTERED'
 }
 
 // Custom error class
 export class GradeError extends Error {
   constructor(
     public readonly code: ErrorCode,
-    message: string,
+    message: string
   ) {
     super(message)
     this.name = 'GradeError'

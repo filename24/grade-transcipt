@@ -30,7 +30,8 @@
 		"indentWidth": 2,
 		"lineEnding": "lf",
 		"lineWidth": 80,
-		"attributePosition": "auto"
+		"attributePosition": "auto",
+		"useEditorconfig": true
 	},
 	"organizeImports": {
 		"enabled": true
@@ -39,7 +40,7 @@
 		"formatter": {
 			"jsxQuoteStyle": "double",
 			"quoteProperties": "asNeeded",
-			"trailingCommas": "all",
+			"trailingCommas": "none",
 			"semicolons": "asNeeded",
 			"arrowParentheses": "always",
 			"bracketSpacing": true,

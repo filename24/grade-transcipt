@@ -4,15 +4,15 @@ const STUDENT_GROUP_ID = '100004237680887'
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ type: FetchGradeType }> },
+  { params }: { params: Promise<{ type: FetchGradeType }> }
 ) {
   if (!params) {
     return Response.json(
       {
         data: null,
-        message: 'Params is required',
+        message: 'Params is required'
       },
-      { status: 400 },
+      { status: 400 }
     )
   }
   const type = (await params).type
@@ -29,10 +29,10 @@ export async function GET(
             ? studentGrades
             : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error
-              studentGrades.length,
+              studentGrades.length
       },
-      message: 'Success',
+      message: 'Success'
     },
-    { status: 200 },
+    { status: 200 }
   )
 }

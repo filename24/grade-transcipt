@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '@/components/ui/card'
 import {
   type ChartConfig,
@@ -13,7 +13,7 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 } from '@/components/ui/chart'
 import { countGrades, grades } from '@/utils'
 import type { Grade } from '@prisma/client'
@@ -24,7 +24,7 @@ import { LabelList, Pie, PieChart } from 'recharts'
 export default function GradePieChart({
   semester1,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  semester2,
+  semester2
 }: {
   semester1: Grade[]
   semester2: Grade[]
@@ -34,10 +34,10 @@ export default function GradePieChart({
     ...grades.map((grade) => {
       return {
         [grade]: {
-          label: grade,
-        },
+          label: grade
+        }
       }
-    }),
+    })
   )
 
   const counts = countGrades(semester1)
@@ -49,16 +49,16 @@ export default function GradePieChart({
       return {
         grade: grade,
         count: counts[grade],
-        fill: `hsl(var(--chart-${index + 1}))`,
+        fill: `hsl(var(--chart-${index + 1}))`
       }
     })
     .filter((grade) => !!grade)
 
   const chartConfig: ChartConfig = {
     point: {
-      label: 'Дүн',
+      label: 'Дүн'
     },
-    ...gradeChartConfig,
+    ...gradeChartConfig
   }
 
   return (

@@ -2,7 +2,7 @@ import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
 
 export default function DashboardLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode
 }>) {

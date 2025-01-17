@@ -3,7 +3,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
@@ -12,7 +12,7 @@ import NumberFlow from '@number-flow/react'
 
 export default function GradeAverage({
   semester1,
-  semester2,
+  semester2
 }: {
   semester1: Grade[]
   semester2: Grade[]

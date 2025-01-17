@@ -2,7 +2,7 @@ import type {
   ClassInfo,
   ResponseData,
   SemesterInfo,
-  StudentGrade,
+  StudentGrade
 } from '@/types/ESIS'
 import * as esis from '@/utils/esis'
 import type { Grade, Prisma } from '@prisma/client'
@@ -13,7 +13,7 @@ export async function getGradeData(groupId: string) {
 
   const semesterInfo = await esis.api
     .get<ResponseData<SemesterInfo[]>>(
-      `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`,
+      `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`
     )
     .then((res) => res.data.RESULT)
 
@@ -21,7 +21,7 @@ export async function getGradeData(groupId: string) {
 
   const gradeInfo = await esis.api
     .get<ResponseData<ClassInfo[]>>(
-      `/journal/group/list/${esis.userData?.institutionId}/${groupId}/${currectSemester.termId}`,
+      `/journal/group/list/${esis.userData?.institutionId}/${groupId}/${currectSemester.termId}`
     )
     .then((res) => res.data.RESULT)
 
@@ -31,7 +31,7 @@ export async function getGradeData(groupId: string) {
     gradeInfo.map(async (classInfo) => {
       const gradeList = await esis.api
         .get<ResponseData<StudentGrade[]>>(
-          `/journal/group/student/list/${esis.userData?.institutionId}/${classInfo.classId}/${groupId}/${esis.userData?.academicYear}/${currectSemester.termId}`,
+          `/journal/group/student/list/${esis.userData?.institutionId}/${classInfo.classId}/${groupId}/${esis.userData?.academicYear}/${currectSemester.termId}`
         )
         .then((res) => res.data.RESULT)
       if (!gradeList) return console.log('No grade list')
@@ -52,12 +52,12 @@ export async function getGradeData(groupId: string) {
           termId: student.termId,
           teacherName: classInfo.instructorName,
           classGrade: student.studentGroupName,
-          semester: Number(currectSemester.termSeq),
+          semester: Number(currectSemester.termSeq)
         }
       })
 
       studentGrades.push(...grades)
-    }),
+    })
   )
 
   return studentGrades
@@ -67,15 +67,15 @@ export type FetchGradeType = 'create' | 'edit' | 'forceEdit'
 export function fetchGradeData(groupId: string, type: 'create'): Promise<number>
 export function fetchGradeData(
   groupId: string,
-  type: 'edit',
+  type: 'edit'
 ): Promise<Prisma.GradeCreateInput[]>
 export function fetchGradeData(
   groupId: string,
-  type: 'forceEdit',
+  type: 'forceEdit'
 ): Promise<Prisma.GradeCreateInput[]>
 export async function fetchGradeData(
   groupId: string,
-  type: FetchGradeType,
+  type: FetchGradeType
 ): Promise<number | Prisma.GradeCreateInput[]> {
   const studentGrades = await getGradeData(groupId)
   const fetchedData: Prisma.GradeCreateInput[] = []
@@ -83,8 +83,8 @@ export async function fetchGradeData(
     await prisma.grade.findMany({
       where: {
         registerNumber: {
-          in: studentGrades.map((student) => student.registerNumber),
-        },
+          in: studentGrades.map((student) => student.registerNumber)
+        }
       },
       select: {
         point: true,
@@ -98,20 +98,20 @@ export async function fetchGradeData(
         termId: true,
         classGrade: true,
         semester: true,
-        teacherName: true,
-      },
+        teacherName: true
+      }
     })
 
   if (type === 'create') {
     const existingGradeIds = originData.map((grade) => grade.gradeId)
     const newGrades = studentGrades.filter(
-      (grade) => !existingGradeIds.includes(grade.gradeId),
+      (grade) => !existingGradeIds.includes(grade.gradeId)
     )
 
     if (newGrades.length === 0) return 0
 
     const data = await prisma.grade.createMany({
-      data: newGrades,
+      data: newGrades
     })
 
     return data.count
@@ -123,7 +123,7 @@ export async function fetchGradeData(
         await prisma.grade.upsert({
           where: { gradeId: student.gradeId },
           update: student,
-          create: student,
+          create: student
         })
         fetchedData.push(student)
       } catch (e) {
@@ -136,7 +136,7 @@ export async function fetchGradeData(
   if (type === 'edit') {
     for (const student of studentGrades) {
       const originStudent = originData.find(
-        (origin) => origin.gradeId === student.gradeId,
+        (origin) => origin.gradeId === student.gradeId
       )
 
       if (originStudent) {
@@ -144,14 +144,14 @@ export async function fetchGradeData(
         const hasChanges = Object.keys(student).some(
           (key) =>
             student[key as keyof typeof student] !==
-            originStudent[key as keyof typeof originStudent],
+            originStudent[key as keyof typeof originStudent]
         )
 
         if (hasChanges) {
           try {
             await prisma.grade.update({
               where: { gradeId: originStudent.gradeId },
-              data: student,
+              data: student
             })
             fetchedData.push(student)
           } catch (e) {
@@ -169,13 +169,13 @@ export async function fetchGradeData(
 
 export async function getStudentGrade(
   displayName: string,
-  semester: number,
+  semester: number
 ): Promise<Grade[]> {
   const data = await prisma.grade.findMany({
     where: { displayName, semester },
     orderBy: {
-      point: 'desc',
-    },
+      point: 'desc'
+    }
   })
 
   return data

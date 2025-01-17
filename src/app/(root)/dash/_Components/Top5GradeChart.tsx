@@ -5,13 +5,13 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '@/components/ui/card'
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 } from '@/components/ui/chart'
 import { resolveClassCode } from '@/utils'
 import type { Grade } from '@prisma/client'
@@ -21,7 +21,7 @@ import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts'
 
 export default function Top5GradeChart({
   semester1,
-  semester2,
+  semester2
 }: {
   semester1: Grade[]
   semester2: Grade[]
@@ -37,10 +37,10 @@ export default function Top5GradeChart({
       const classCode = resolveClassCode(grade.classCode)
       return {
         [classCode]: {
-          label: classCode,
-        },
+          label: classCode
+        }
       }
-    }),
+    })
   )
 
   const chartData = topFiveGrade.map((grade, index) => {
@@ -49,14 +49,14 @@ export default function Top5GradeChart({
     return {
       className: classCode,
       point: grade.point,
-      fill: `hsl(var(--chart-${index + 1}))`,
+      fill: `hsl(var(--chart-${index + 1}))`
     }
   })
   const chartConfig: ChartConfig = {
     point: {
-      label: 'Дүн',
+      label: 'Дүн'
     },
-    ...gradeChartConfig,
+    ...gradeChartConfig
   }
 
   return (
@@ -76,7 +76,7 @@ export default function Top5GradeChart({
             data={chartData}
             layout="vertical"
             margin={{
-              left: 0,
+              left: 0
             }}
           >
             <CartesianGrid vertical={false} />

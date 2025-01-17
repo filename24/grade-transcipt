@@ -17,17 +17,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbackUrl: { name: 'knea.gt.callback' },
     nonce: { name: 'knea.gt.nonce' },
     state: { name: 'knea.gt.state' },
-    pkceCodeVerifier: { name: 'knea.gt.pkce' },
+    pkceCodeVerifier: { name: 'knea.gt.pkce' }
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   session: {
     strategy: 'jwt',
-    maxAge: 14 * 60 * 24 * 7,
+    maxAge: 14 * 60 * 24 * 7
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60
   },
   callbacks: {
     jwt({ token, user }) {
@@ -52,12 +52,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (pathname.includes('dash')) return !!auth
       return true
-    },
+    }
   },
   providers: [
     Credentials({
       credentials: {
-        registerNumber: {},
+        registerNumber: {}
       },
       authorize: async (credentials): Promise<User> => {
         let user = null
@@ -70,8 +70,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const gradeData = await prisma.grade.findFirst({
           where: {
-            registerNumber: loginData.data.registerNumber,
-          },
+            registerNumber: loginData.data.registerNumber
+          }
         })
 
         if (!gradeData) {
@@ -80,14 +80,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         user = await prisma.user.findFirst({
           where: {
-            registerNumber: loginData.data.registerNumber,
+            registerNumber: loginData.data.registerNumber
           },
           select: {
             id: true,
             name: true,
             registerNumber: true,
-            role: true,
-          },
+            role: true
+          }
         })
 
         if (!user) {
@@ -95,13 +95,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             data: {
               name: gradeData.displayName,
               registerNumber: gradeData.registerNumber,
-              role: 'STUDENT',
-            },
+              role: 'STUDENT'
+            }
           })
         }
 
         return user
-      },
-    }),
-  ],
+      }
+    })
+  ]
 })
