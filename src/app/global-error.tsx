@@ -50,6 +50,11 @@ export default function RootErrorHandler({
               color: #ffffff;
             }
           }
+          @media (min-width: 1024px) {
+            .lg\:w-2\/6 {
+              width: 33.333333%;
+            }
+          }
         `}
         </style>
       </head>
@@ -66,11 +71,12 @@ export default function RootErrorHandler({
           }}
         >
           <Image
-            src={'/panik.webp'}
-            alt={'PANIK!!!!!!'}
+            src={'/ServiceUnavailable.png'}
+            alt={'UwU'}
             width={512}
             height={512}
-            style={{ width: '100%', aspectRatio: '1/1', maxWidth: '512px' }}
+            sizes="100vw"
+            className="lg:w-2/6"
           />
           <h1 style={{ fontSize: '4rem', fontWeight: '600' }}>
             Holyy fu** shit!!

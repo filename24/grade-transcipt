@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { Analytics } from '@vercel/analytics/react'
 import { SessionProvider } from 'next-auth/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'Knea - Grade transcript',
@@ -19,7 +20,12 @@ export const metadata: Metadata = {
     siteName: 'Knea - Grade transcript',
     title: 'Knea - Grade transcript',
     description: 'Сурагчын дүнгийн систем'
-  }
+  },
+  appleWebApp: {
+    statusBarStyle: 'black-translucent',
+    title: 'Knea - Grate transcript'
+  },
+  keywords: ['дүнгийн систем', 'knea', 'дүн харах']
 }
 
 export const viewport: Viewport = {
@@ -67,6 +73,7 @@ export default function RootLayout({
           <Toaster />
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )

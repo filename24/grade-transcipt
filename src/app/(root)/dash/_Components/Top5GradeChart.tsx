@@ -122,7 +122,7 @@ export default function Top5GradeChart({
       </CardContent>
       <CardFooter>
         <Link
-          href="/grade"
+          href="/dash/grade"
           className="flex flex-row gap-1 text-center text-muted-foreground text-sm"
         >
           Дэлгэрэнгүй мэдээлэл харах <ArrowRight size={20} />

@@ -51,6 +51,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const { pathname } = request.nextUrl
 
       if (pathname.includes('dash')) return !!auth
+
+      if (pathname.includes('profile')) return !!auth
       return true
     }
   },
@@ -86,7 +88,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             id: true,
             name: true,
             registerNumber: true,
-            role: true
+            role: true,
+            systemId: true
           }
         })
 
@@ -95,7 +98,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             data: {
               name: gradeData.displayName,
               registerNumber: gradeData.registerNumber,
-              role: 'STUDENT'
+              role: 'STUDENT',
+              systemId: gradeData.systemId
             }
           })
         }

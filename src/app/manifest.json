@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
   "name": "Knea - Grade Transcript",
   "short_name": "Knea - Grade",
   "icons": [
@@ -15,5 +16,6 @@
   ],
   "theme_color": "#181825",
   "background_color": "#181825",
-  "display": "standalone"
+  "display": "standalone",
+  "lang": "mn"
 }
