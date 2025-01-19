@@ -11,9 +11,11 @@ datasource db {
 model Grade {
   // studentClassGradeId	
   id             String @id @default(uuid())
+  systemId       String
   gradeId        String @unique
   teacherName    String
   // Semester
+  academicYear   String
   termId         String
   semester       Int
   displayName    String
@@ -30,6 +32,7 @@ model Grade {
 
 model User {
   id             String    @id @default(uuid())
+  systemId       String
   name           String?
   registerNumber String
   role           Role

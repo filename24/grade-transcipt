@@ -42,7 +42,8 @@ export async function getGradeData(groupId: string) {
           className: student.className,
           classCode: `${student.className.split(' ')[0]} ${student.className
             .split(' ')
-            .pop()}`,
+            .pop()
+            ?.toLowerCase()}`,
           displayName: student.displayName,
           gradeId: student.studentClassGradeId,
           grade: student.gradeCode,
@@ -52,7 +53,10 @@ export async function getGradeData(groupId: string) {
           termId: student.termId,
           teacherName: classInfo.instructorName,
           classGrade: student.studentGroupName,
-          semester: Number(currectSemester.termSeq)
+          semester: Number(currectSemester.termSeq),
+          academicYear:
+            esis.userData?.academicYear || String(new Date().getUTCFullYear()),
+          systemId: student.personId
         }
       })
 
@@ -98,7 +102,9 @@ export async function fetchGradeData(
         termId: true,
         classGrade: true,
         semester: true,
-        teacherName: true
+        teacherName: true,
+        academicYear: true,
+        systemId: true
       }
     })
 
