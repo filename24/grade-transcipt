@@ -33,7 +33,7 @@ const Navbar = () => {
               Dashboard
             </Link>
             <Link
-              href="/grade"
+              href="/dash/grade"
               className={buttonVariants({ variant: 'ghost' })}
             >
               Хичээлийн дүн
@@ -72,7 +72,7 @@ const Navbar = () => {
           <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
             <Notebook size={20} />
             <Link
-              href="/grade"
+              href="/dash/grade"
               className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               Хичээлийн дүн
