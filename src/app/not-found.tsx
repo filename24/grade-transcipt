@@ -1,4 +1,3 @@
-import Navbar from '@/components/navbar'
 import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -6,7 +5,6 @@ import Link from 'next/link'
 export default function NotFound() {
   return (
     <>
-      <Navbar />
       <main className="flex h-full min-h-[90vh] w-full flex-col items-center justify-center gap-8 p-4">
         <Image
           src="/NotFound.png"

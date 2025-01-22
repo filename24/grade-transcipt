@@ -53,6 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (pathname.includes('dash')) return !!auth
 
       if (pathname.includes('profile')) return !!auth
+
       return true
     }
   },

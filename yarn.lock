@@ -725,6 +725,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pdf-lib/standard-fonts@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@pdf-lib/standard-fonts@npm:1.0.0"
+  dependencies:
+    pako: "npm:^1.0.6"
+  checksum: 10c0/c683adfb764cd235a8370a0c1d5a8d7e90e3499ad33cdecfb92e4d48b0d36cfd038e3a875ebd0937a5646ee1578d793ab98f9c374be360c9a05d2699c1caedf4
+  languageName: node
+  linkType: hard
+
+"@pdf-lib/upng@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@pdf-lib/upng@npm:1.0.1"
+  dependencies:
+    pako: "npm:^1.0.10"
+  checksum: 10c0/9c300c513c1089e561c0cccac01f396a24efb9b0e9c922a39248cb09dfced70c05b9facdfce11a7f22cbedb4129593630a18111b90a57ef34ea4c3df98f2ac1d
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -868,6 +886,38 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/fc4ace9d79d7954c715ade765e06c95d7e1b12a63a536bcbe842fb904f03f88fc5bd6e38d44bd23243d37a270b4c44380fedddaeeae2d274f0b898a20665aba2
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-dialog@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@radix-ui/react-dialog@npm:1.1.4"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.1"
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-context": "npm:1.1.1"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.3"
+    "@radix-ui/react-focus-guards": "npm:1.1.1"
+    "@radix-ui/react-focus-scope": "npm:1.1.1"
+    "@radix-ui/react-id": "npm:1.1.0"
+    "@radix-ui/react-portal": "npm:1.1.3"
+    "@radix-ui/react-presence": "npm:1.1.2"
+    "@radix-ui/react-primitive": "npm:2.0.1"
+    "@radix-ui/react-slot": "npm:1.1.1"
+    "@radix-ui/react-use-controllable-state": "npm:1.1.0"
+    aria-hidden: "npm:^1.1.1"
+    react-remove-scroll: "npm:^2.6.1"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/d0ac8d85869b0d5a51823eb66503e41bab543807aa8702a2f1b2d5f720b1a2e4e9d0d83ca744aae06c6942a8759a1cd12bfa9b715d492868548254784969f78d
   languageName: node
   linkType: hard
 
@@ -1189,6 +1239,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-separator@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-separator@npm:1.1.1"
+  dependencies:
+    "@radix-ui/react-primitive": "npm:2.0.1"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/4b0dc0db4e31d4d71a2a688581707dedb19a9e13378e86dbbab467970c5b271afc189ebba0e340495e15ce0fbbc42445d0be43ff8104de5f5c96cf3b822e801d
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-slot@npm:1.1.1, @radix-ui/react-slot@npm:^1.1.1":
   version: 1.1.1
   resolution: "@radix-ui/react-slot@npm:1.1.1"
@@ -1201,6 +1270,36 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/f3cc71c16529c67a8407a89e0ac13a868cafa0cd05ca185b464db609aa5996a3f00588695518e420bd47ffdb4cc2f76c14cc12ea5a38fc2ca3578a30d2ca58b9
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-tooltip@npm:^1.1.6":
+  version: 1.1.6
+  resolution: "@radix-ui/react-tooltip@npm:1.1.6"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.1"
+    "@radix-ui/react-compose-refs": "npm:1.1.1"
+    "@radix-ui/react-context": "npm:1.1.1"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.3"
+    "@radix-ui/react-id": "npm:1.1.0"
+    "@radix-ui/react-popper": "npm:1.2.1"
+    "@radix-ui/react-portal": "npm:1.1.3"
+    "@radix-ui/react-presence": "npm:1.1.2"
+    "@radix-ui/react-primitive": "npm:2.0.1"
+    "@radix-ui/react-slot": "npm:1.1.1"
+    "@radix-ui/react-use-controllable-state": "npm:1.1.0"
+    "@radix-ui/react-visually-hidden": "npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/6e2e83b2ef448bcc486e8f73bfd303b18b723f86239f40f5e06cf930f074494f6fefb1a48bcaf24b215ec7bd7f87f6884d1ef9394cddcf50d1b30e26f9e15093
   languageName: node
   linkType: hard
 
@@ -3295,10 +3394,13 @@ __metadata:
     "@next/eslint-plugin-next": "npm:^15.1.4"
     "@number-flow/react": "npm:^0.5.5"
     "@prisma/client": "npm:^6.2.1"
+    "@radix-ui/react-dialog": "npm:^1.1.4"
     "@radix-ui/react-dropdown-menu": "npm:^2.1.4"
     "@radix-ui/react-label": "npm:^2.1.1"
     "@radix-ui/react-select": "npm:^2.1.4"
+    "@radix-ui/react-separator": "npm:^1.1.1"
     "@radix-ui/react-slot": "npm:^1.1.1"
+    "@radix-ui/react-tooltip": "npm:^1.1.6"
     "@tanstack/react-table": "npm:^8.20.6"
     "@types/node": "npm:^20.17.14"
     "@types/react": "npm:^19.0.7"
@@ -3312,10 +3414,11 @@ __metadata:
     eslint-config-next: "npm:15.1.4"
     eslint-plugin-react-hooks: "npm:^5.1.0"
     jose: "npm:^5.9.6"
-    lucide-react: "npm:^0.472.0"
+    lucide-react: "npm:^0.473.0"
     next: "npm:15.1.4"
     next-auth: "npm:^5.0.0-beta.25"
     next-themes: "npm:^0.4.4"
+    pdf-lib: "npm:^1.17.1"
     postcss: "npm:^8.5.1"
     prettier-plugin-tailwindcss: "npm:^0.6.10"
     prisma: "npm:^6.2.1"
@@ -3956,12 +4059,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.472.0":
-  version: 0.472.0
-  resolution: "lucide-react@npm:0.472.0"
+"lucide-react@npm:^0.473.0":
+  version: 0.473.0
+  resolution: "lucide-react@npm:0.473.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/4c867b12e2bd3fd72482e07dbeed25103c97b6555a89e75079c9c3293415c52248063d150c86e21c28fc3c1f9408832a63c7fdbc0cb763c4160b97290e671320
+  checksum: 10c0/0e6911eb2b5332165bdbca6f951a49e9f1162502a9641edea8bae29c0307d720b86bbbcc17fa909c3d0748fbcb8088eb33bb6f627a1cab1118a259b63ee7a38c
   languageName: node
   linkType: hard
 
@@ -4468,6 +4571,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pako@npm:^1.0.10, pako@npm:^1.0.11, pako@npm:^1.0.6":
+  version: 1.0.11
+  resolution: "pako@npm:1.0.11"
+  checksum: 10c0/86dd99d8b34c3930345b8bbeb5e1cd8a05f608eeb40967b293f72fe469d0e9c88b783a8777e4cc7dc7c91ce54c5e93d88ff4b4f060e6ff18408fd21030d9ffbe
+  languageName: node
+  linkType: hard
+
 "parent-module@npm:^1.0.0":
   version: 1.0.1
   resolution: "parent-module@npm:1.0.1"
@@ -4505,6 +4615,18 @@ __metadata:
     lru-cache: "npm:^10.2.0"
     minipass: "npm:^5.0.0 || ^6.0.2 || ^7.0.0"
   checksum: 10c0/32a13711a2a505616ae1cc1b5076801e453e7aae6ac40ab55b388bb91b9d0547a52f5aaceff710ea400205f18691120d4431e520afbe4266b836fadede15872d
+  languageName: node
+  linkType: hard
+
+"pdf-lib@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "pdf-lib@npm:1.17.1"
+  dependencies:
+    "@pdf-lib/standard-fonts": "npm:^1.0.0"
+    "@pdf-lib/upng": "npm:^1.0.1"
+    pako: "npm:^1.0.11"
+    tslib: "npm:^1.11.1"
+  checksum: 10c0/a9489a402880dacd1389a3e14ff8f6139d58e3bc82f26b0fcbd0798b841aee6ccb7fcfab0992b574e57b40404ced0330a7170b3c6467363461a9df5d9daec489
   languageName: node
   linkType: hard
 
@@ -5738,6 +5860,13 @@ __metadata:
     minimist: "npm:^1.2.6"
     strip-bom: "npm:^3.0.0"
   checksum: 10c0/5b4f301a2b7a3766a986baf8fc0e177eb80bdba6e396792ff92dc23b5bca8bb279fc96517dcaaef63a3b49bebc6c4c833653ec58155780bc906bdbcf7dda0ef5
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^1.11.1":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: 10c0/69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
   languageName: node
   linkType: hard
 

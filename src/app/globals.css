@@ -6,8 +6,7 @@
   :root {
     --nav-height: 60px;
 
-    --font-pretendard:
-      "Pretendard Variable", Pretendard, -apple-system,
+    --font-pretendard: "Pretendard Variable", Pretendard, -apple-system,
       BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
       "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
@@ -49,6 +48,15 @@
     --chart-6: 266, 85%, 58%;
     --chart-7: 231, 97%, 72%;
     --chart-8: 316, 73%, 69%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
     --radius: 0.5rem;
@@ -88,6 +96,15 @@
     --chart-6: 41, 86%, 83%;
     --chart-7: 189, 71%, 73%;
     --chart-8: 316, 72%, 86%;
+
+    --sidebar-background: 240, 21%, 12%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240, 23%, 9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
