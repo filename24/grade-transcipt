@@ -28,8 +28,8 @@ export const api = axios.create({
 //   return response
 // })
 
-export async function tryLogin() {
-  if (isLoggedIn) return
+export async function tryLogin(esis?: { username: string; password: string }) {
+  if (isLoggedIn) return api
 
   try {
     const { data } = await axios.request({
@@ -40,8 +40,8 @@ export async function tryLogin() {
         Accept: 'application/json'
       },
       data: {
-        userName: process.env.ESIS_USERNAME,
-        password: process.env.ESIS_PASSWORD
+        userName: esis?.username ?? process.env.ESIS_USERNAME,
+        password: esis?.password ?? process.env.ESIS_PASSWORD
       }
     })
 
@@ -54,9 +54,9 @@ export async function tryLogin() {
         ', token: ' +
         api.defaults.headers.common['Authorization']
     )
-    return true
+    return api
   } catch (error) {
     console.error(error)
-    return false
+    return undefined
   }
 }

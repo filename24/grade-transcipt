@@ -1,10 +1,11 @@
-import { LoginSchema } from '@/schemas/login'
+import { EsisLoginSchema, RegisterLoginSchema } from '@/schemas/login'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import prisma from '@/utils/prisma'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { GradeAuthError } from './error'
 import { SignJWT } from 'jose'
+import { tryLogin } from './esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -60,49 +61,70 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        registerNumber: {}
+        registerNumber: {},
+        username: {},
+        password: {}
       },
-      authorize: async (credentials): Promise<User> => {
+      authorize: async (credentials): Promise<User | null> => {
         let user = null
 
-        const loginData = LoginSchema.safeParse(credentials)
+        if (credentials.registerNumber) {
+          const loginData = RegisterLoginSchema.safeParse(credentials)
 
-        if (!loginData.success) {
-          throw new GradeAuthError('Буруу утга оруулсан байна.')
-        }
-
-        const gradeData = await prisma.grade.findFirst({
-          where: {
-            registerNumber: loginData.data.registerNumber
+          if (!loginData.success) {
+            throw new GradeAuthError('Буруу утга оруулсан байна.')
           }
-        })
 
-        if (!gradeData) {
-          throw new GradeAuthError('Knea - Grade system бүртгэлгүй байна.')
-        }
-
-        user = await prisma.user.findFirst({
-          where: {
-            registerNumber: loginData.data.registerNumber
-          },
-          select: {
-            id: true,
-            name: true,
-            registerNumber: true,
-            role: true,
-            systemId: true
-          }
-        })
-
-        if (!user) {
-          user = await prisma.user.create({
-            data: {
-              name: gradeData.displayName,
-              registerNumber: gradeData.registerNumber,
-              role: 'STUDENT',
-              systemId: gradeData.systemId
+          const gradeData = await prisma.grade.findFirst({
+            where: {
+              registerNumber: loginData.data.registerNumber
             }
           })
+
+          if (!gradeData) {
+            throw new GradeAuthError('Knea - Grade system бүртгэлгүй байна.')
+          }
+
+          user = await prisma.user.findFirst({
+            where: {
+              registerNumber: loginData.data.registerNumber
+            },
+            select: {
+              id: true,
+              name: true,
+              registerNumber: true,
+              role: true,
+              systemId: true
+            }
+          })
+
+          if (!user) {
+            user = await prisma.user.create({
+              data: {
+                name: gradeData.displayName,
+                registerNumber: gradeData.registerNumber,
+                role: 'STUDENT',
+                systemId: gradeData.systemId
+              }
+            })
+          }
+        } else {
+          const loginData = EsisLoginSchema.safeParse(credentials)
+
+          if (!loginData.success) {
+            throw new GradeAuthError('Буруу утга оруулсан байна.')
+          }
+
+          const esis = await tryLogin({
+            username: loginData.data.username,
+            password: loginData.data.username
+          })
+
+          if (!esis) {
+            throw new GradeAuthError(
+              'ESIS системд алдаа заалаа. Дараа дахин оролдоно уу!'
+            )
+          }
         }
 
         return user

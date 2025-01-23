@@ -186,3 +186,14 @@ export async function getStudentGrade(
 
   return data
 }
+
+export async function getAllStudentGrade(semester: number): Promise<Grade[]> {
+  const data = await prisma.grade.findMany({
+    where: { semester },
+    orderBy: {
+      displayName: 'desc'
+    }
+  })
+
+  return data
+}
