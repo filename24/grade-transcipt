@@ -10,6 +10,9 @@ export default async function Login() {
   const session = await auth()
 
   if (session) {
+    if (session.user?.role === 'TEACHER') {
+      redirect('/teacher')
+    }
     redirect('/dash')
   }
   return (

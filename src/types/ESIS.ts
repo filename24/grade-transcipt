@@ -1,3 +1,13 @@
+export type If<
+  Value extends boolean,
+  TrueResult,
+  FalseResult = undefined
+> = Value extends true
+  ? TrueResult
+  : Value extends false
+    ? FalseResult
+    : TrueResult | FalseResult
+
 export interface SemesterInfo {
   termId: string
   termName: string

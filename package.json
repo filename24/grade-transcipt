@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
+    "@discordjs/collection": "^2.1.1",
     "@number-flow/react": "^0.5.5",
     "@prisma/client": "^6.2.1",
     "@radix-ui/react-dialog": "^1.1.5",

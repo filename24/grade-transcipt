@@ -5,7 +5,7 @@ import prisma from '@/utils/prisma'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { GradeAuthError } from './error'
 import { SignJWT } from 'jose'
-import { tryLogin } from './esis'
+import { ESISClient } from '@/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -115,15 +115,46 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new GradeAuthError('Буруу утга оруулсан байна.')
           }
 
-          const esis = await tryLogin({
+          const esis = new ESISClient({
             username: loginData.data.username,
-            password: loginData.data.username
+            password: loginData.data.password
           })
 
-          if (!esis) {
+          try {
+            await esis.connect()
+
+            if (!esis.isReady())
+              throw new GradeAuthError(
+                'ESIS системд бэлэн болоогүй байна. Дараа дахин оролдоно уу!'
+              )
+          } catch (_e) {
             throw new GradeAuthError(
-              'ESIS системд алдаа заалаа. Дараа дахин оролдоно уу!'
+              `${esis.options.username} хэрэглэгч олдсонгүй. Та нэвтрэх нэрээ дахин шалгана уу`
             )
+          }
+
+          user = await prisma.user.findFirst({
+            where: {
+              registerNumber: loginData.data.username
+            },
+            select: {
+              id: true,
+              name: true,
+              registerNumber: true,
+              role: true,
+              systemId: true
+            }
+          })
+
+          if (!user) {
+            user = await prisma.user.create({
+              data: {
+                name: esis.user.displayName,
+                registerNumber: esis.user.userName,
+                role: 'TEACHER',
+                systemId: esis.user.personId
+              }
+            })
           }
         }
 
