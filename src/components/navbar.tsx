@@ -1,25 +1,18 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChartArea, LogOut, Menu, Moon, Notebook, Sun } from 'lucide-react'
+import { ChartArea, LogOut, Menu, Notebook } from 'lucide-react'
 import { Button, buttonVariants } from './ui/button'
-import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { signOut, useSession } from 'next-auth/react'
 import UserMenu from './user-menu'
+import ThemeSwitcher from './theme-switcher'
 
 const Navbar = () => {
-  const { setTheme, theme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
-  const [isDark, setIsDark] = useState(theme === 'dark')
   const session = useSession()
 
   const toggleMenu = () => setIsOpen(!isOpen)
-  const toggleTheme = () => {
-    setIsDark(!isDark)
-    setTheme(isDark ? 'light' : 'dark')
-  }
-
   return (
     <nav className="sticky z-50 flex w-full flex-col bg-card text-card-foreground shadow backdrop-blur-lg">
       <div className="flex h-14 items-center">
@@ -41,9 +34,7 @@ const Navbar = () => {
           </div>
           <div className="flex items-center gap-x-2 ">
             <UserMenu session={session.data} />
-            <Button onClick={toggleTheme} variant="outline" size="icon">
-              {isDark ? <Sun /> : <Moon />}
-            </Button>
+            <ThemeSwitcher />
 
             <Button
               variant="outline"

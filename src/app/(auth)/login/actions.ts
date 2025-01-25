@@ -3,6 +3,7 @@
 import { EsisLoginSchema, RegisterLoginSchema } from '@/schemas/login'
 import { signIn } from '@/utils/auth'
 import { GradeError } from '@/utils/error'
+import '@/utils/prisma'
 
 export async function loginWithRegister(
   _state: RegisterLoginFormState,

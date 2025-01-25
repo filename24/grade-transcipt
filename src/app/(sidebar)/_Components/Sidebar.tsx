@@ -4,6 +4,7 @@ import * as React from 'react'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -17,6 +18,16 @@ import { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { ChevronUp, User2 } from 'lucide-react'
+import { signOut } from '@/utils/auth'
 
 const data = {
   admin: [
@@ -60,6 +71,7 @@ export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar> & { session: Session | null }) {
   const pathname = usePathname()
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -104,6 +116,35 @@ export function AppSidebar({
               </SidebarGroup>
             ))}
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton size={'lg'}>
+                  <User2 /> {session?.user?.name}
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuLabel>
+                  {session?.user?.name ?? 'Profile'}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href="/profile">Хувийн мэдээлэл</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  Гарах
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

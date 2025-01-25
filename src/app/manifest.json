@@ -16,6 +16,6 @@
   ],
   "theme_color": "#181825",
   "background_color": "#181825",
-  "display": "standalone",
+  "display": "fullscreen",
   "lang": "mn"
 }
