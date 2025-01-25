@@ -9,6 +9,7 @@
 !.yarn/versions
 
 .pnp.*
+bun.lockb
 
 node_modules
 # testing
