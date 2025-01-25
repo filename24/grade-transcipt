@@ -1,9 +1,10 @@
 import { getAllStudentGrade, resolveClassCode } from '@/utils'
 import { auth } from '@/utils/auth'
+import { NextResponse } from 'next/server'
 
 export const GET = auth(async (request) => {
   if (!request.auth)
-    return Response.json(
+    return NextResponse.json(
       { message: 'Unauthorized', data: null },
       { status: 401 }
     )
@@ -19,7 +20,7 @@ export const GET = auth(async (request) => {
     teacherName: grade.teacherName
   }))
 
-  return Response.json(
+  return NextResponse.json(
     {
       message: 'Success!',
       data
@@ -28,4 +29,5 @@ export const GET = auth(async (request) => {
       status: 200
     }
   )
-})
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}) as any
