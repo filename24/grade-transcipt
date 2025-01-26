@@ -11,9 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="flex flex-1 flex-col border-grid">
       <Navbar />
-      <main className="mx-auto w-full max-w-6xl grow py-4">
-        {children}
-      </main>
+      <main className="mx-auto w-full max-w-6xl grow py-4">{children}</main>
       <Footer />
     </div>
   )
