@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   SidebarRail
 } from '@/components/ui/sidebar'
-import { Session } from 'next-auth'
+import { Session } from '@/utils/auth'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'

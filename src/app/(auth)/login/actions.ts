@@ -1,29 +1,36 @@
 'use server'
-
-import { LoginSchema } from '@/schemas/login'
 import { signIn } from '@/utils/auth'
 import { GradeError } from '@/utils/error'
+import { redirect } from 'next/navigation'
 
 export async function login(
   _state: LoginFormState,
   formData: FormData
 ): Promise<LoginFormState> {
-  const loginData = LoginSchema.safeParse({
-    registerNumber: formData.get('registerNumber')
-  })
+  const registerNumber = formData.get('registerNumber')?.toString()
 
-  if (!loginData.success) {
+  if (!registerNumber)
     return {
-      errors: loginData.error.flatten().fieldErrors
+      errors: {
+        registerNumber: ['Регистерын дугаар хоосон байна.']
+      }
     }
-  }
 
   try {
-    await signIn('credentials', formData)
+    await signIn.registernumber(
+      {
+        registerNumber
+      },
+      {
+        onSuccess() {
+          redirect('/dash')
+        }
+      }
+    )
   } catch (error) {
     if (GradeError.isAuthError(error)) {
       return {
-        message: error.message
+        message: error.body.message
       }
     } else {
       throw error

@@ -1,4 +1,4 @@
-import { CredentialsSignin } from 'next-auth'
+import { APIError } from 'better-call'
 
 export enum ErrorCode {
   INVALID_INPUT = 'INVALID_INPUT',
@@ -24,15 +24,7 @@ export class GradeError extends Error {
     return error instanceof GradeError
   }
 
-  static isAuthError(error: unknown): error is GradeAuthError {
-    return error instanceof GradeAuthError
-  }
-}
-
-export class GradeAuthError extends CredentialsSignin {
-  code = 'GradeError'
-  constructor(message?: string, errorOptions?: { statusCode: number }) {
-    super(message, errorOptions)
-    this.message = message ?? 'Authentication error'
+  static isAuthError(error: unknown): error is APIError {
+    return error instanceof APIError
   }
 }

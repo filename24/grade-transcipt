@@ -1,23 +1,5 @@
-import type { Role } from '@prisma/client'
+import type { User as PrismaUser } from '@prisma/client'
 
-declare module 'next-auth' {
-  interface User {
-    name: string
-    role: Role
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { JWT } from 'next-auth/jwt'
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    role: Role
-  }
-}
-
-declare module 'next-auth' {
-  interface Session {
-    token: string
-  }
+declare module 'better-auth/auth' {
+  type User = PrismaUser
 }

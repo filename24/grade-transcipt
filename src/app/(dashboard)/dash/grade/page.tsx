@@ -1,12 +1,13 @@
 import { getStudentGrade, resolveClassCode } from '@/utils'
-import { auth } from '@/utils/auth'
+import { getSession } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
 import { GradeTableData } from './_Components/GradeTable'
 import GradeLayout from './_Components/GradeLayout'
+import { headers } from 'next/headers'
 
 export default async function GradePage() {
-  const session = await auth()
+  const session = await getSession(await headers())
 
   if (!session?.user?.name) {
     return redirect('/login')

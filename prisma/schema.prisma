@@ -28,12 +28,14 @@ model Grade {
   grade          String
   point          Int
   status         String
+
+  @@map("grade")
 }
 
 model User {
   id             String    @id @default(uuid())
-  systemId       String
   name           String?
+  systemId       String
   registerNumber String
   role           Role
   accounts       Account[]
@@ -41,6 +43,17 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  email         String?
+  emailVerified Boolean?
+  image         String?
+  username      String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+
+  @@unique([username])
+  @@map("user")
 }
 
 enum Role {
@@ -49,41 +62,54 @@ enum Role {
   ADMIN
 }
 
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
 model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
+  id         String @id
+  accountId  String
+  providerId String
+  userId     String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  accessToken  String?
+  idToken      String?
+  refreshToken String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
 
-  @@id([provider, providerAccountId])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scope    String?
+  password String?
+
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("account")
 }
 
 model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id
+  userId String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+  token          String
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
 
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime
+  updatedAt DateTime
 
-  @@id([identifier, token])
+  @@unique([token])
+  @@map("session")
 }

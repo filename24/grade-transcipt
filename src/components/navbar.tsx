@@ -5,15 +5,16 @@ import { ChartArea, LogOut, Menu, Moon, Notebook, Sun } from 'lucide-react'
 import { Button, buttonVariants } from './ui/button'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
-import { signOut, useSession } from 'next-auth/react'
 import UserMenu from './user-menu'
+import { signOut, useSession } from '@/utils/auth'
+import { useRouter } from 'next/navigation'
 
 const Navbar = () => {
   const { setTheme, theme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(theme === 'dark')
   const session = useSession()
-
+  const router = useRouter()
   const toggleMenu = () => setIsOpen(!isOpen)
   const toggleTheme = () => {
     setIsDark(!isDark)
@@ -81,7 +82,15 @@ const Navbar = () => {
           <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
             <LogOut size={20} />
             <button
-              onClick={() => signOut()}
+              onClick={() =>
+                signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.push('/login') // redirect to login page
+                    }
+                  }
+                })
+              }
               className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               Гарах

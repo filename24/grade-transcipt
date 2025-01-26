@@ -1,14 +1,16 @@
-import { auth } from '@/utils/auth'
 import GradeAverage from './_Components/GradeAverage'
 import { redirect } from 'next/navigation'
 import { getStudentGrade } from '@/utils/fetch'
 import Top5GradeChart from './_Components/Top5GradeChart'
 import GradePieChart from './_Components/GradePieChart'
+import { getSession } from '@/utils/auth'
+import { headers } from 'next/headers'
 
 export default async function DashboardPage() {
-  const session = await auth()
+  const session = await getSession(await headers())
 
-  if (!session?.user?.name) {
+  console.log(session)
+  if (!session) {
     return redirect('/login')
   }
 
