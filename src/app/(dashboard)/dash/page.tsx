@@ -17,7 +17,7 @@ export default async function DashboardPage() {
   const semester2Grade = await getStudentGrade(session.user.name, 2)
 
   return (
-    <div className="p-2">
+    <main>
       <div className="mb-4">
         <h3 className="font-semibold text-2xl tracking-tight">
           Тавтай морилно уу, {session?.user?.name}
@@ -38,6 +38,6 @@ export default async function DashboardPage() {
         <Top5GradeChart semester1={semester1Grade} semester2={semester2Grade} />
         <GradePieChart semester1={semester1Grade} semester2={semester2Grade} />
       </div>
-    </div>
+    </main>
   )
 }
