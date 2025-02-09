@@ -7,6 +7,7 @@ import type {
 import * as esis from '@/utils/esis'
 import type { Grade, Prisma } from '@prisma/client'
 import prisma from '@/utils/prisma'
+import { CURRECT_SEMESTER } from './constants'
 
 export async function getGradeData(groupId: string) {
   await esis.tryLogin()
@@ -17,7 +18,7 @@ export async function getGradeData(groupId: string) {
     )
     .then((res) => res.data.RESULT)
 
-  const currectSemester = semesterInfo[0]
+  const currectSemester = semesterInfo[CURRECT_SEMESTER]
 
   const gradeInfo = await esis.api
     .get<ResponseData<ClassInfo[]>>(
