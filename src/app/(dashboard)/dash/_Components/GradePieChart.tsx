@@ -84,7 +84,7 @@ export default function GradePieChart({
             </Pie>
             <ChartLegend
               content={<ChartLegendContent nameKey="grade" />}
-              className="-translate-y-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              className="-translate-y-2 *:basis-1/4 *:justify-center"
             />
           </PieChart>
         </ChartContainer>

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { columns, DataTable, GradeTableData } from './GradeTable'
 import {
   Select,
@@ -36,7 +36,9 @@ export default function GradeLayout({
         </SelectContent>
       </Select>
 
-      <DataTable columns={columns} data={select} />
+      <Suspense>
+        <DataTable columns={columns} data={select} />
+      </Suspense>
     </>
   )
 }

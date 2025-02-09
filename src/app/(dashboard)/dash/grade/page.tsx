@@ -36,9 +36,5 @@ export default async function GradePage() {
     })
   )
 
-  return (
-    <div className="p-2">
-      <GradeLayout semester1={semester1Data} semester2={semester2Data} />
-    </div>
-  )
+  return <GradeLayout semester1={semester1Data} semester2={semester2Data} />
 }

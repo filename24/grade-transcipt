@@ -4,7 +4,6 @@
   },
   "search.exclude": {
     "**/node_modules": true,
-    "**/.yarn": true,
     "**/.next": true
   },
   "[typescript]": {
