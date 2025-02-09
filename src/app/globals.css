@@ -77,8 +77,7 @@
   :root {
     --nav-height: 60px;
 
-    --font-pretendard:
-      "Pretendard Variable", Pretendard, -apple-system,
+    --font-pretendard: "Pretendard Variable", Pretendard, -apple-system,
       BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
       "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
@@ -98,7 +97,7 @@
     --border: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
     --input: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
 
-    --primary: 220 91.4893627166748% 53.921568393707275%; /* accent - Blue */
+    --primary: 240, 21%, 10%; /* accent - Blue */
     --primary-foreground: 220 23.076923191547394% 94.90196108818054%; /* base */
 
     --secondary: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
@@ -147,7 +146,7 @@
     --border: 234 13.20754736661911% 31.176471710205078%; /* surface1 */
     --input: 234 13.20754736661911% 31.176471710205078%; /* surface1 */
 
-    --primary: 217 91.86992049217224% 75.88235139846802%; /* accent - Blue */
+    --primary: 220, 23%, 95%; /* accent - Blue */
     --primary-foreground: 240 21.052631735801697% 14.901961386203766%; /* base */
 
     --secondary: 237 16.239316761493683% 22.94117659330368%; /* surface0 */
@@ -186,5 +185,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  html {
+    scrollbar-width: none;
   }
 }
