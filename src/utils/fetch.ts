@@ -1,12 +1,74 @@
-import type {
-  ClassInfo,
-  ResponseData,
-  SemesterInfo,
-  StudentGrade
+import {
+  AcademicYearData,
+  SubjectCourseData,
+  type ClassInfo,
+  type ResponseData,
+  type SemesterInfo,
+  type StudentGrade
 } from '@/types/ESIS'
 import * as esis from '@/utils/esis'
 import type { Grade, Prisma } from '@prisma/client'
 import prisma from '@/utils/prisma'
+import { CURRECT_SEMESTER } from './constants'
+import { resolveClassCode } from '.'
+
+/**
+ * 학생 학년 정보
+ *
+ * 만약에 학생 아카데믹 년도가 1개일경우 학생 id 가 없음으로 간주한다
+ *
+ * @param userId 학생 person id
+ * @returns 학생이 진학한 학년을 출력한다
+ */
+export async function getStudentAcademicYears(userId: string) {
+  await esis.tryLogin()
+
+  const academicYears = await esis.api
+    .get<ResponseData<AcademicYearData[]>>(
+      `/profile/stdntGrade/academicYear/${userId}`
+    )
+    .then((res) => res.data.RESULT)
+
+  return academicYears
+}
+
+export async function getStudentGradeRecords(
+  userId: string,
+  academicLevel: string
+): Promise<StudentGradeRecord[]> {
+  await esis.tryLogin()
+
+  const rawRecords = await esis.api
+    .get<ResponseData<SubjectCourseData[]>>(
+      `https://svc5.esis.edu.mn/api/profile/stdntGrade/list/${userId}/0/${academicLevel}`
+    )
+    .then((res) => res.data.RESULT)
+
+  const record: StudentGradeRecord[] = rawRecords.map((record) => ({
+    className: resolveClassCode(
+      `${record.subjectAreaCode} ${record.courseName
+        .split(' ')
+        .pop()
+        ?.toLowerCase()}`
+    ),
+    classCode: record.subjectAreaCode,
+    point: Number(record.gradeMark),
+    grade: record.gradeCode,
+    schoolName: record.organizationName,
+    academicLevel: record.academicLevel
+  }))
+
+  return record
+}
+
+export interface StudentGradeRecord {
+  className: string
+  classCode: string
+  point: number
+  grade: string
+  schoolName: string
+  academicLevel: string
+}
 
 export async function getGradeData(groupId: string) {
   await esis.tryLogin()
@@ -17,7 +79,7 @@ export async function getGradeData(groupId: string) {
     )
     .then((res) => res.data.RESULT)
 
-  const currectSemester = semesterInfo[0]
+  const currectSemester = semesterInfo[CURRECT_SEMESTER]
 
   const gradeInfo = await esis.api
     .get<ResponseData<ClassInfo[]>>(
@@ -181,6 +243,16 @@ export async function getStudentGrade(
     where: { displayName, semester },
     orderBy: {
       point: 'desc'
+    }
+  })
+
+  return data
+}
+
+export async function getStudentDataWithName(name: string) {
+  const data = await prisma.user.findFirst({
+    where: {
+      name
     }
   })
 

@@ -1,3 +1,3 @@
-import DashboardLoading from '../(dashboard)/dash/loading'
+import HomeLoading from '../loading'
 
-export default DashboardLoading
+export default HomeLoading

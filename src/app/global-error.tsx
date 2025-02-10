@@ -34,7 +34,7 @@ export default function RootErrorHandler({
         <style>
           {`
           html,body {
-            font-family: "Wanted Sans Variable", "Wanted Sans", -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+            font-family: font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
             height: auto;
             min-height: 100vh;
             width: 100%;
@@ -50,9 +50,9 @@ export default function RootErrorHandler({
               color: #ffffff;
             }
           }
-          @media (min-width: 1024px) {
-            .lg\:w-2\/6 {
-              width: 33.333333%;
+          .lg\:w-2\/6 {
+            @media (width >= 64rem /* 1024px */) {
+              width: calc(2/6 * 100%);
             }
           }
         `}
