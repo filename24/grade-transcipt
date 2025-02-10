@@ -61,7 +61,9 @@ export function getGradeScale(grade: number): number | undefined {
   }
 }
 
-export function calcAverageGrade(grades: Grade[]): number {
+export type GradePointOnly = Partial<Grade> & { point: number }
+
+export function calcAverageGrade(grades: GradePointOnly[]): number {
   if (grades.length === 0) return 0
 
   const sum = grades.reduce((total, grade) => total + grade.point, 0)
@@ -189,4 +191,23 @@ export function getEducationLevelFromGrade(
     return 'HIGH'
   }
   return null
+}
+
+export function getGradeCode(gradePoint: number): string {
+  if (gradePoint >= 90) return 'VIII'
+  if (gradePoint >= 80) return 'VII'
+  if (gradePoint >= 70) return 'VI'
+  if (gradePoint >= 60) return 'V'
+  if (gradePoint >= 50) return 'IV'
+  if (gradePoint >= 40) return 'III'
+  if (gradePoint >= 30) return 'II'
+  return 'I'
+}
+
+export function isElementarySchool(academicLevel: string): boolean {
+  const match = academicLevel.trim().match(/^(\d+)-р анги$/)
+  if (!match) return false
+
+  const grade = parseInt(match[1], 10)
+  return grade >= 1 && grade <= 5
 }

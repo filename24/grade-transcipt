@@ -96,6 +96,49 @@ export interface StudentGrade {
   approvalStatusName: string
 }
 
+export interface AcademicYearData {
+  /**
+   * Start year
+   * if academicYear 0 is all
+   * @example academicYear:2022
+   * 2022-2023 academic year
+   */
+  academicYear: string
+  academicLevel: string
+  academicYearName: string
+}
+
+export interface SubjectCourseData {
+  /**
+   * 순번
+   */
+  rn: string
+  /**
+   * 학교명
+   */
+  organizationName: string
+  /**
+   * 학년
+   */
+  academicLevel: string
+  /**
+   * 과목코드
+   */
+  subjectAreaCode: string
+  /**
+   * 과목 이름
+   */
+  courseName: string
+  /**
+   * 점수
+   */
+  gradeMark: string
+  /**
+   * 등급
+   */
+  gradeCode: string
+}
+
 /**
  * NEW - 등록함
  * REJECTED - 취소함
@@ -128,6 +171,7 @@ export enum ClassCode {
   МТИ = 'Мэдээлэл технологи',
   ИБЛ = 'Иргэний ёс зүй',
   ДЗЗ = 'Дизайн, зураг зүй, технологи',
+  ТҮҮ = 'Түүх',
 
   ТХН = 'Технологи',
   ХӨГ = 'Хөгжим',

@@ -21,15 +21,14 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
-import { GradeStatus } from '@/types/ESIS'
-import { calcAverageGrade, getGradeCode } from '@/utils'
+import {
+  calcAverageGrade,
+  getGradeCode,
+  isElementarySchool,
+  StudentGradeRecord
+} from '@/utils'
 
-export type GradeTableData = {
-  className: string
-  point: number
-  grade: string
-  status: string
-}
+export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 
 export const columns: ColumnDef<GradeTableData>[] = [
   {
@@ -64,28 +63,18 @@ export const columns: ColumnDef<GradeTableData>[] = [
         </Button>
       )
     }
-  },
-  {
-    accessorKey: 'status',
-    header: 'Төлөв',
-    cell: ({ row }) => {
-      const grade = row.getValue('status')
-      const formatted = GradeStatus[grade as keyof typeof GradeStatus]
-
-      return <div className="font-medium">{formatted}</div>
-    }
   }
 ]
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TValue, TData extends StudentGradeRecord> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TValue, TData extends StudentGradeRecord>({
   columns,
   data
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TValue, TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
@@ -142,22 +131,22 @@ export function DataTable<TData, TValue>({
             </TableRow>
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell
-              colSpan={2}
-              className="bg-gray-300 text-center dark:bg-[#151520]"
-            >
-              Дундаж
-            </TableCell>
-            <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
-              {getGradeCode(calcAverageGrade(data as any))}
-            </TableCell>
-            <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
-              {calcAverageGrade(data as any)}
-            </TableCell>
-          </TableRow>
-        </TableFooter>
+
+        {isElementarySchool(data[0].academicLevel) ? null : (
+          <TableFooter>
+            <TableRow>
+              <TableCell className="bg-gray-300 dark:bg-[#151520]">
+                Дундаж
+              </TableCell>
+              <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
+                {getGradeCode(calcAverageGrade(data))}
+              </TableCell>
+              <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
+                {calcAverageGrade(data)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        )}
       </Table>
     </div>
   )
