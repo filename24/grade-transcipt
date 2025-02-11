@@ -20,7 +20,8 @@ export default async function GradePage() {
       className: resolveClassCode(grade.classCode),
       grade: grade.grade,
       point: grade.point,
-      status: grade.status
+      status: grade.status,
+      classCode: grade.classCode
     })
   )
 
@@ -29,7 +30,8 @@ export default async function GradePage() {
       className: resolveClassCode(grade.classCode),
       grade: grade.grade,
       point: grade.point,
-      status: grade.status
+      status: grade.status,
+      classCode: grade.classCode
     })
   )
 

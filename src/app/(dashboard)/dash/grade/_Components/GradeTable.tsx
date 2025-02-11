@@ -21,11 +21,13 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
-import { GradeStatus } from '@/types/ESIS'
+import { ClassCode, GradeStatus } from '@/types/ESIS'
 import { calcAverageGrade, getGradeCode } from '@/utils'
+import { ClassIcon } from '@/utils/icons'
 
 export type GradeTableData = {
   className: string
+  classCode: string
   point: number
   grade: string
   status: string
@@ -44,11 +46,30 @@ export const columns: ColumnDef<GradeTableData>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
+    },
+    cell(props) {
+      return (
+        <div className="flex min-w-[200px] flex-row gap-2">
+          {
+            ClassIcon[
+              props.row.original.classCode.split(
+                ' '
+              )[0] as keyof typeof ClassCode
+            ]
+          }
+          <p>{props.getValue() as string}</p>
+        </div>
+      )
     }
   },
   {
     accessorKey: 'grade',
-    header: 'Түвшин'
+    header: 'Түвшин',
+    cell(props) {
+      return (
+        <p className="text-nowrap text-center">{props.getValue() as string}</p>
+      )
+    }
   },
   {
     accessorKey: 'point',
@@ -57,12 +78,16 @@ export const columns: ColumnDef<GradeTableData>[] = [
         <Button
           variant="ghost"
           size={'sm'}
+          className="gap-0 p-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Дүн
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
+    },
+    cell(props) {
+      return <p className="text-center">{props.getValue() as string}</p>
     }
   },
   {
@@ -145,7 +170,7 @@ export function DataTable<TData, TValue>({
         <TableFooter>
           <TableRow>
             <TableCell
-              colSpan={2}
+              colSpan={1}
               className="bg-gray-300 text-center dark:bg-[#151520]"
             >
               Дундаж
@@ -153,9 +178,10 @@ export function DataTable<TData, TValue>({
             <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
               {getGradeCode(calcAverageGrade(data as any))}
             </TableCell>
-            <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
+            <TableCell className="border-x-0 bg-gray-300 text-center font-bold dark:bg-[#151520]">
               {calcAverageGrade(data as any)}
             </TableCell>
+            <TableCell className="border-x-0 bg-gray-300 dark:bg-[#151520]"></TableCell>
           </TableRow>
         </TableFooter>
       </Table>

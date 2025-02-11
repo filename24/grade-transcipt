@@ -27,6 +27,8 @@ import {
   isElementarySchool,
   StudentGradeRecord
 } from '@/utils'
+import { ClassIcon } from '@/utils/icons'
+import { ClassCode } from '@/types/ESIS'
 
 export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 
@@ -43,11 +45,30 @@ export const columns: ColumnDef<GradeTableData>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
+    },
+    cell(props) {
+      return (
+        <div className="flex min-w-[200px] flex-row gap-2">
+          {
+            ClassIcon[
+              props.row.original.classCode.split(
+                ' '
+              )[0] as keyof typeof ClassCode
+            ]
+          }
+          <p>{props.getValue() as string}</p>
+        </div>
+      )
     }
   },
   {
     accessorKey: 'grade',
-    header: 'Түвшин'
+    header: 'Түвшин',
+    cell(props) {
+      return (
+        <p className="text-nowrap text-center">{props.getValue() as string}</p>
+      )
+    }
   },
   {
     accessorKey: 'point',
@@ -56,12 +77,16 @@ export const columns: ColumnDef<GradeTableData>[] = [
         <Button
           variant="ghost"
           size={'sm'}
+          className="gap-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Дүн
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
+    },
+    cell(props) {
+      return <p className="text-center">{props.getValue() as string}</p>
     }
   }
 ]
@@ -126,7 +151,7 @@ export function DataTable<TValue, TData extends StudentGradeRecord>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                Дүн гараагүй.
+                Хайлт олдсонгүй.
               </TableCell>
             </TableRow>
           )}
