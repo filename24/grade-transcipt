@@ -4,6 +4,7 @@ import prisma from '@/utils/prisma'
 import { ClassCode } from '@/types/ESIS'
 import type { Grade } from '@prisma/client'
 import { EducationLevel, SEMESTER_DATE, SemesterLevel } from './constants'
+import { StudentGradeRecord } from '.'
 
 export * from './fetch'
 
@@ -27,7 +28,7 @@ export async function getGradeData(registerNumber: string) {
 export function resolveClassCode(classCode: string) {
   const [className, section] = classCode.split(' ')
 
-  return `${ClassCode[className as keyof typeof ClassCode]} ${section}`
+  return `${ClassCode[className as keyof typeof ClassCode]} ${section === 'заавал' ? '' : section}`
 }
 
 export function calcGPA(grades: Grade[]): number {
@@ -210,4 +211,17 @@ export function isElementarySchool(academicLevel: string): boolean {
 
   const grade = parseInt(match[1], 10)
   return grade >= 1 && grade <= 5
+}
+
+export function filterUniqueClassNames(
+  records: StudentGradeRecord[]
+): StudentGradeRecord[] {
+  const seen = new Set<string>()
+  return records.filter((record) => {
+    if (seen.has(record.className)) {
+      return false
+    }
+    seen.add(record.className)
+    return true
+  })
 }

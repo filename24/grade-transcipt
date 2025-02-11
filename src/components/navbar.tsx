@@ -107,42 +107,42 @@ const Navbar = ({ session }: { session: Session | null }) => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden">
-          <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
+          <Link
+            href="/dash"
+            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
+          >
             <ChartArea size={20} />
-            <Link
-              href="/dash"
-              className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
+            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
               Dashboard
-            </Link>
-          </div>
-          <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
+            </p>
+          </Link>
+          <Link
+            href="/dash/grade"
+            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
+          >
             <Notebook size={20} />
-            <Link
-              href="/dash/grade"
-              className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
+            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
               Хичээлийн дүн
-            </Link>
-          </div>
-          <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
+            </p>
+          </Link>
+          <Link
+            href="/dash/record"
+            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
+          >
             <Notebook size={20} />
-            <Link
-              href="/dash/record"
-              className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
+            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
               Хувийн хэргийн дүн
-            </Link>
-          </div>
-          <div className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3">
+            </p>
+          </Link>
+          <button
+            onClick={() => signOut()}
+            className="flex w-full flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
+          >
             <LogOut size={20} />
-            <button
-              onClick={() => signOut()}
-              className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
+            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
               Гарах
-            </button>
-          </div>
+            </p>
+          </button>
         </div>
       )}
     </nav>

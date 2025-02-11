@@ -2,10 +2,17 @@ import { LoginForm } from './_Components/LoginForm'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
-export default async function Login() {
+export default async function Login({
+  searchParams
+}: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const session = await auth()
+  const params = await searchParams
 
   if (session) {
+    if (params?.callbackUrl) redirect(params.callbackUrl as string)
+
     redirect('/dash')
   }
   return (

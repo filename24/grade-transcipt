@@ -10,7 +10,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { AcademicYearData } from '@/types/ESIS'
-import { StudentGradeRecord } from '@/utils'
+import { filterUniqueClassNames, StudentGradeRecord } from '@/utils'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -33,12 +33,13 @@ export default function RecordLayout({
     highestAcademicYear.academicLevel
   )
 
-  console.log(select, gradeRecords[0])
   const data =
     select === '0'
       ? gradeRecords
-      : gradeRecords.filter(
-          (record) => String(parseInt(record.academicLevel)) === select
+      : filterUniqueClassNames(
+          gradeRecords.filter(
+            (record) => String(parseInt(record.academicLevel)) === select
+          )
         )
 
   return (
@@ -74,7 +75,7 @@ export default function RecordLayout({
             {academicYears.map((academicYears) => {
               return (
                 <SelectItem
-                  key={academicYears.academicYear}
+                  key={academicYears.academicLevel}
                   value={academicYears.academicLevel}
                 >
                   {academicYears.academicYearName}
