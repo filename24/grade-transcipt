@@ -4,11 +4,14 @@ import { redirect } from 'next/navigation'
 
 export default async function Login({
   searchParams
-}: { searchParams?: { [key: string]: string | undefined } }) {
+}: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const session = await auth()
+  const params = await searchParams
 
   if (session) {
-    if (searchParams?.callbackUrl) redirect(searchParams.callbackUrl)
+    if (params?.callbackUrl) redirect(params.callbackUrl as string)
 
     redirect('/dash')
   }
