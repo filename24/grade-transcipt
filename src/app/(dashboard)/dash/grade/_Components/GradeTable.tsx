@@ -31,6 +31,7 @@ export type GradeTableData = {
   point: number
   grade: string
   status: string
+  teacherName?: string
 }
 
 export const columns: ColumnDef<GradeTableData>[] = [

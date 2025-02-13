@@ -11,6 +11,9 @@ export default async function GradePage() {
   if (!session?.user?.name) {
     return redirect('/login')
   }
+  if (session.user.role === 'TEACHER') {
+    redirect('/teacher')
+  }
 
   const semester1GradeRaw = await getStudentGrade(session.user.name, 1)
   const semester2GradeRaw = await getStudentGrade(session.user.name, 2)
