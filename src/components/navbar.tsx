@@ -1,15 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import {
-  ArrowRight,
-  ChartArea,
-  LogOut,
-  Menu,
-  Moon,
-  Notebook,
-  Sun
-} from 'lucide-react'
+import { ArrowRight, ChartArea, LogOut, Menu, Notebook } from 'lucide-react'
 import { Button, buttonVariants } from './ui/button'
 import Image from 'next/image'
 import { signOut } from 'next-auth/react'
@@ -18,19 +10,13 @@ import { Session } from 'next-auth'
 import { getCurrentSemesters, getDDay } from '@/utils'
 import { SEMESTER_DATE } from '@/utils/constants'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
-import { useTheme } from 'next-themes'
+import ThemeSwitcher from './theme-switcher'
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]
-  const { setTheme, theme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
-  const [isDark, setIsDark] = useState(theme === 'dark')
 
   const toggleMenu = () => setIsOpen(!isOpen)
-  const toggleTheme = () => {
-    setIsDark(!isDark)
-    setTheme(isDark ? 'light' : 'dark')
-  }
 
   return (
     <nav className="sticky z-50 flex w-full flex-col bg-card text-card-foreground shadow-sm backdrop-blur-lg">
@@ -88,9 +74,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
               </HoverCardContent>
             </HoverCard>
             <UserMenu session={session} />
-            <Button onClick={toggleTheme} variant="outline" size="icon">
-              {isDark ? <Sun /> : <Moon />}
-            </Button>
+            <ThemeSwitcher />
 
             <Button
               variant="outline"
