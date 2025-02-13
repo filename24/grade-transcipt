@@ -21,18 +21,16 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
-import { ClassCode, GradeStatus } from '@/types/ESIS'
-import { calcAverageGrade, getGradeCode } from '@/utils'
+import {
+  calcAverageGrade,
+  getGradeCode,
+  isElementarySchool,
+  StudentGradeRecord
+} from '@/utils'
 import { ClassIcon } from '@/utils/icons'
+import { ClassCode } from '@/types/ESIS'
 
-export type GradeTableData = {
-  className: string
-  classCode: string
-  point: number
-  grade: string
-  status: string
-  teacherName?: string
-}
+export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 
 export const columns: ColumnDef<GradeTableData>[] = [
   {
@@ -79,7 +77,7 @@ export const columns: ColumnDef<GradeTableData>[] = [
         <Button
           variant="ghost"
           size={'sm'}
-          className="gap-0 p-0"
+          className="gap-0"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Дүн
@@ -90,28 +88,18 @@ export const columns: ColumnDef<GradeTableData>[] = [
     cell(props) {
       return <p className="text-center">{props.getValue() as string}</p>
     }
-  },
-  {
-    accessorKey: 'status',
-    header: 'Төлөв',
-    cell: ({ row }) => {
-      const grade = row.getValue('status')
-      const formatted = GradeStatus[grade as keyof typeof GradeStatus]
-
-      return <div className="font-medium">{formatted}</div>
-    }
   }
 ]
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TValue, TData extends StudentGradeRecord> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TValue, TData extends StudentGradeRecord>({
   columns,
   data
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TValue, TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
@@ -163,28 +151,27 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                Дүн гараагүй.
+                Хайлт олдсонгүй.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell
-              colSpan={1}
-              className="bg-gray-300 text-center dark:bg-[#151520]"
-            >
-              Дундаж
-            </TableCell>
-            <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
-              {getGradeCode(calcAverageGrade(data as any))}
-            </TableCell>
-            <TableCell className="border-x-0 bg-gray-300 text-center font-bold dark:bg-[#151520]">
-              {calcAverageGrade(data as any)}
-            </TableCell>
-            <TableCell className="border-x-0 bg-gray-300 dark:bg-[#151520]"></TableCell>
-          </TableRow>
-        </TableFooter>
+
+        {isElementarySchool(data[0].academicLevel) ? null : (
+          <TableFooter>
+            <TableRow>
+              <TableCell className="bg-gray-300 dark:bg-[#151520]">
+                Дундаж
+              </TableCell>
+              <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
+                {getGradeCode(calcAverageGrade(data))}
+              </TableCell>
+              <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
+                {calcAverageGrade(data)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        )}
       </Table>
     </div>
   )

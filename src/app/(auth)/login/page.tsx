@@ -6,13 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
-export default async function Login() {
+export default async function Login({
+  searchParams
+}: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const session = await auth()
+  const params = await searchParams
 
   if (session) {
     if (session.user?.role === 'TEACHER') {
       redirect('/teacher')
     }
+    if (params?.callbackUrl) redirect(params.callbackUrl as string)
+
     redirect('/dash')
   }
   return (

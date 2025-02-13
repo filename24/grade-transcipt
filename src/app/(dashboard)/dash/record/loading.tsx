@@ -18,12 +18,14 @@ export default function GradeLoading() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Хичээлийн дүн</BreadcrumbPage>
+            <BreadcrumbPage>Хувийн хэргийн дүн</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <div className="mb-4">
-        <h3 className="font-semibold text-2xl tracking-tight">Хичээлийн дүн</h3>
+        <h3 className="font-semibold text-2xl tracking-tight">
+          Хувийн хэргийн дүн
+        </h3>
       </div>
 
       <div className="mb-2">
