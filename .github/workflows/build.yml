@@ -42,7 +42,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build apps
-        run: yarn build:apps --summarize
+        run: bun run build:apps --summarize
 
       - name: Summarize Turborepo Output
         uses: ./packages/actions/src/turboSummary
@@ -65,7 +65,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build pacakges
-        run: yarn build:packages --summarize
+        run: bun run build:packages --summarize
 
       - name: Summarize Turborepo Output
         uses: ./packages/actions/src/turboSummary
