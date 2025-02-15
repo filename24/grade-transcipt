@@ -1,4 +1,4 @@
-import type { ClassCode } from '@/types/ESIS'
+import type { CourseCode } from '@gt/esis'
 import {
   Atom,
   AudioLines,
@@ -29,7 +29,7 @@ import {
 } from 'lucide-react'
 
 export const ClassIcon: Record<
-  keyof typeof ClassCode,
+  keyof typeof CourseCode,
   ReturnType<typeof CaseLower>
 > = {
   МХЛ: <CaseLower className="size-5" />,

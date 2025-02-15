@@ -8,7 +8,7 @@ export type If<
     ? FalseResult
     : TrueResult | FalseResult
 
-export interface SemesterInfo {
+export interface HalfYearInfo {
   termId: string
   termName: string
   termSeq: string
@@ -34,7 +34,7 @@ export type ResponseData<D = Record<string, string>> = {
   RESULT: D
 }
 
-export interface ClassInfo {
+export interface CourseInfo {
   institutionId: string
   classId: string
   studentGroupId: string
@@ -164,7 +164,7 @@ export enum GradeStatus {
   NEW = 'Бүртгэсэн'
 }
 
-export enum ClassCode {
+export enum CourseCode {
   МХЛ = 'Монгол хэл',
   УЗО = 'Уран зохиол',
   МБЧ = 'Үндэсний бичиг',
@@ -197,3 +197,6 @@ export enum ClassCode {
   ХБО = 'Хүн болон орчин',
   БЭХ = 'Бэлтгэл хичээл'
 }
+
+export * from './client/Client'
+export * from './utils/Constants'

@@ -1,13 +1,13 @@
 import type {
   AcademicYearData,
   SubjectCourseData,
-  ClassInfo,
+  CourseInfo,
   ResponseData,
-  SemesterInfo,
+  HalfYearInfo,
   StudentGrade
-} from '@/types/ESIS'
+} from '@gt/esis'
 import * as esis from '@/utils/esis'
-import type { Grade, Prisma } from '@prisma/client'
+import type { Grade, Prisma } from '@gt/database'
 import prisma from '@gt/database'
 import { CURRECT_SEMESTER } from './constants'
 import { resolveClassCode } from '.'
@@ -74,7 +74,7 @@ export async function getGradeData(groupId: string) {
   await esis.tryLogin()
 
   const semesterInfo = await esis.api
-    .get<ResponseData<SemesterInfo[]>>(
+    .get<ResponseData<HalfYearInfo[]>>(
       `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`
     )
     .then((res) => res.data.RESULT)
@@ -82,7 +82,7 @@ export async function getGradeData(groupId: string) {
   const currectSemester = semesterInfo[CURRECT_SEMESTER]
 
   const gradeInfo = await esis.api
-    .get<ResponseData<ClassInfo[]>>(
+    .get<ResponseData<CourseInfo[]>>(
       `/journal/group/list/${esis.userData?.institutionId}/${groupId}/${currectSemester.termId}`
     )
     .then((res) => res.data.RESULT)

@@ -1,4 +1,4 @@
-import type { Role } from '@prisma/client'
+import type { Role } from '@gt/database'
 
 declare module 'next-auth' {
   interface User {

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
-import type { Grade } from '@prisma/client'
+import type { Grade } from '@gt/database'
 
 export default function GradeAverage({
   semester1,

@@ -21,7 +21,7 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
-import { type ClassCode, GradeStatus } from '@/types/ESIS'
+import { type CourseCode, GradeStatus } from '@gt/esis'
 import { calcAverageGrade, getGradeCode, type GradePointOnly } from '@/utils'
 import { ClassIcon } from '@/utils/icons'
 
@@ -55,7 +55,7 @@ export const columns: ColumnDef<GradeTableData>[] = [
             ClassIcon[
               props.row.original.classCode.split(
                 ' '
-              )[0] as keyof typeof ClassCode
+              )[0] as keyof typeof CourseCode
             ]
           }
           <p>{props.getValue() as string}</p>

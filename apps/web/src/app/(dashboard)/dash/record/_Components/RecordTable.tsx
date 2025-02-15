@@ -28,7 +28,7 @@ import {
   type StudentGradeRecord
 } from '@/utils'
 import { ClassIcon } from '@/utils/icons'
-import type { ClassCode } from '@/types/ESIS'
+import type { CourseCode } from '@gt/esis'
 
 export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 
@@ -53,7 +53,7 @@ export const columns: ColumnDef<GradeTableData>[] = [
             ClassIcon[
               props.row.original.classCode.split(
                 ' '
-              )[0] as keyof typeof ClassCode
+              )[0] as keyof typeof CourseCode
             ]
           }
           <p>{props.getValue() as string}</p>

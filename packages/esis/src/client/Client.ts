@@ -1,6 +1,5 @@
-import type { If, UserData } from '@/types/ESIS'
+import { type If, type UserData, ESIS_BASE_URL } from '../'
 import axios, { type AxiosInstance, type RawAxiosRequestHeaders } from 'axios'
-import { ESIS_BASE_URL } from '../utils/Constants'
 
 export class ESISClient<Ready extends boolean = boolean> {
   public api: AxiosInstance

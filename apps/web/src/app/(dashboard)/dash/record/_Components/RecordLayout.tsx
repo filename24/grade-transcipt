@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { AcademicYearData } from '@/types/ESIS'
+import type { AcademicYearData } from '@gt/esis'
 import { filterUniqueClassNames, type StudentGradeRecord } from '@/utils'
 import {
   Breadcrumb,

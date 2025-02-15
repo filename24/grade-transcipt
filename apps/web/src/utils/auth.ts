@@ -5,7 +5,7 @@ import prisma from '@gt/database'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { GradeAuthError } from './error'
 import { SignJWT } from 'jose'
-import { ESISClient } from '@/esis'
+import { ESISClient } from '@gt/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

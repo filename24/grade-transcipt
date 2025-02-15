@@ -1,4 +1,4 @@
-import type { UserData } from '@/types/ESIS'
+import type { UserData } from '@gt/esis'
 import axios, { type RawAxiosRequestHeaders } from 'axios'
 
 export let isLoggedIn = false

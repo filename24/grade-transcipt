@@ -1,0 +1,17 @@
+{
+  "name": "@gt/esis",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsup src/* --watch",
+    "lint": "biome lint --write ./src/ && biome format --write ./src/"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,8 +1,8 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import prisma from '@gt/database'
-import { ClassCode } from '@/types/ESIS'
-import type { Grade } from '@prisma/client'
+import { CourseCode } from '@gt/esis'
+import type { Grade } from '@gt/database'
 import {
   type EducationLevel,
   SEMESTER_DATE,
@@ -32,7 +32,7 @@ export async function getGradeData(registerNumber: string) {
 export function resolveClassCode(classCode: string) {
   const [className, section] = classCode.split(' ')
 
-  return `${ClassCode[className as keyof typeof ClassCode]} ${section === 'заавал' ? '' : section}`
+  return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'заавал' ? '' : section}`
 }
 
 export function calcGPA(grades: Grade[]): number {

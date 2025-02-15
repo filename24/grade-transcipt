@@ -14,6 +14,7 @@
         "@auth/prisma-adapter": "^2.7.4",
         "@discordjs/collection": "^2.1.1",
         "@gt/database": "workspace:*",
+        "@gt/esis": "*",
         "@number-flow/react": "^0.5.5",
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-dropdown-menu": "^2.1.6",
@@ -73,6 +74,15 @@
         "prisma": "^6.3.1",
         "tsup": "^8.3.6",
         "tsx": "^4.19.2",
+      },
+      "peerDependencies": {
+        "typescript": "^5.0.0",
+      },
+    },
+    "packages/esis": {
+      "name": "@gt/esis",
+      "devDependencies": {
+        "@types/bun": "latest",
       },
       "peerDependencies": {
         "typescript": "^5.0.0",
@@ -189,6 +199,8 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.9", "", {}, "sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg=="],
 
     "@gt/database": ["@gt/database@workspace:packages/database"],
+
+    "@gt/esis": ["@gt/esis@workspace:packages/esis"],
 
     "@gt/tsconfig": ["@gt/tsconfig@workspace:packages/tsconfig"],
 

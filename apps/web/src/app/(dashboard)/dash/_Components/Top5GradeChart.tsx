@@ -14,7 +14,7 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart'
 import { resolveClassCode } from '@/utils'
-import type { Grade } from '@prisma/client'
+import type { Grade } from '@gt/database'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts'

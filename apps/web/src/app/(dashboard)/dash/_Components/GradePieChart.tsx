@@ -16,7 +16,7 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart'
 import { countGrades, grades } from '@/utils'
-import type { Grade } from '@prisma/client'
+import type { Grade } from '@gt/database'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { LabelList, Pie, PieChart } from 'recharts'
