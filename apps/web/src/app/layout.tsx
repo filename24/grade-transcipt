@@ -60,6 +60,7 @@ export default function RootLayout({
           crossOrigin=""
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
+        <link rel="icon" href="/knea.svg" type="image/svg+xml" />
       </head>
       <body className="min-h-svh w-full max-w-[100vw] font-pretendard">
         <ThemeProvider

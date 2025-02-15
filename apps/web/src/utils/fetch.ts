@@ -11,6 +11,7 @@ import type { Grade, Prisma } from '@gt/database'
 import prisma from '@gt/database'
 import { CURRECT_SEMESTER } from './constants'
 import { resolveClassCode } from '.'
+import { unstable_cache } from 'next/cache'
 
 /**
  * 학생 학년 정보
@@ -20,46 +21,54 @@ import { resolveClassCode } from '.'
  * @param userId 학생 person id
  * @returns 학생이 진학한 학년을 출력한다
  */
-export async function getStudentAcademicYears(userId: string) {
-  await esis.tryLogin()
+export const getStudentAcademicYears = unstable_cache(
+  async (userId: string) => {
+    await esis.tryLogin()
 
-  const academicYears = await esis.api
-    .get<ResponseData<AcademicYearData[]>>(
-      `/profile/stdntGrade/academicYear/${userId}`
-    )
-    .then((res) => res.data.RESULT)
+    const academicYears = await esis.api
+      .get<ResponseData<AcademicYearData[]>>(
+        `/profile/stdntGrade/academicYear/${userId}`
+      )
+      .then((res) => res.data.RESULT)
 
-  return academicYears
-}
+    return academicYears
+  },
+  ['record'],
+  { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
+)
 
-export async function getStudentGradeRecords(
-  userId: string,
-  academicLevel: string
-): Promise<StudentGradeRecord[]> {
-  await esis.tryLogin()
+export const getStudentGradeRecords = unstable_cache(
+  async (
+    userId: string,
+    academicLevel: string
+  ): Promise<StudentGradeRecord[]> => {
+    await esis.tryLogin()
 
-  const rawRecords = await esis.api
-    .get<ResponseData<SubjectCourseData[]>>(
-      `https://svc5.esis.edu.mn/api/profile/stdntGrade/list/${userId}/0/${academicLevel}`
-    )
-    .then((res) => res.data.RESULT)
+    const rawRecords = await esis.api
+      .get<ResponseData<SubjectCourseData[]>>(
+        `https://svc5.esis.edu.mn/api/profile/stdntGrade/list/${userId}/0/${academicLevel}`
+      )
+      .then((res) => res.data.RESULT)
 
-  const record: StudentGradeRecord[] = rawRecords.map((record) => ({
-    className: resolveClassCode(
-      `${record.subjectAreaCode} ${record.courseName
-        .split(' ')
-        .pop()
-        ?.toLowerCase()}`
-    ),
-    classCode: record.subjectAreaCode,
-    point: Number(record.gradeMark),
-    grade: record.gradeCode,
-    schoolName: record.organizationName,
-    academicLevel: record.academicLevel
-  }))
+    const record: StudentGradeRecord[] = rawRecords.map((record) => ({
+      className: resolveClassCode(
+        `${record.subjectAreaCode} ${record.courseName
+          .split(' ')
+          .pop()
+          ?.toLowerCase()}`
+      ),
+      classCode: record.subjectAreaCode,
+      point: Number(record.gradeMark),
+      grade: record.gradeCode,
+      schoolName: record.organizationName,
+      academicLevel: record.academicLevel
+    }))
 
-  return record
-}
+    return record
+  },
+  ['record'],
+  { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
+)
 
 export interface StudentGradeRecord {
   className: string
@@ -249,12 +258,16 @@ export async function getStudentGrade(
   return data
 }
 
-export async function getStudentDataWithName(name: string) {
-  const data = await prisma.user.findFirst({
-    where: {
-      name
-    }
-  })
+export const getStudentDataWithName = unstable_cache(
+  async (name: string) => {
+    const data = await prisma.user.findFirst({
+      where: {
+        name
+      }
+    })
 
-  return data
-}
+    return data
+  },
+  ['record'],
+  { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
+)
