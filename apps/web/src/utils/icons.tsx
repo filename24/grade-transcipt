@@ -1,0 +1,66 @@
+import type { CourseCode } from '@gt/esis'
+import {
+  Atom,
+  AudioLines,
+  Biohazard,
+  BookA,
+  BookImage,
+  Brush,
+  CaseLower,
+  CaseSensitive,
+  Club,
+  Cpu,
+  Earth,
+  HandPlatter,
+  HeartPulse,
+  Home,
+  LeafyGreen,
+  Pen,
+  Pi,
+  Scale,
+  Sigma,
+  Smile,
+  SmilePlus,
+  Speech,
+  Swords,
+  Theater,
+  TriangleRight,
+  User
+} from 'lucide-react'
+
+export const ClassIcon: Record<
+  keyof typeof CourseCode,
+  ReturnType<typeof CaseLower>
+> = {
+  МХЛ: <CaseLower className="size-5" />,
+  УЗО: <Speech className="size-5" />,
+  МБЧ: <Pen className="size-5" />,
+  МАТ: <Sigma className="size-5" />,
+  БИО: <Biohazard className="size-5" />,
+  ФИЗ: <Pi className="size-5" />,
+  ХИМ: <Atom className="size-5" />,
+  ГЗЗ: <Earth className="size-5" />,
+  ЭМД: <HeartPulse className="size-5" />,
+  БНТ: <HandPlatter className="size-5" />,
+  АНГ: <BookA className="size-5" />,
+  МТХ: <Swords className="size-5" />,
+  НСУ: <Scale className="size-5" />,
+  МТИ: <Cpu className="size-5" />,
+  ИБЛ: <SmilePlus className="size-5" />,
+  ДЗЗ: <BookImage className="size-5" />,
+  ТҮҮ: <Swords className="size-5" />,
+
+  ТХН: <BookImage className="size-5" />,
+  ХӨГ: <AudioLines className="size-5" />,
+  ОРХ: <CaseSensitive className="size-5" />,
+  ЗРЗ: <TriangleRight className="size-5" />,
+  ДУГ: <Brush className="size-5" />,
+
+  ХБН: <User className="size-5" />,
+  ХББ: <Club className="size-5" />,
+  ДУТ: <Brush className="size-5" />,
+  ХГҮ: <Theater className="size-5" />,
+  АЧС: <Home className="size-5" />,
+  ХБО: <LeafyGreen className="size-5" />,
+  БЭХ: <Smile className="size-5" />
+}

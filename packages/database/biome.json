@@ -6,25 +6,12 @@
   },
   "linter": {
     "rules": {
-      "recommended": true,
-      "suspicious": {
-        "noArrayIndexKey": "off"
-      },
-      "a11y": {
-        "useFocusableInteractive": "off"
-      },
+      "recommended": false,
       "nursery": {
         "useSortedClasses": {
           "level": "error",
           "fix": "safe",
-          "options": {
-            "attributes": [
-              "className"
-            ],
-            "functions": [
-              "cn"
-            ]
-          }
+          "options": {}
         }
       }
     }

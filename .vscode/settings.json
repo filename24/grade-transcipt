@@ -4,13 +4,13 @@
   },
   "search.exclude": {
     "**/node_modules": true,
-    "**/.next": true
+    "**/.next": true,
+    "**/dist": true
   },
+  "editor.defaultFormatter": "biomejs.biome",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "files.eol": "\n"
 }
