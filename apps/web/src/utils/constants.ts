@@ -52,7 +52,6 @@ export const SEMESTER_DATE = {
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
 export const ACADEMIC_YEAR = '2024' as const
 
-
 /**
  * Class ID
  */
