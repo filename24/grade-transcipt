@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
+import { ACADEMIC_YEAR } from '@/utils/constants'
 import type { Grade } from '@gt/database'
 
 export default function GradeAverage({
@@ -18,7 +19,7 @@ export default function GradeAverage({
   semester1: Grade[]
   semester2: Grade[]
 }) {
-  const academicYear = `${semester1[0].academicYear}-${Number(semester1[0].academicYear) + 1}`
+  const academicYear = `${ACADEMIC_YEAR}-${Number(ACADEMIC_YEAR) + 1}`
 
   return (
     <Card className="w-full">

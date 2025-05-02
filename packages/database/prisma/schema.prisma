@@ -1,7 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  // TODO: Need fix this error
-  // output        = "../generated/client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -33,16 +32,29 @@ model Grade {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  systemId       String
+  id       String @id @default(uuid())
+  // institutionId
+  schoolId String @default("40301")
+  // Student groupId
+  classId  String @default("100004237680887")
+  systemId String
+
   name           String?
+  email          String?
   registerNumber String
+  type           UserType  @default(ESIS)
   role           Role
   accounts       Account[]
   sessions       Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum UserType {
+  Medle
+  ESIS
+  GrandIT
 }
 
 enum Role {

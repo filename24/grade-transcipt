@@ -9,9 +9,10 @@ import type {
 import * as esis from '@/utils/esis'
 import type { Grade, Prisma } from '@gt/database'
 import prisma from '@gt/database'
-import { CURRECT_SEMESTER } from './constants'
+import { ACADEMIC_YEAR, CURRECT_SEMESTER } from './constants'
 import { resolveClassCode } from '.'
 import { unstable_cache } from 'next/cache'
+import { SCHOOL_ID } from '../app/api/grade/fetch/[type]/route'
 
 /**
  * 학생 학년 정보
@@ -84,7 +85,7 @@ export async function getGradeData(groupId: string) {
 
   const semesterInfo = await esis.api
     .get<ResponseData<HalfYearInfo[]>>(
-      `journal/terms/list/${esis.userData?.institutionId}/${esis.userData?.academicYear}`
+      `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
     )
     .then((res) => res.data.RESULT)
 
@@ -92,7 +93,7 @@ export async function getGradeData(groupId: string) {
 
   const gradeInfo = await esis.api
     .get<ResponseData<CourseInfo[]>>(
-      `/journal/group/list/${esis.userData?.institutionId}/${groupId}/${currectSemester.termId}`
+      `/journal/group/list/${SCHOOL_ID}/${groupId}/${currectSemester.termId}`
     )
     .then((res) => res.data.RESULT)
 
@@ -102,7 +103,7 @@ export async function getGradeData(groupId: string) {
     gradeInfo.map(async (classInfo) => {
       const gradeList = await esis.api
         .get<ResponseData<StudentGrade[]>>(
-          `/journal/group/student/list/${esis.userData?.institutionId}/${classInfo.classId}/${groupId}/${esis.userData?.academicYear}/${currectSemester.termId}`
+          `/journal/group/student/list/${SCHOOL_ID}/${classInfo.classId}/${groupId}/${ACADEMIC_YEAR}/${currectSemester.termId}`
         )
         .then((res) => res.data.RESULT)
       if (!gradeList) return console.log('No grade list')
@@ -125,8 +126,7 @@ export async function getGradeData(groupId: string) {
           teacherName: classInfo.instructorName,
           classGrade: student.studentGroupName,
           semester: Number(currectSemester.termSeq),
-          academicYear:
-            esis.userData?.academicYear || String(new Date().getUTCFullYear()),
+          academicYear: ACADEMIC_YEAR || String(new Date().getUTCFullYear()),
           systemId: student.personId
         }
       })

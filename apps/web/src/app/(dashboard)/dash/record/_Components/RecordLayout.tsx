@@ -70,7 +70,7 @@ export default function RecordLayout({
           }}
         >
           <SelectTrigger className="mb-2 w-[180px] text-muted-foreground">
-            <SelectValue placeholder="Хагас жил" />
+            <SelectValue placeholder="Анги" />
           </SelectTrigger>
           <SelectContent>
             {academicYears.map((academicYears) => {

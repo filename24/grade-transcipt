@@ -50,6 +50,7 @@ export const SEMESTER_DATE = {
 }
 
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
+export const ACADEMIC_YEAR = '2024' as const
 
 export type SemesterLevel = 1 | 2 | 3
 export type EducationLevel = keyof typeof SEMESTER_DATE
