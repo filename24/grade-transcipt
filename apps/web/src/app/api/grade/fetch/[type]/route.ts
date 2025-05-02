@@ -1,7 +1,6 @@
 import { STUDENT_GROUP_ID } from '@/utils/constants'
 import { fetchGradeData, type FetchGradeType } from '@/utils/fetch'
 
-
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ type: FetchGradeType }> }
