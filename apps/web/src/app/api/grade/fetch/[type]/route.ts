@@ -1,10 +1,6 @@
+import { STUDENT_GROUP_ID } from '@/utils/constants'
 import { fetchGradeData, type FetchGradeType } from '@/utils/fetch'
 
-/**
- * Class ID
- */
-export const STUDENT_GROUP_ID = '100004237680887'
-export const SCHOOL_ID = '40301'
 
 export async function GET(
   _request: Request,

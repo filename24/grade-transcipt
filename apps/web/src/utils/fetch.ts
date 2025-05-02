@@ -9,10 +9,9 @@ import type {
 import * as esis from '@/utils/esis'
 import type { Grade, Prisma } from '@gt/database'
 import prisma from '@gt/database'
-import { ACADEMIC_YEAR, CURRECT_SEMESTER } from './constants'
+import { ACADEMIC_YEAR, CURRECT_SEMESTER, SCHOOL_ID } from './constants'
 import { resolveClassCode } from '.'
 import { unstable_cache } from 'next/cache'
-import { SCHOOL_ID } from '../app/api/grade/fetch/[type]/route'
 
 /**
  * 학생 학년 정보
