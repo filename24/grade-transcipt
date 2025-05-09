@@ -35,7 +35,7 @@ export function resolveClassCode(classCode: string) {
   return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'заавал' ? '' : section}`
 }
 
-export function calcGPA(grades: Grade[]): number {
+export function calcGPA(grades: GradePointOnly[]): number {
   if (grades.length === 0) return 0
 
   const totalCredits = grades.reduce((acc, _grade) => acc + 1, 0)
@@ -66,7 +66,7 @@ export function getGradeScale(grade: number): number | undefined {
   }
 }
 
-export type GradePointOnly = Partial<Grade> & { point: number }
+export type GradePointOnly = Pick<Grade, 'point'>
 
 export function calcAverageGrade(grades: GradePointOnly[]): number {
   if (grades.length === 0) return 0
@@ -156,6 +156,24 @@ export function getCurrentSemesterForLevel(
     }
   }
   return null
+}
+
+/**
+ * 문자열을 Sentence case로 변환하는 함수
+ * 첫 번째 문자를 대문자로, 나머지를 소문자로 변환
+ * @param str 입력 문자열
+ * @returns Sentence case로 변환된 문자열
+ * @example
+ * toSentenceCase("javascript") // "Javascript"
+ */
+export function toSentenceCase(str: string): string {
+  // 입력이 빈 문자열이거나 유효하지 않은 경우 빈 문자열 반환
+  if (!str || typeof str !== "string") {
+    return "";
+  }
+
+  // 첫 문자 대문자, 나머지 소문자로 변환
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 /**
