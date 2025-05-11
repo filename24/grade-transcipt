@@ -101,3 +101,18 @@ model VerificationToken {
 
   @@id([identifier, token])
 }
+
+model UnelgeeSubjects {
+  id String @id @default(uuid())
+
+  lessonName       String
+  schoolId         String
+  teacherLastName  String
+  teacherFirstName String
+
+  lastName       String
+  firstName      String
+  registerNumber String
+  grade          String
+  class          String
+}
