@@ -9,9 +9,6 @@
     "lint": "biome lint --write ./src/ && biome format --write ./src/"
   },
   "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+    "tsup": "^8.3.6"
   }
 }
