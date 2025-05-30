@@ -8,8 +8,6 @@ import { SignJWT } from 'jose'
 import { ESISClient } from '@gt/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
   adapter: PrismaAdapter(prisma),
   debug: process.env.NODE_ENV === 'development',
   cookies: {
