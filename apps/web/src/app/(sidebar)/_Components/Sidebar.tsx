@@ -49,17 +49,21 @@ const data = {
   ],
   teacher: [
     {
-      title: 'Дүн, мэдээлэл',
-      url: '#',
+      title: 'Гүйцэтгэлийн үнэлгээ',
+      url: '/unelgee',
       items: [
         {
-          title: 'Хичээлийн дүн',
-          url: '#',
+          title: 'Ангийн журнал',
+          url: '/unelgee/students',
           isActive: true
         },
         {
-          title: 'Дүн татах',
-          url: '#'
+          title: 'Багшийн журнал',
+          url: '/unelgee/teacher'
+        },
+        {
+          title: 'Судалгаа бүртгэх',
+          url: '/unelgee/sudalgaa'
         }
       ]
     }
@@ -90,7 +94,10 @@ export function AppSidebar({
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={item.url === pathname}
+                        >
                           <a href={item.url}>{item.title}</a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -106,7 +113,10 @@ export function AppSidebar({
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={item.url === pathname}
+                        >
                           <a href={item.url}>{item.title}</a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -116,35 +126,37 @@ export function AppSidebar({
               </SidebarGroup>
             ))}
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size={'lg'}>
-                  <User2 /> {session?.user?.name}
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuLabel>
-                  {session?.user?.name ?? 'Profile'}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link href="/profile">Хувийн мэдээлэл</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
-                  Гарах
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      {session ? (
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton size={'lg'}>
+                    <User2 /> {session?.user?.name}
+                    <ChevronUp className="ml-auto" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  className="w-[--radix-popper-anchor-width]"
+                >
+                  <DropdownMenuLabel>
+                    {session?.user?.name ?? 'Profile'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link href="/profile">Хувийн мэдээлэл</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()}>
+                    Гарах
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      ) : undefined}
       <SidebarRail />
     </Sidebar>
   )

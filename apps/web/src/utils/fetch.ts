@@ -7,11 +7,18 @@ import type {
   StudentGrade
 } from '@gt/esis'
 import * as esis from '@/utils/esis'
-import type { Grade, Prisma } from '@gt/database'
+import type { Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
 import { ACADEMIC_YEAR, CURRECT_SEMESTER, SCHOOL_ID } from './constants'
-import { resolveClassCode } from '.'
+import { getFirstCharOfFirstWord, resolveClassCode, toSentenceCase } from '.'
 import { unstable_cache } from 'next/cache'
+import axios from 'axios'
+import type {
+  AsuulgaData,
+  EECResponseData,
+  FormattedData,
+  LoginResponse
+} from '@/types/unelgee'
 
 /**
  * 학생 학년 정보
@@ -270,3 +277,67 @@ export const getStudentDataWithName = unstable_cache(
   ['record'],
   { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
 )
+
+export async function getUnelgeeStudents(
+  registerNumbers: string[],
+  className: string,
+  type: '1' | '2' = '1'
+) {
+  const responseData: Omit<UnelgeeSubjects, 'id'>[] = []
+
+  console.log(registerNumbers)
+  for (let index = 0; index < registerNumbers.length; index++) {
+    const registerNumber = registerNumbers[index]
+
+    const loginData = await axios.post<LoginResponse>(
+      'https://asuulga-test-api.eec.mn/api/v1/login',
+      {
+        regNo: registerNumber,
+        // 1: student, 2: parent
+        type
+      }
+    )
+
+    if (!loginData.data.result) {
+      continue
+    }
+
+    const token = loginData.data.result.jwtToken
+
+    const asuulgaData = await axios
+      .get<EECResponseData<AsuulgaData[]>>(
+        'https://asuulga-test-api.eec.mn/api/v1/survey/teacher?type=EBS',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      .then((d) => d.data)
+
+    asuulgaData.result.map((data) => {
+      console.log(data.student.firstName)
+      responseData.push({
+        lastName: toSentenceCase(data.student.lastName),
+        firstName: toSentenceCase(data.student.firstName),
+        grade: String(data.grade),
+        registerNumber: data.student.regNo,
+        lessonName: data.lesson.name,
+        teacherFirstName: toSentenceCase(data.teacher.firstName),
+        teacherLastName: toSentenceCase(data.teacher.lastName),
+        schoolId: data.esisID,
+        class: data.student.class || className
+      })
+    })
+  }
+
+  const payload = await prisma.unelgeeSubjects.createMany({
+    data: responseData,
+    skipDuplicates: true
+  })
+
+  return {
+    count: payload.count,
+    data: responseData
+  }
+}

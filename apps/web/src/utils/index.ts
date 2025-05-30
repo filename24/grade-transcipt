@@ -35,7 +35,7 @@ export function resolveClassCode(classCode: string) {
   return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'заавал' ? '' : section}`
 }
 
-export function calcGPA(grades: Grade[]): number {
+export function calcGPA(grades: GradePointOnly[]): number {
   if (grades.length === 0) return 0
 
   const totalCredits = grades.reduce((acc, _grade) => acc + 1, 0)
@@ -66,7 +66,7 @@ export function getGradeScale(grade: number): number | undefined {
   }
 }
 
-export type GradePointOnly = Partial<Grade> & { point: number }
+export type GradePointOnly = Pick<Grade, 'point'>
 
 export function calcAverageGrade(grades: GradePointOnly[]): number {
   if (grades.length === 0) return 0
@@ -231,4 +231,44 @@ export function filterUniqueClassNames(
     seen.add(record.className)
     return true
   })
+}
+
+export function getFirstCharOfFirstWord(str: string) {
+  // 공백 제거 후 공백 기준으로 분리
+  const words = str.trim().split(' ')
+  // 첫 번째 단어가 있으면 첫 문자를 반환, 없으면 빈 문자열 반환
+  return words.length > 0 && words[0].length > 0 ? words[0][0] : ''
+}
+
+/**
+ * 문자열을 Sentence case로 변환하는 함수
+ * 첫 번째 문자를 대문자로, 나머지를 소문자로 변환
+ * @param str 입력 문자열
+ * @returns Sentence case로 변환된 문자열
+ * @example
+ * toSentenceCase("javascript") // "Javascript"
+ */
+export function toSentenceCase(str: string): string {
+  // 입력이 빈 문자열이거나 유효하지 않은 경우 빈 문자열 반환
+  if (!str || typeof str !== 'string') {
+    return ''
+  }
+
+  // 첫 문자 대문자, 나머지 소문자로 변환
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
+
+export function parseTextToArray(inputText: string) {
+  // 입력이 문자열이 아니거나 빈 문자열인 경우 빈 배열 반환
+  if (typeof inputText !== 'string' || inputText.trim() === '') {
+    return []
+  }
+
+  // 줄바꿈 문자(\n 또는 \r\n)를 기준으로 문자열을 분리하고, 빈 문자열 제거
+  const lines = inputText
+    .split(/\r?\n/) // \r\n(Windows) 또는 \n(MacOS/Linux)을 처리
+    .map((line) => line.trim()) // 각 줄의 앞뒤 공백 제거
+    .filter((line) => line !== '') // 빈 줄 제거
+
+  return lines
 }
