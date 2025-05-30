@@ -28,13 +28,13 @@ jobs:
           cwd: '.'
           enable-corepack: false
 
-      - name: Run ESLint
+      - name: Run biome
         run: pnpm run lint
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "style(eslint): fixed eslint style format [skip ci]"
+          commit_message: "style(biome): fixed biome style format [skip ci]"
 
   appbuild:
     name: Build apps
