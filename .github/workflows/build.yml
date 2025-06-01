@@ -1,5 +1,12 @@
 on:
   push:
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 name: Build and Lint
 jobs:
@@ -10,19 +17,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install Node v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        uses: ./packages/actions/src/pnpmInstall
+        with:
+          cwd: '.'
+          enable-corepack: false
 
-      - name: Run ESLint
-        run: bun lint
+      - name: Run biome
+        run: pnpm run lint
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "style(eslint): fixed eslint style format [skip ci]"
+          commit_message: "style(biome): fixed biome style format [skip ci]"
 
   appbuild:
     name: Build apps
@@ -35,14 +47,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install Node v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        uses: ./packages/actions/src/pnpmInstall
+        with:
+          cwd: '.'
+          enable-corepack: false
 
       - name: Build apps
-        run: bun run build:apps --summarize
+        run: pnpm run build:apps --summarize
 
       - name: Summarize Turborepo Output
         uses: ./packages/actions/src/turboSummary
@@ -58,14 +75,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install Node v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        uses: ./packages/actions/src/pnpmInstall
+        with:
+          cwd: '.'
+          enable-corepack: false
 
       - name: Build pacakges
-        run: bun run build:packages --summarize
+        run: pnpm run build:packages --summarize
 
       - name: Summarize Turborepo Output
         uses: ./packages/actions/src/turboSummary

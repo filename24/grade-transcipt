@@ -8,9 +8,8 @@ import { SignJWT } from 'jose'
 import { ESISClient } from '@gt/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  adapter: PrismaAdapter(prisma),
+  // biome-ignore lint/suspicious/noExplicitAny: <단일 풀더로 generate 된건 이상하게 오류뿜음>
+  adapter: PrismaAdapter(prisma as any),
   debug: process.env.NODE_ENV === 'development',
   cookies: {
     csrfToken: { name: 'knea.gt.csrf' },

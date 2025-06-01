@@ -2,12 +2,14 @@ import type { Role } from '@gt/database'
 
 declare module 'next-auth' {
   interface User {
-    name: string
+    id: string
+    name: string | null
+    registerNumber: string
     role: Role
+    systemId: string
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JWT } from 'next-auth/jwt'
 
 declare module 'next-auth/jwt' {

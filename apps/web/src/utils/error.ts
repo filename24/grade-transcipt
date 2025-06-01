@@ -32,7 +32,7 @@ export class GradeError extends Error {
 export class GradeAuthError extends CredentialsSignin {
   code = 'GradeError'
   constructor(message?: string, errorOptions?: { statusCode: number }) {
-    super(message, errorOptions)
+    super(message)
     this.message = message ?? 'Authentication error'
   }
 }

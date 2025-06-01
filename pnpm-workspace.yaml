@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+ignoredBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - '@vercel/speed-insights'
+  - sharp
+  - unrs-resolver
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - esbuild
+  - prisma
