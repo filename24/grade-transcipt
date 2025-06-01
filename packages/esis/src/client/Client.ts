@@ -1,41 +1,19 @@
-import { type If, type UserData, ESIS_BASE_URL } from '../'
-import axios, { type AxiosInstance, type RawAxiosRequestHeaders } from 'axios'
+import { decodeJwt } from 'jose'
+import { type If, type TokenData, ESIS_BASE_URL, type ResponseData } from '../'
 
 export class ESISClient<Ready extends boolean = boolean> {
-  public api: AxiosInstance
   public options: ESISOptions
 
-  public user!: If<Ready, UserData>
+  public data!: If<Ready, TokenData>
   #token: string | null = null
   private _ready: Ready = false as Ready
 
   constructor(options: Partial<ESISOptions>) {
     this.options = {
       header: {
-        'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Whale/3.27.254.15 Safari/537.36'
+        'Content-Type': 'application/json'
       },
       ...options
-    }
-
-    this.api = axios.create({
-      baseURL: `${ESIS_BASE_URL}/api`,
-      headers: this.options.header
-    })
-
-    if (options.debug) {
-      this.api.interceptors.request.use((request) => {
-        console.log(
-          'Starting Request',
-          request.url || request.data ? `${request.url} ${request.data}` : ''
-        )
-        return request
-      })
-      this.api.interceptors.response.use((response) => {
-        console.log('Response:', response.data)
-        return response
-      })
     }
   }
 
@@ -51,28 +29,121 @@ export class ESISClient<Ready extends boolean = boolean> {
     return this._ready
   }
 
-  public async connect(): Promise<void> {
-    const { data } = await axios.request({
-      method: 'POST',
-      url: `${ESIS_BASE_URL}/signin`,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      data: {
-        userName: this.options.username ?? process.env.ESIS_USERNAME,
-        password: this.options.password ?? process.env.ESIS_PASSWORD ?? 'asdf'
+  public async connect(token?: string): Promise<string> {
+    if (token) {
+      const response = await fetch(
+        `${ESIS_BASE_URL}/svc/api/hub/organization/info`
+      )
+
+      if (response.status === 401) {
+        console.warn('Unauthorized regenerating token...')
+      } else {
+        const data = await response.json()
+        if (data.SUCCESS_CODE === 200) {
+          const { iat, exp, ...tokenData } = decodeJwt<TokenData>(token)
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          this.data = tokenData as any
+          this.#token = token
+          this._ready = true as Ready
+
+          return token
+        }
       }
+    }
+
+    const response = await fetch(`${ESIS_BASE_URL}/svc/api/login`, {
+      method: 'POST',
+      headers: this.options.header as Record<string, string>,
+      body: JSON.stringify({
+        username: this.options.username,
+        password: this.options.password
+      })
     })
 
-    if (data.RESULT.academicYear === '-1') throw Error('User not found')
+    if (response.status === 401)
+      throw new Error('Unauthorized, please check your credentials')
 
-    this.user = data.RESULT
+    const data = await response.json()
+
+    this.#token = data.token
     this._ready = true as Ready
-    this.#token = data.RESULT.token
-    this.api.defaults.headers.common.Authorization = `Bearer ${this.token}`
+    this.data = data.result
 
-    console.log('Logged in successfully with ', process.env.ESIS_USERNAME)
+    return data.token
+  }
+
+  async get<Data extends ResponseData>(url: string) {
+    return this.request<Data>(url, {
+      method: 'GET'
+    })
+  }
+
+  async post<Data extends ResponseData>(
+    url: string,
+    body: Record<string, string>
+  ): Promise<Data['RESULT']> {
+    return this.request<Data>(url, {
+      body,
+      method: 'POST'
+    })
+  }
+
+  async put<Data extends ResponseData>(
+    url: string,
+    body: Record<string, string>
+  ): Promise<Data['RESULT']> {
+    return this.request<Data>(url, {
+      body,
+      method: 'PUT'
+    })
+  }
+
+  async delete<Data extends ResponseData>(
+    url: string,
+    body: Record<string, string>
+  ): Promise<Data['RESULT']> {
+    return this.request<Data>(url, {
+      body,
+      method: 'DELETE'
+    })
+  }
+
+  async request<Data extends ResponseData>(
+    url: string,
+    options: {
+      body?: Record<string, string>
+      method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    }
+  ): Promise<Data['RESULT']> {
+    let reslovedURL = ''
+    if (!url.startsWith(ESIS_BASE_URL)) {
+      reslovedURL = `${ESIS_BASE_URL}${url}`
+    } else {
+      reslovedURL = url
+    }
+
+    const response = await fetch(reslovedURL, {
+      method: options.method,
+      headers: {
+        ...this.options.header,
+        Authorization: this.token
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Request failed with status ${response.status} - ${response.statusText}`
+      )
+    }
+
+    const data = (await response.json()) as Data
+
+    if (data.SUCCESS_CODE !== 200) {
+      throw new Error(`Request failed with message: ${data.RESPONSE_MESSAGE}`)
+    }
+
+    return data.RESULT
   }
 }
 
@@ -80,5 +151,15 @@ export interface ESISOptions {
   username?: string
   password?: string
   debug?: boolean
-  header: Partial<RawAxiosRequestHeaders>
+  header: Partial<RequestHeaders>
+}
+
+export type RequestHeaders = {
+  [x: string]: string | undefined
+  Accept?: string | undefined
+  'Content-Length'?: string | undefined
+  'User-Agent'?: string | undefined
+  'Content-Encoding'?: string | undefined
+  Authorization?: string | undefined
+  'Content-Type'?: string | undefined
 }

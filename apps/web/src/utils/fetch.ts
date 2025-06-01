@@ -1,15 +1,20 @@
-import type {
-  AcademicYearData,
-  SubjectCourseData,
-  CourseInfo,
-  ResponseData,
-  HalfYearInfo,
-  StudentGrade
+import {
+  type AcademicYearData,
+  type SubjectCourseData,
+  type CourseInfo,
+  type ResponseData,
+  type HalfYearInfo,
+  type StudentGrade,
+  ESISClient
 } from '@gt/esis'
-import * as esis from '@/utils/esis'
 import type { Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
-import { ACADEMIC_YEAR, CURRECT_SEMESTER, SCHOOL_ID } from './constants'
+import {
+  ACADEMIC_YEAR,
+  CURRECT_SEMESTER,
+  RedisKeys,
+  SCHOOL_ID
+} from './constants'
 import { getFirstCharOfFirstWord, resolveClassCode, toSentenceCase } from '.'
 import { unstable_cache } from 'next/cache'
 import axios from 'axios'
@@ -19,43 +24,29 @@ import type {
   FormattedData,
   LoginResponse
 } from '@/types/unelgee'
+import { Redis } from '@upstash/redis'
 
-/**
- * 학생 학년 정보
- *
- * 만약에 학생 아카데믹 년도가 1개일경우 학생 id 가 없음으로 간주한다
- *
- * @param userId 학생 person id
- * @returns 학생이 진학한 학년을 출력한다
- */
-export const getStudentAcademicYears = unstable_cache(
-  async (userId: string) => {
-    await esis.tryLogin()
+const redis = Redis.fromEnv()
+export const esis = new ESISClient({
+  username: process.env.ESIS_USERNAME,
+  password: process.env.ESIS_PASSWORD
+})
+const token = (await redis.get(RedisKeys.esisToken)) as string | null
 
-    const academicYears = await esis.api
-      .get<ResponseData<AcademicYearData[]>>(
-        `/profile/stdntGrade/academicYear/${userId}`
-      )
-      .then((res) => res.data.RESULT)
-
-    return academicYears
-  },
-  ['record'],
-  { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
-)
+if (token) {
+  esis.connect(token)
+} else {
+  esis.connect()
+}
 
 export const getStudentGradeRecords = unstable_cache(
   async (
     userId: string,
     academicLevel: string
   ): Promise<StudentGradeRecord[]> => {
-    await esis.tryLogin()
-
-    const rawRecords = await esis.api
-      .get<ResponseData<SubjectCourseData[]>>(
-        `https://svc5.esis.edu.mn/api/profile/stdntGrade/list/${userId}/0/${academicLevel}`
-      )
-      .then((res) => res.data.RESULT)
+    const rawRecords = await esis.get<ResponseData<SubjectCourseData[]>>(
+      `/svc/api/hub/student/course/grade/${userId}`
+    )
 
     const record: StudentGradeRecord[] = rawRecords.map((record) => ({
       className: resolveClassCode(
@@ -68,7 +59,8 @@ export const getStudentGradeRecords = unstable_cache(
       point: Number(record.gradeMark),
       grade: record.gradeCode,
       schoolName: record.organizationName,
-      academicLevel: record.academicLevel
+      academicLevel: record.academicLevel,
+      academicYear: record.academicYear
     }))
 
     return record
@@ -84,11 +76,10 @@ export interface StudentGradeRecord {
   grade: string
   schoolName: string
   academicLevel: string
+  academicYear: string
 }
 
 export async function getGradeData(groupId: string) {
-  await esis.tryLogin()
-
   const semesterInfo = await esis.api
     .get<ResponseData<HalfYearInfo[]>>(
       `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`

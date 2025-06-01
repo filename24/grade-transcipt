@@ -79,7 +79,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
             <Button
               variant="outline"
               size="icon"
-              className="block md:hidden"
+              className="md:hidden"
               onClick={toggleMenu}
             >
               <Menu />
@@ -118,7 +118,8 @@ const Navbar = ({ session }: { session: Session | null }) => {
               Хувийн хэргийн дүн
             </p>
           </Link>
-          <Button
+          <button
+            type="button"
             onClick={() => signOut()}
             className="flex w-full flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
           >
@@ -126,7 +127,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
             <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
               Гарах
             </p>
-          </Button>
+          </button>
         </div>
       )}
     </nav>

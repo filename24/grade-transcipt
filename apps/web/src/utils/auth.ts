@@ -107,54 +107,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               }
             })
           }
-        } else {
-          const loginData = EsisLoginSchema.safeParse(credentials)
-
-          if (!loginData.success) {
-            throw new GradeAuthError('Буруу утга оруулсан байна.')
-          }
-
-          const esis = new ESISClient({
-            username: loginData.data.username,
-            password: loginData.data.password
-          })
-
-          try {
-            await esis.connect()
-
-            if (!esis.isReady())
-              throw new GradeAuthError(
-                'ESIS системд бэлэн болоогүй байна. Дараа дахин оролдоно уу!'
-              )
-          } catch (_e) {
-            throw new GradeAuthError(
-              `${esis.options.username} хэрэглэгч олдсонгүй. Та нэвтрэх нэрээ дахин шалгана уу`
-            )
-          }
-
-          user = await prisma.user.findFirst({
-            where: {
-              registerNumber: loginData.data.username
-            },
-            select: {
-              id: true,
-              name: true,
-              registerNumber: true,
-              role: true,
-              systemId: true
-            }
-          })
-
-          if (!user) {
-            user = await prisma.user.create({
-              data: {
-                name: esis.user.displayName,
-                registerNumber: esis.user.userName,
-                role: 'TEACHER',
-                systemId: esis.user.personId
-              }
-            })
-          }
         }
 
         return user
