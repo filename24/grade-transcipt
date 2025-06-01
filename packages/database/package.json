@@ -17,7 +17,7 @@
     "studio": "prisma studio"
   },
   "devDependencies": {
-    "@types/node": "^22.15.27",
+    "@types/node": "^22.15.29",
     "prisma": "^6.3.1",
     "tsup": "^8.3.6",
     "tsx": "^4.19.2"
