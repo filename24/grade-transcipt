@@ -1,11 +1,10 @@
-import { EsisLoginSchema, RegisterLoginSchema } from '@/schemas/login'
+import { RegisterLoginSchema } from '@/schemas/login'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import prisma from '@gt/database'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { GradeAuthError } from './error'
 import { SignJWT } from 'jose'
-import { ESISClient } from '@gt/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // biome-ignore lint/suspicious/noExplicitAny: <단일 풀더로 generate 된건 이상하게 오류뿜음>

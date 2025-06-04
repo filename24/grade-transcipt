@@ -21,14 +21,10 @@ import {
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
-import {
-  calcAverageGrade,
-  getGradeCode,
-  isElementarySchool,
-  type StudentGradeRecord
-} from '@/utils'
+import { calcAverageGrade, getGradeCode, isElementarySchool } from '@/utils'
 import { ClassIcon } from '@/utils/icons'
 import type { CourseCode } from '@gt/esis'
+import type { StudentGradeRecord } from '@/utils/fetch'
 
 export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 

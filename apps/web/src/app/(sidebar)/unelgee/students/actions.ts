@@ -1,6 +1,7 @@
 'use server'
 
-import { getUnelgeeStudents, parseTextToArray } from '@/utils'
+import { parseTextToArray } from '@/utils'
+import { getUnelgeeStudents } from '@/utils/fetch'
 import '@gt/database'
 import prisma from '@gt/database'
 import { z } from 'zod'

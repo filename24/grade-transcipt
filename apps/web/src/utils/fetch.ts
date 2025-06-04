@@ -1,59 +1,33 @@
-import {
-  type AcademicYearData,
-  type SubjectCourseData,
-  type CourseInfo,
-  type ResponseData,
-  type HalfYearInfo,
-  type StudentGrade,
-  ESISClient
+import type {
+  SubjectCourseData,
+  CourseInfo,
+  ResponseData,
+  HalfYearInfo,
+  StudentGrade
 } from '@gt/esis'
 import type { Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
-import {
-  ACADEMIC_YEAR,
-  CURRECT_SEMESTER,
-  RedisKeys,
-  SCHOOL_ID
-} from './constants'
-import { getFirstCharOfFirstWord, resolveClassCode, toSentenceCase } from '.'
+import { ACADEMIC_YEAR, CURRECT_SEMESTER, SCHOOL_ID } from './constants'
+import { resolveClassCode, toSentenceCase } from '.'
 import { unstable_cache } from 'next/cache'
 import axios from 'axios'
 import type {
   AsuulgaData,
   EECResponseData,
-  FormattedData,
   LoginResponse
 } from '@/types/unelgee'
-import { Redis } from '@upstash/redis'
-
-const redis = Redis.fromEnv()
-export const esis = new ESISClient({
-  username: process.env.ESIS_USERNAME,
-  password: process.env.ESIS_PASSWORD
-})
-const token = (await redis.get(RedisKeys.esisToken)) as string | null
-
-if (token) {
-  esis.connect(token)
-} else {
-  esis.connect()
-}
+import esis from './esis'
 
 export const getStudentGradeRecords = unstable_cache(
-  async (
-    userId: string,
-    academicLevel: string
-  ): Promise<StudentGradeRecord[]> => {
+  async (userId: string): Promise<StudentGradeRecord[]> => {
     const rawRecords = await esis.get<ResponseData<SubjectCourseData[]>>(
-      `/svc/api/hub/student/course/grade/${userId}`
+      `/svc/api/hub/student/course/grade/${userId}`,
+      { cache: 'force-cache' }
     )
 
     const record: StudentGradeRecord[] = rawRecords.map((record) => ({
       className: resolveClassCode(
-        `${record.subjectAreaCode} ${record.courseName
-          .split(' ')
-          .pop()
-          ?.toLowerCase()}`
+        `${record.subjectAreaCode} ${record.courseClassification === '1' ? 'заавал' : 'сонгон'}`
       ),
       classCode: record.subjectAreaCode,
       point: Number(record.gradeMark),
@@ -78,31 +52,38 @@ export interface StudentGradeRecord {
   academicLevel: string
   academicYear: string
 }
+export async function getGradeData(registerNumber: string) {
+  return await prisma.grade.findMany({
+    where: {
+      registerNumber
+    },
+    select: {
+      classCode: true,
+      grade: true,
+      status: true
+    }
+  })
+}
 
-export async function getGradeData(groupId: string) {
-  const semesterInfo = await esis.api
-    .get<ResponseData<HalfYearInfo[]>>(
-      `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
-    )
-    .then((res) => res.data.RESULT)
+export async function fetchStudentGrades(groupId: string) {
+  const semesterInfo = await esis.get<ResponseData<HalfYearInfo[]>>(
+    `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
+  )
 
   const currectSemester = semesterInfo[CURRECT_SEMESTER]
 
-  const gradeInfo = await esis.api
-    .get<ResponseData<CourseInfo[]>>(
-      `/journal/group/list/${SCHOOL_ID}/${groupId}/${currectSemester.termId}`
-    )
-    .then((res) => res.data.RESULT)
+  const gradeInfo = await esis.get<ResponseData<CourseInfo[]>>(
+    `/journal/group/list/${SCHOOL_ID}/${groupId}/${currectSemester.termId}`
+  )
 
   const studentGrades: Omit<Prisma.GradeCreateInput, 'id'>[] = []
 
   await Promise.all(
     gradeInfo.map(async (classInfo) => {
-      const gradeList = await esis.api
-        .get<ResponseData<StudentGrade[]>>(
-          `/journal/group/student/list/${SCHOOL_ID}/${classInfo.classId}/${groupId}/${ACADEMIC_YEAR}/${currectSemester.termId}`
-        )
-        .then((res) => res.data.RESULT)
+      const gradeList = await esis.get<ResponseData<StudentGrade[]>>(
+        `/journal/group/student/list/${SCHOOL_ID}/${classInfo.classId}/${groupId}/${ACADEMIC_YEAR}/${currectSemester.termId}`
+      )
+
       if (!gradeList) return console.log('No grade list')
 
       console.log(gradeList[0].className, ' : ', gradeList.length)
@@ -136,12 +117,15 @@ export async function getGradeData(groupId: string) {
 }
 
 export type FetchGradeType = 'create' | 'edit' | 'forceEdit'
-export function fetchGradeData(groupId: string, type: 'create'): Promise<number>
-export function fetchGradeData(
+export async function fetchGradeData(
+  groupId: string,
+  type: 'create'
+): Promise<number>
+export async function fetchGradeData(
   groupId: string,
   type: 'edit'
 ): Promise<Prisma.GradeCreateInput[]>
-export function fetchGradeData(
+export async function fetchGradeData(
   groupId: string,
   type: 'forceEdit'
 ): Promise<Prisma.GradeCreateInput[]>
@@ -149,7 +133,7 @@ export async function fetchGradeData(
   groupId: string,
   type: FetchGradeType
 ): Promise<number | Prisma.GradeCreateInput[]> {
-  const studentGrades = await getGradeData(groupId)
+  const studentGrades = await fetchStudentGrades(groupId)
   const fetchedData: Prisma.GradeCreateInput[] = []
   const originData: Omit<Prisma.GradeCreateInput, 'id'>[] =
     await prisma.grade.findMany({

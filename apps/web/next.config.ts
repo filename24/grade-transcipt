@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true
+  },
+  logging: {
+    fetches: {
+      fullUrl: true
+    }
   }
 }
 

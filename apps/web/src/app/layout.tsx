@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import Head from 'next/head'
 
 export const metadata: Metadata = {
   title: 'Knea - Grade transcript',
@@ -40,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="mn">
-      <head>
+      <Head>
         {/* Font Ready */}
         <link
           rel="preconnect"
@@ -61,7 +62,7 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
         <link rel="icon" href="/knea.svg" type="image/svg+xml" />
-      </head>
+      </Head>
       <body className="min-h-svh w-full max-w-[100vw] font-pretendard">
         <ThemeProvider
           attribute="class"

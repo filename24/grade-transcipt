@@ -1,7 +1,16 @@
 import { decodeJwt } from 'jose'
-import { type If, type TokenData, ESIS_BASE_URL, type ResponseData } from '../'
+import {
+  type If,
+  type TokenData,
+  ESIS_BASE_URL,
+  type ResponseData,
+  type ClientEventsTypes
+} from '../'
+import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter'
 
-export class ESISClient<Ready extends boolean = boolean> {
+export class ESISClient<
+  Ready extends boolean = boolean
+> extends AsyncEventEmitter<ClientEventsTypes> {
   public options: ESISOptions
 
   public data!: If<Ready, TokenData>
@@ -9,6 +18,7 @@ export class ESISClient<Ready extends boolean = boolean> {
   private _ready: Ready = false as Ready
 
   constructor(options: Partial<ESISOptions>) {
+    super()
     this.options = {
       header: {
         'Content-Type': 'application/json'
@@ -31,26 +41,48 @@ export class ESISClient<Ready extends boolean = boolean> {
 
   public async connect(token?: string): Promise<string> {
     if (token) {
+      this.emit('debug', 'Connecting with provided token...')
+      this.emit('debug', `Provided token: ${token}`)
+
       const response = await fetch(
-        `${ESIS_BASE_URL}/svc/api/hub/organization/info`
+        `${ESIS_BASE_URL}/svc/api/hub/organization/info`,
+        {
+          headers: {
+            ...this.options.header,
+            Authorization: `Bearer ${token}`
+          },
+          method: 'GET'
+        }
       )
 
       if (response.status === 401) {
-        console.warn('Unauthorized regenerating token...')
+        this.emit('debug', 'Unauthorized regenerating token...')
       } else {
         const data = await response.json()
         if (data.SUCCESS_CODE === 200) {
           const { iat, exp, ...tokenData } = decodeJwt<TokenData>(token)
+
+          this.emit(
+            'debug',
+            'Client received organization info. Marking as fully ready.'
+          )
           // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           this.data = tokenData as any
           this.#token = token
           this._ready = true as Ready
+
+          if (this.isReady()) this.emit('ready', this)
 
           return token
         }
       }
     }
 
+    this.emit('debug', 'Connecting without provided token...')
+    this.emit(
+      'debug',
+      `Using username: ${this.options.username} and password: ${this.options.password}`
+    )
     const response = await fetch(`${ESIS_BASE_URL}/svc/api/login`, {
       method: 'POST',
       headers: this.options.header as Record<string, string>,
@@ -67,44 +99,59 @@ export class ESISClient<Ready extends boolean = boolean> {
 
     this.#token = data.token
     this._ready = true as Ready
+    this.emit(
+      'debug',
+      'Client received organization info. Marking as fully ready.'
+    )
     this.data = data.result
 
+    if (this.isReady()) this.emit('ready', this)
     return data.token
   }
 
-  async get<Data extends ResponseData>(url: string) {
+  async get<Data extends ResponseData>(
+    url: string,
+    requestOptions?: RequestInit
+  ) {
     return this.request<Data>(url, {
-      method: 'GET'
+      method: 'GET',
+      requestOptions
     })
   }
 
   async post<Data extends ResponseData>(
     url: string,
-    body: Record<string, string>
+    body: Record<string, string>,
+    requestOptions?: RequestInit
   ): Promise<Data['RESULT']> {
     return this.request<Data>(url, {
       body,
-      method: 'POST'
+      method: 'POST',
+      requestOptions
     })
   }
 
   async put<Data extends ResponseData>(
     url: string,
-    body: Record<string, string>
+    body: Record<string, string>,
+    requestOptions?: RequestInit
   ): Promise<Data['RESULT']> {
     return this.request<Data>(url, {
       body,
-      method: 'PUT'
+      method: 'PUT',
+      requestOptions
     })
   }
 
   async delete<Data extends ResponseData>(
     url: string,
-    body: Record<string, string>
+    body: Record<string, string>,
+    requestOptions?: RequestInit
   ): Promise<Data['RESULT']> {
     return this.request<Data>(url, {
       body,
-      method: 'DELETE'
+      method: 'DELETE',
+      requestOptions
     })
   }
 
@@ -113,6 +160,7 @@ export class ESISClient<Ready extends boolean = boolean> {
     options: {
       body?: Record<string, string>
       method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+      requestOptions?: RequestInit
     }
   ): Promise<Data['RESULT']> {
     let reslovedURL = ''
@@ -122,11 +170,16 @@ export class ESISClient<Ready extends boolean = boolean> {
       reslovedURL = url
     }
 
+    this.emit(
+      'debug',
+      `Requesting ${reslovedURL} with method ${options.method}`
+    )
     const response = await fetch(reslovedURL, {
+      ...options.requestOptions,
       method: options.method,
       headers: {
         ...this.options.header,
-        Authorization: this.token
+        Authorization: `Bearer ${this.token}`
       },
       body: options.body ? JSON.stringify(options.body) : undefined
     })

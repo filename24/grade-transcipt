@@ -1,3 +1,5 @@
+import type { ESISClient } from './client/Client'
+
 export type If<
   Value extends boolean,
   TrueResult,
@@ -123,18 +125,6 @@ export interface StudentGrade {
   approvalStatusName: string
 }
 
-export interface AcademicYearData {
-  /**
-   * Start year
-   * if academicYear 0 is all
-   * @example academicYear:2022
-   * 2022-2023 academic year
-   */
-  academicYear: string
-  academicLevel: string
-  academicYearName: string
-}
-
 export interface SubjectCourseData {
   // 기관 ID
   institutionId: number
@@ -220,6 +210,12 @@ export enum CourseCode {
   АЧС = 'Амьдрах чадварт суралцах үйл ажиллагаа',
   ХБО = 'Хүн болон орчин',
   БЭХ = 'Бэлтгэл хичээл'
+}
+
+export interface ClientEventsTypes {
+  ready: [client: ESISClient<true>]
+  error: [error: Error]
+  debug: [message: string]
 }
 
 export * from './client/Client'
