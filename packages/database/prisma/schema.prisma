@@ -31,6 +31,20 @@ model Grade {
   status         String
 }
 
+model Exam {
+  id            String @id @default(uuid())
+  // personId
+  systemId      String
+  // TEST_CAND_COMPONENT_ID
+  testId        String @unique
+  name          String
+  type          String
+  academicLevel String
+  grade         String
+  point         Int
+  status        String
+}
+
 model User {
   id       String @id @default(uuid())
   // institutionId

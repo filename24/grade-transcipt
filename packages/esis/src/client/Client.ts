@@ -192,10 +192,6 @@ export class ESISClient<
 
     const data = (await response.json()) as Data
 
-    if (data.SUCCESS_CODE !== 200) {
-      throw new Error(`Request failed with message: ${data.RESPONSE_MESSAGE}`)
-    }
-
     return data.RESULT
   }
 }

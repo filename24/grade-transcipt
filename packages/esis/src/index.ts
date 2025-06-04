@@ -220,3 +220,4 @@ export interface ClientEventsTypes {
 
 export * from './client/Client'
 export * from './utils/Constants'
+export * from './types'

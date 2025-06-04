@@ -1,5 +1,5 @@
 import { STUDENT_GROUP_ID } from '@/utils/constants'
-import { fetchGradeData, type FetchType } from '@/utils/fetch'
+import { fetchTestData, type FetchType } from '@/utils/fetch'
 
 export async function GET(
   _request: Request,
@@ -18,17 +18,17 @@ export async function GET(
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
-  const studentGrades = await fetchGradeData(STUDENT_GROUP_ID, type)
+  const studentExamData = await fetchTestData(STUDENT_GROUP_ID, type)
 
   return Response.json(
     {
       data: {
         size:
-          typeof studentGrades === 'number'
-            ? studentGrades
+          typeof studentExamData === 'number'
+            ? studentExamData
             : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-expect-error
-              studentGrades.length
+              studentExamData.length
       },
       message: 'Success'
     },

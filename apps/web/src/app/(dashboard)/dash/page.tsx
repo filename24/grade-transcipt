@@ -46,13 +46,15 @@ export default async function DashboardPage() {
         <Terminal />
         <AlertTitle>Нэмэлт мэдээ</AlertTitle>
         <AlertDescription>
-          <p>Хувийн хэргийн дүнгээ харж болохыг та мэдэх үү?</p>
+          <p>
+            Та улсын шалгалт, дэвших шалгалтын дүнгээ эндээс харах боломжтой!
+          </p>
           <Link
-            href={'/dash/record'}
+            href={'/dash/exam'}
             className={`flex ${buttonVariants({ variant: 'link', size: 'sm' })}`}
           >
             <ArrowRight size={20} />
-            <p>Хувийн хэргийн дүн харах</p>
+            <p>Шалгалтын дүн харах</p>
           </Link>
         </AlertDescription>
       </Alert>

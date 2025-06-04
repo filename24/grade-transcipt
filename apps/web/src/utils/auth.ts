@@ -30,11 +30,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     jwt({ token, user }) {
-      if (user) token.role = user.role
+      if (user) {
+        token.user = user
+      }
       return token
     },
     async session({ session, token }) {
-      session.user.role = token.role
+      session.user = token.user
 
       const secret = new TextEncoder().encode(process.env.AUTH_SECRET)
       const jwt = await new SignJWT(token)
