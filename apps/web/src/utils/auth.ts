@@ -1,11 +1,10 @@
-import { EsisLoginSchema, RegisterLoginSchema } from '@/schemas/login'
+import { RegisterLoginSchema } from '@/schemas/login'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import prisma from '@gt/database'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { GradeAuthError } from './error'
 import { SignJWT } from 'jose'
-import { ESISClient } from '@gt/esis'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // biome-ignore lint/suspicious/noExplicitAny: <단일 풀더로 generate 된건 이상하게 오류뿜음>
@@ -104,54 +103,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 registerNumber: gradeData.registerNumber,
                 role: 'STUDENT',
                 systemId: gradeData.systemId
-              }
-            })
-          }
-        } else {
-          const loginData = EsisLoginSchema.safeParse(credentials)
-
-          if (!loginData.success) {
-            throw new GradeAuthError('Буруу утга оруулсан байна.')
-          }
-
-          const esis = new ESISClient({
-            username: loginData.data.username,
-            password: loginData.data.password
-          })
-
-          try {
-            await esis.connect()
-
-            if (!esis.isReady())
-              throw new GradeAuthError(
-                'ESIS системд бэлэн болоогүй байна. Дараа дахин оролдоно уу!'
-              )
-          } catch (_e) {
-            throw new GradeAuthError(
-              `${esis.options.username} хэрэглэгч олдсонгүй. Та нэвтрэх нэрээ дахин шалгана уу`
-            )
-          }
-
-          user = await prisma.user.findFirst({
-            where: {
-              registerNumber: loginData.data.username
-            },
-            select: {
-              id: true,
-              name: true,
-              registerNumber: true,
-              role: true,
-              systemId: true
-            }
-          })
-
-          if (!user) {
-            user = await prisma.user.create({
-              data: {
-                name: esis.user.displayName,
-                registerNumber: esis.user.userName,
-                role: 'TEACHER',
-                systemId: esis.user.personId
               }
             })
           }

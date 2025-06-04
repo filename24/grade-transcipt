@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import prisma from '@gt/database'
 import { CourseCode } from '@gt/esis'
 import type { Grade } from '@gt/database'
 import {
@@ -8,25 +7,10 @@ import {
   SEMESTER_DATE,
   type SemesterLevel
 } from './constants'
-import type { StudentGradeRecord } from '.'
-
-export * from './fetch'
+import type { StudentGradeRecord } from './fetch'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
-
-export async function getGradeData(registerNumber: string) {
-  return await prisma.grade.findMany({
-    where: {
-      registerNumber
-    },
-    select: {
-      classCode: true,
-      grade: true,
-      status: true
-    }
-  })
 }
 
 export function resolveClassCode(classCode: string) {
@@ -213,10 +197,7 @@ export function getGradeCode(gradePoint: number): string {
 }
 
 export function isElementarySchool(academicLevel: string): boolean {
-  const match = academicLevel.trim().match(/^(\d+)-р анги$/)
-  if (!match) return false
-
-  const grade = Number.parseInt(match[1], 10)
+  const grade = Number.parseInt(academicLevel)
   return grade >= 1 && grade <= 5
 }
 

@@ -1,8 +1,4 @@
-import {
-  getStudentAcademicYears,
-  getStudentDataWithName,
-  getStudentGradeRecords
-} from '@/utils'
+import { getStudentDataWithName, getStudentGradeRecords } from '@/utils/fetch'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import RecordLayout from './_Components/RecordLayout'
@@ -16,10 +12,42 @@ export default async function RecordPage() {
 
   if (!userData) return redirect('/login')
 
-  const academicYears = await getStudentAcademicYears(userData.systemId)
+  const academicYears: AcademicYearData[] = []
+  const studentRecords = await getStudentGradeRecords(userData.systemId)
 
-  const studentRecords = await getStudentGradeRecords(userData.systemId, '0')
+  studentRecords.map((data) => {
+    if (
+      data.academicYear &&
+      !academicYears.some((year) => year.academicYear === data.academicYear)
+    ) {
+      academicYears.push({
+        academicYear: data.academicYear,
+        academicLevel: data.academicLevel,
+        academicLevelName: `${data.academicLevel}-р анги`
+      })
+    }
+  })
   return (
     <RecordLayout academicYears={academicYears} gradeRecords={studentRecords} />
   )
+}
+
+export interface AcademicYearData {
+  /**
+   * Start year
+   * if academicYear 0 is all
+   * @example academicYear:2022
+   * 2022-2023 academic year
+   */
+  academicYear: string
+  /**
+   * Academic level
+   * @example academicLevel: "10"
+   */
+  academicLevel: string
+  /**
+   * Academic level name
+   * @example academicLevelName: "10-р анги"
+   */
+  academicLevelName: string
 }

@@ -1,3 +1,5 @@
+import type { ESISClient } from './client/Client'
+
 export type If<
   Value extends boolean,
   TrueResult,
@@ -28,8 +30,25 @@ export interface UserData {
   token: string
 }
 
-export type ResponseData<D = Record<string, string>> = {
-  SUCCESS_CODE: string
+export interface TokenData {
+  userId: number
+  personId: null
+  legalEntityId: number
+  /**
+   * 진행중인 학교년도
+   */
+  academicYear: number
+  displayName: null
+  isEbsSub: number
+  organizationName: string
+  organizationProperty: number
+  requestPermissionCode: 'Y' | 'N'
+  username: string
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type ResponseData<D = any> = {
+  SUCCESS_CODE: number
   RESPONSE_MESSAGE: string
   RESULT: D
 }
@@ -106,47 +125,42 @@ export interface StudentGrade {
   approvalStatusName: string
 }
 
-export interface AcademicYearData {
-  /**
-   * Start year
-   * if academicYear 0 is all
-   * @example academicYear:2022
-   * 2022-2023 academic year
-   */
-  academicYear: string
-  academicLevel: string
-  academicYearName: string
-}
-
 export interface SubjectCourseData {
-  /**
-   * 순번
-   */
-  rn: string
-  /**
-   * 학교명
-   */
+  // 기관 ID
+  institutionId: number
+
+  // 기관 이름, 예: 학교 이름 (문자열)
   organizationName: string
-  /**
-   * 학년
-   */
+
+  // 학년도, 연도를 문자열로 저장 (예: "2023")
+  academicYear: string
+
+  // 학년 수준, 학년을 문자열로 표현 (예: "10")
   academicLevel: string
-  /**
-   * 과목코드
-   */
+
+  // 과목 영역 ID, 과목을 구분하는 숫자 식별자
+  subjectAreaId: number
+
+  // 과목 영역 코드, 과목을 나타내는 짧은 코드 (예: "БНТ")
   subjectAreaCode: string
-  /**
-   * 과목 이름
-   */
+
+  // 강의 이름, 과목의 전체 이름 (예: "Биеийн тамир 10 (БНТ 1001) Заавал")
   courseName: string
-  /**
-   * 점수
-   */
-  gradeMark: string
-  /**
-   * 등급
-   */
+
+  // 성적 점수, 소수점을 포함한 실수 (예: 97.7)
+  gradeMark: number
+
+  // 성적 등급 코드, 등급을 나타내는 문자열 (예: "VIII")
   gradeCode: string
+
+  // 강의 분류, 필수/선택 여부를 나타내는 문자열 (예: "1")
+  courseClassification: string
+
+  // 강의 분류 이름, 분류의 설명 (예: "Заавал судлах хичээл")
+  courseClassificationName: string
+
+  // 평균 수업 시간, 주당 수업 시간을 숫자로 표현 (예: 2)
+  avgContactHours: number
 }
 
 /**
@@ -196,6 +210,12 @@ export enum CourseCode {
   АЧС = 'Амьдрах чадварт суралцах үйл ажиллагаа',
   ХБО = 'Хүн болон орчин',
   БЭХ = 'Бэлтгэл хичээл'
+}
+
+export interface ClientEventsTypes {
+  ready: [client: ESISClient<true>]
+  error: [error: Error]
+  debug: [message: string]
 }
 
 export * from './client/Client'

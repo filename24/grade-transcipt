@@ -1,9 +1,10 @@
-import { getStudentGrade, resolveClassCode } from '@/utils'
+import { resolveClassCode } from '@/utils'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
 import type { GradeTableData } from './_Components/GradeTable'
 import GradeLayout from './_Components/GradeLayout'
+import { getStudentGrade } from '@/utils/fetch'
 
 export default async function GradePage() {
   const session = await auth()

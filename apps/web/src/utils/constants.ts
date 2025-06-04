@@ -60,3 +60,7 @@ export const SCHOOL_ID = '40301'
 
 export type SemesterLevel = 1 | 2 | 3
 export type EducationLevel = keyof typeof SEMESTER_DATE
+
+export const RedisKeys = {
+  esisToken: 'gt.knea.esis.token'
+} as const

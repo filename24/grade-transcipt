@@ -1,59 +1,103 @@
-import type { UserData } from '@gt/esis'
-import axios, { type RawAxiosRequestHeaders } from 'axios'
+import { ESISClient } from '@gt/esis'
+import { RedisKeys } from './constants'
 
-export let isLoggedIn = false
-export let userData: UserData | null = null
+const RETRY_LIMIT = 5
+const RETRY_DELAY = 5000 // milliseconds
+const TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000
+let attempts = 0
 
-const header: RawAxiosRequestHeaders = {
-  'Content-Type': 'application/json',
-  'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Whale/3.27.254.15 Safari/537.36'
+const globalForESIS = global as unknown as {
+  esis: ESISClient
 }
 
-export const api = axios.create({
-  baseURL: 'https://svc5.esis.edu.mn/api',
-  headers: header
-})
+const esis =
+  globalForESIS.esis ||
+  new ESISClient({
+    username: process.env.ESIS_USERNAME,
+    password: process.env.ESIS_PASSWORD
+  })
 
-// api.interceptors.request.use((request) => {
-//   console.log(
-//     'Starting Request',
-//     request.url + '  ' + request.data ? request.data : ''
-//   )
-//   return request
-// })
+if (process.env.NODE_ENV !== 'production') globalForESIS.esis = esis
+import { Redis } from '@upstash/redis'
 
-// api.interceptors.response.use((response) => {
-//   console.log('Response:', response.data)
-//   return response
-// })
+const redis = Redis.fromEnv({ enableAutoPipelining: false })
+const token = (await redis.get(RedisKeys.esisToken)) as string | null
 
-export async function tryLogin(esis?: { username: string; password: string }) {
-  if (isLoggedIn) return api
+if (process.env.NODE_ENV !== 'production') {
+  esis.on('debug', (message) => {
+    console.debug(`[ESIS DEBUG] ${message}`)
+  })
+}
 
+async function refreshToken() {
   try {
-    const { data } = await axios.request({
-      method: 'POST',
-      url: 'https://svc5.esis.edu.mn/signin',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      data: {
-        userName: esis?.username ?? process.env.ESIS_USERNAME,
-        password: esis?.password ?? process.env.ESIS_PASSWORD
-      }
-    })
-
-    userData = data.RESULT
-    api.defaults.headers.common.Authorization = `Bearer ${data.RESULT.token}`
-    isLoggedIn = true
-    console.log(
-      `Logged in successfully userID:${process.env.ESIS_USERNAME}, token: ${api.defaults.headers.common.Authorization}`
-    )
-    return api
+    const newToken = await esis.connect() // 새로운 연결로 토큰 발급
+    if (newToken) {
+      await redis.set(RedisKeys.esisToken, newToken, {
+        ex: TOKEN_EXPIRY / 1000
+      })
+      return newToken
+    }
   } catch (error) {
-    console.error(error)
-    return undefined
+    console.error('Token refresh failed:', error)
+    throw error
   }
 }
+
+export async function connectEsis() {
+  try {
+    if (token) {
+      try {
+        return await esis.connect(token)
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      } catch (error: any) {
+        if (error.message?.includes('Unauthorized')) {
+          esis.emit(
+            'debug',
+            'Token expired or invalid, attempting to refresh...'
+          )
+          const newToken = await refreshToken()
+          return await esis.connect(newToken)
+        }
+        throw error
+      }
+    }
+    // 토큰이 없는 경우 새로 발급
+    const newToken = await esis.connect()
+    if (newToken) {
+      await redis.set(RedisKeys.esisToken, newToken, {
+        ex: TOKEN_EXPIRY / 1000
+      })
+    }
+    return newToken
+  } catch (error) {
+    console.error('[ESIS ERROR] Connection failed:', error)
+    throw error
+  }
+}
+
+esis.once('ready', () => {
+  console.log('[ESIS] Connected successfully')
+  attempts = 0 // Reset attempts on successful connection
+})
+
+if (!esis.isReady()) {
+  esis.emit('debug', 'ESIS server not ready reconnecting...')
+  connectEsis()
+    .then(() => {
+      esis.emit('debug', 'ESIS server connected successfully')
+    })
+    .catch((error) => {
+      console.error('[ESIS ERROR] Failed to connect to ESIS server:', error)
+      if (attempts < RETRY_LIMIT) {
+        attempts++
+        setTimeout(connectEsis, RETRY_DELAY) // Retry after 5 seconds
+      } else {
+        console.error(
+          '[ESIS ERROR] Max connection attempts reached. Exiting...'
+        )
+      }
+    })
+}
+
+export default esis

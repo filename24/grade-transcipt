@@ -9,8 +9,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { AcademicYearData } from '@gt/esis'
-import { filterUniqueClassNames, type StudentGradeRecord } from '@/utils'
+import { filterUniqueClassNames } from '@/utils'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +18,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import type { AcademicYearData } from '../page'
+import type { StudentGradeRecord } from '@/utils/fetch'
 
 export default function RecordLayout({
   gradeRecords,
@@ -79,7 +80,7 @@ export default function RecordLayout({
                   key={academicYears.academicLevel}
                   value={academicYears.academicLevel}
                 >
-                  {academicYears.academicYearName}
+                  {academicYears.academicLevelName}
                 </SelectItem>
               )
             })}
