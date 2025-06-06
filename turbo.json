@@ -34,7 +34,11 @@
         "KV_REST_API_URL",
         "KV_REST_API_TOKEN",
         "KV_REST_API_READ_ONLY_TOKEN",
-        "REDIS_URL"
+        "REDIS_URL",
+        "SENTRY_AUTH_TOKEN",
+        "NEXT_PUBLIC_SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT"
       ]
     },
     "db:migrate:dev": {

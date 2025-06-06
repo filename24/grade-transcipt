@@ -18,14 +18,13 @@ import type {
   EECResponseData,
   LoginResponse
 } from '@/types/unelgee'
-import esis from './esis'
+import esis, { connectEsis } from './esis'
 
 export const getStudentGradeRecords = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {
     if (!esis.isReady()) {
-      await esis.connect()
+      await connectEsis()
     }
-
     const rawRecords = await esis.get<ResponseData<SubjectCourseData[]>>(
       `/svc/api/hub/student/course/grade/${userId}`,
       { cache: 'force-cache' }
@@ -236,9 +235,8 @@ export async function fetchGradeData(
 
 export async function fetchStudentTests(groupId: string) {
   if (!esis.isReady()) {
-    await esis.connect()
+    await connectEsis()
   }
-
   const examSchedules = await esis.get<ResponseData<ExamSession[]>>(
     `/svc/api/hub/service/exam/component/sessions/${groupId}`,
     { cache: 'force-cache' }
