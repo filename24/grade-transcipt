@@ -22,6 +22,10 @@ import esis from './esis'
 
 export const getStudentGradeRecords = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {
+    if (!esis.isReady()) {
+      await esis.connect()
+    }
+
     const rawRecords = await esis.get<ResponseData<SubjectCourseData[]>>(
       `/svc/api/hub/student/course/grade/${userId}`,
       { cache: 'force-cache' }
@@ -67,6 +71,9 @@ export async function getGradeData(registerNumber: string) {
   })
 }
 
+/**
+ * Need migrate for hub api
+ */
 export async function fetchStudentGrades(groupId: string) {
   const semesterInfo = await esis.get<ResponseData<HalfYearInfo[]>>(
     `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
@@ -228,6 +235,10 @@ export async function fetchGradeData(
 }
 
 export async function fetchStudentTests(groupId: string) {
+  if (!esis.isReady()) {
+    await esis.connect()
+  }
+
   const examSchedules = await esis.get<ResponseData<ExamSession[]>>(
     `/svc/api/hub/service/exam/component/sessions/${groupId}`,
     { cache: 'force-cache' }

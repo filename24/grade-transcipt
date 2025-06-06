@@ -17,7 +17,6 @@ const esis =
     password: process.env.ESIS_PASSWORD
   })
 
-if (process.env.NODE_ENV !== 'production') globalForESIS.esis = esis
 import { Redis } from '@upstash/redis'
 
 const redis = Redis.fromEnv({ enableAutoPipelining: false })
@@ -101,3 +100,5 @@ if (!esis.isReady()) {
 }
 
 export default esis
+
+if (process.env.NODE_ENV !== 'production') globalForESIS.esis = esis
