@@ -51,7 +51,8 @@ export class ESISClient<
             ...this.options.header,
             Authorization: `Bearer ${token}`
           },
-          method: 'GET'
+          method: 'GET',
+          cache: 'force-cache'
         }
       )
 

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs"
 import { RegisterLoginSchema } from '@/schemas/login'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
@@ -37,6 +38,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.user = token.user
+
+      const scope = Sentry.getCurrentScope()
+ 
+      scope.setUser({
+        username: token.name || 'Unknown User',
+      })
 
       const secret = new TextEncoder().encode(process.env.AUTH_SECRET)
       const jwt = await new SignJWT(token)

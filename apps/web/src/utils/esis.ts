@@ -1,4 +1,5 @@
 import { ESISClient } from '@gt/esis'
+import { redis } from '@gt/database'
 import { RedisKeys } from './constants'
 
 const RETRY_LIMIT = 5
@@ -6,20 +7,11 @@ const RETRY_DELAY = 5000 // milliseconds
 const TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000
 let attempts = 0
 
-const globalForESIS = global as unknown as {
-  esis: ESISClient
-}
+const esis = new ESISClient({
+  username: process.env.ESIS_USERNAME,
+  password: process.env.ESIS_PASSWORD
+})
 
-const esis =
-  globalForESIS.esis ||
-  new ESISClient({
-    username: process.env.ESIS_USERNAME,
-    password: process.env.ESIS_PASSWORD
-  })
-
-import { Redis } from '@upstash/redis'
-
-const redis = Redis.fromEnv({ enableAutoPipelining: false })
 const token = (await redis.get(RedisKeys.esisToken)) as string | null
 
 if (process.env.NODE_ENV !== 'production') {
@@ -100,5 +92,3 @@ if (!esis.isReady()) {
 }
 
 export default esis
-
-if (process.env.NODE_ENV !== 'production') globalForESIS.esis = esis

@@ -1,13 +1,17 @@
 'use client'
-
+import * as Sentry from '@sentry/nextjs'
+import { useEffect } from 'react'
 import Image from 'next/image'
 
 export default function RootErrorHandler({
   error
 }: {
   error: Error & { digest?: string }
-  reset: () => void
 }) {
+  useEffect(() => {
+    Sentry.captureException(error)
+  }, [error])
+
   return (
     <html lang="mn">
       <head>
@@ -82,9 +86,6 @@ export default function RootErrorHandler({
             Holyy fu** shit!!
           </h1>
           <p>Something veryyyyyyyy wrong. Pls report this</p>
-          <p>
-            Error: {error.name}: {error.message} ({error.digest})
-          </p>
         </main>
       </body>
     </html>
