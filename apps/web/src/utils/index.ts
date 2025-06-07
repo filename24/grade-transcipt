@@ -185,7 +185,7 @@ export function getEducationLevelFromGrade(
   return null
 }
 
-export function getGradeCode(gradePoint: number): string {
+export function calculateGradeCode(gradePoint: number): string {
   if (gradePoint >= 90) return 'VIII'
   if (gradePoint >= 80) return 'VII'
   if (gradePoint >= 70) return 'VI'
@@ -253,3 +253,8 @@ export function parseTextToArray(inputText: string) {
 
   return lines
 }
+
+import { Snowflake } from '@sapphire/snowflake'
+
+const epoch = new Date(2023, 9, 1)
+export const SnowflakeId = new Snowflake(epoch)

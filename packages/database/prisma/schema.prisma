@@ -11,19 +11,19 @@ datasource db {
 
 model Grade {
   // studentClassGradeId	
-  id             String @id @default(uuid())
+  id             String  @id @default(uuid())
   systemId       String
-  gradeId        String @unique
-  teacherName    String
+  gradeId        String  @unique
+  teacherName    String?
   // Semester
   academicYear   String
-  termId         String
+  termId         String?
   semester       Int
   displayName    String
   // primaryNidNumber	
   registerNumber String
   classCode      String
-  className      String
+  className      String?
   classGrade     String
   // gradeId	
   grade          String

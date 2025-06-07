@@ -22,7 +22,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowUpDown } from 'lucide-react'
 import { type CourseCode, GradeStatus } from '@gt/esis'
-import { calcAverageGrade, getGradeCode, type GradePointOnly } from '@/utils'
+import {
+  calcAverageGrade,
+  calculateGradeCode,
+  type GradePointOnly
+} from '@/utils'
 import { ClassIcon } from '@/utils/icons'
 
 export type GradeTableData = {
@@ -177,7 +181,7 @@ export function DataTable<TData, TValue>({
               Дундаж
             </TableCell>
             <TableCell className="bg-gray-300 text-center font-bold dark:bg-[#151520]">
-              {getGradeCode(
+              {calculateGradeCode(
                 calcAverageGrade(data as unknown as GradePointOnly[])
               )}
             </TableCell>
