@@ -2,7 +2,7 @@
  * 0 - 1 semester
  * 1 - 2 semester
  */
-export const CURRECT_SEMESTER = 0
+export const CURRECT_SEMESTER = 1
 
 export const SEMESTER_DATE = {
   ELEMENTARY: {

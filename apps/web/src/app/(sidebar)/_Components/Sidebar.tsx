@@ -42,7 +42,7 @@ const data = {
         },
         {
           title: 'Fetch a grade data',
-          url: '#'
+          url: '/admin/grade'
         }
       ]
     }

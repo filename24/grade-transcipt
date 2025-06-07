@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Grade" ALTER COLUMN "termId" DROP NOT NULL,
+ALTER COLUMN "className" DROP NOT NULL,
+ALTER COLUMN "teacherName" DROP NOT NULL;

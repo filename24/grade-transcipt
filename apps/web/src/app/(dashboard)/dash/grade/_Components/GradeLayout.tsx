@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Terminal } from 'lucide-react'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,12 +19,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { GradeStatus } from '@gt/esis'
 
 export default function GradeLayout({
   semester1,
   semester2
 }: { semester1: GradeTableData[]; semester2: GradeTableData[] }) {
-  const [select, setSelects] = useState<GradeTableData[]>(semester1)
+  const [select, setSelects] = useState<GradeTableData[]>(semester2)
 
   return (
     <>
@@ -43,9 +45,21 @@ export default function GradeLayout({
         <h3 className="font-semibold text-2xl tracking-tight">Хичээлийн дүн</h3>
       </div>
 
+      <Alert variant={'destructive'} className="mb-4">
+        <Terminal />
+        <AlertTitle>Мэдэгдэл</AlertTitle>
+        <AlertDescription>
+          Шинэ систем рүү шилжсэнтэй холбогдуулан хагас жилийн дүн гар аргаар
+          татаж байгаа тул дүн систем дээр удаан гарч байгаа байж болзошгүй.
+          <br />
+          Дүнгийн төлөв {GradeStatus.NEW} байх тохиолдолд дүн солигдох
+          магадлалтайг анхаарна уу.
+        </AlertDescription>
+      </Alert>
+
       <div className="flex flex-row justify-between">
         <Select
-          defaultValue="1"
+          defaultValue="2"
           onValueChange={(value: '1' | '2') => {
             setSelects(value === '1' ? semester1 : semester2)
           }}
