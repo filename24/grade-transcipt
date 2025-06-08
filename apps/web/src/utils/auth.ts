@@ -116,7 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             })
           }
         }
-
+        console.log(user?.name, user?.id)
         return user
       }
     })
