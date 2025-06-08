@@ -7,12 +7,28 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { AppSidebarHeader } from '../../_Components/Header'
-import GradeTable from './_Components/Gradetable'
-
+import { AppSidebarHeader } from '@/app/(sidebar)/_Components/Header'
+import { GradeAdminTable } from './_Components/GradeAdminTable'
+import prisma from '@gt/database'
+import { CURRECT_SEMESTER } from '@/utils/constants'
 export default async function AdminPage() {
   const session = await auth()
 
+  const data = await prisma.grade.findMany({
+    select: {
+      academicYear: true,
+      displayName: true,
+      classCode: true,
+      semester: true,
+      point: true,
+      status: true,
+      grade: true,
+      registerNumber: true
+    },
+    where: {
+      semester: CURRECT_SEMESTER + 1
+    }
+  })
   if (session?.user?.role === 'ADMIN') {
     return (
       <>
@@ -25,11 +41,15 @@ export default async function AdminPage() {
             <BreadcrumbItem>
               <BreadcrumbPage>Grade</BreadcrumbPage>
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Edit</BreadcrumbPage>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </AppSidebarHeader>
 
         <div className="md:p-6">
-          <GradeTable />
+          <GradeAdminTable data={data} />
         </div>
       </>
     )

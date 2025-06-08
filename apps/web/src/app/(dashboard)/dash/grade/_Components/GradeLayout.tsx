@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { GradeStatus } from '@gt/esis'
+import { Badge } from '@/components/ui/badge'
 
 export default function GradeLayout({
   semester1,
@@ -45,15 +46,47 @@ export default function GradeLayout({
         <h3 className="font-semibold text-2xl tracking-tight">Хичээлийн дүн</h3>
       </div>
 
-      <Alert variant={'destructive'} className="mb-4">
+      <Alert className="mb-4">
         <Terminal />
-        <AlertTitle>Мэдэгдэл</AlertTitle>
-        <AlertDescription>
-          Шинэ систем рүү шилжсэнтэй холбогдуулан хагас жилийн дүн гар аргаар
-          татаж байгаа тул дүн систем дээр удаан гарч байгаа байж болзошгүй.
-          <br />
-          Дүнгийн төлөв {GradeStatus.NEW} байх тохиолдолд дүн солигдох
-          магадлалтайг анхаарна уу.
+        <AlertTitle>Дүнгийн төлөвийн мэдээлэл</AlertTitle>
+        <AlertDescription className="grid gap-2">
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#c0f1b6] text-[#548164] dark:bg-[#375841] dark:text-[#64d88d]"
+            >
+              {GradeStatus.APPROVED}
+            </Badge>{' '}
+            Дүн менежерээр батлуулагдсан (Солих боломжгүй)
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#c1e6f4] text-[#487CA5] dark:bg-[#2f4469] dark:text-[#63a1fc]"
+            >
+              {GradeStatus.NEW}
+            </Badge>{' '}
+            Мэргэжлийн багш дүнгээ шивсэн (Солигдох магадлалтай)
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#eedeaa] text-[#C29343] dark:bg-[#836534] dark:text-[#e4ab43]"
+            >
+              {GradeStatus.PENDING}
+            </Badge>{' '}
+            Мэргэжлийн багш дүнгээ менежерт илгээсэн
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#f6baba] text-[#C4554D] dark:bg-[#673932] dark:text-[#e66359]"
+            >
+              {GradeStatus.REJECTED}
+            </Badge>{' '}
+            Мэргэжлийн багш эсвэл менежерийн хүсэлтээр дүн цуцалсан (Солигдох
+            магадлалтай)
+          </div>
         </AlertDescription>
       </Alert>
 

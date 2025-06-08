@@ -1,5 +1,5 @@
 'use client'
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { HotColumn, HotTable } from '@handsontable/react-wrapper'
 
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,9 @@ import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { toast } from 'sonner'
 import { createGrades } from '../actions'
 import { Loader2 } from 'lucide-react'
+import type { GradeStatus } from '@gt/esis'
+
+import { GradeConfigDialog } from './GradeConfigDialog'
 
 registerCellType(NumericCellType)
 
@@ -35,11 +38,35 @@ export type GradeData = Pick<
   | 'registerNumber'
   | 'displayName'
   | 'grade'
+  | 'status'
+>
+
+export type GradeConfig = Partial<
+  Pick<GradeData, 'classGrade' | 'classCode'> & {
+    status: keyof typeof GradeStatus
+  }
 >
 
 export default function GradeTable() {
-  const [data, setData] = useState<GradeData[]>([...generateEmptyData(42)])
   const [state, action, pending] = useActionState(createGrades, undefined)
+  const [config, setConfig] = useState<GradeConfig>({})
+  const [data, setData] = useState<GradeData[]>([...generateEmptyData(42)])
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: data 의존시 무한로프 돎
+  useEffect(() => {
+    setData(
+      data.map((row) => ({
+        ...row,
+        // config에서 가져온 값들 업데이트
+        classCode: config.classCode || row.classCode,
+        classGrade: config.classGrade || row.classGrade,
+        status: config.status || row.status,
+        // point와 grade 리셋
+        point: 0,
+        grade: ''
+      }))
+    )
+  }, [config])
 
   if (state?.message) {
     toast.success(state.message)
@@ -49,14 +76,13 @@ export default function GradeTable() {
     toast.error(state.errors.message)
   }
 
-  console.log(data)
   return (
     <form
       action={() => {
         action(data)
       }}
     >
-      <div className="mb-4 flex flex-row justify-start">
+      <div className="mb-4 flex flex-row justify-start gap-4">
         <Button type="submit" disabled={pending} className="w-fit">
           {pending ? (
             <>
@@ -70,13 +96,15 @@ export default function GradeTable() {
 
         <Button
           type="button"
-          className="ml-2 w-fit"
+          className="w-fit"
           onClick={() => {
-            setData([...generateEmptyData(42)])
+            setData([...generateEmptyData(42, config)])
           }}
         >
           Reset
         </Button>
+
+        <GradeConfigDialog config={config} setConfig={setConfig} />
       </div>
       <HotTable
         themeName="ht-theme-main-dark-auto"
@@ -140,13 +168,14 @@ export default function GradeTable() {
   )
 }
 
-function generateEmptyData(rows: number): GradeData[] {
+function generateEmptyData(rows: number, config?: GradeConfig): GradeData[] {
   return Array.from({ length: rows }, () => ({
     displayName: '',
     registerNumber: '',
-    classCode: '',
-    classGrade: '11а',
+    classCode: config?.classCode || '',
+    classGrade: config?.classGrade || '',
     point: 0,
-    grade: ''
+    grade: '',
+    status: config?.status || ''
   }))
 }
