@@ -45,7 +45,7 @@ export async function createGrades(
       grade: item.grade,
       academicYear: ACADEMIC_YEAR,
       gradeId: SnowflakeId.generate().toString(),
-      status: 'NEW',
+      status: item.status,
       className: null,
       semester: CURRECT_SEMESTER + 1,
       teacherName: null,

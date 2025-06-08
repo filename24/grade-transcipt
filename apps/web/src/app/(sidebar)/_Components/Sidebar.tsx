@@ -36,13 +36,12 @@ const data = {
       url: '#',
       items: [
         {
-          title: 'Export a grade data',
-          url: '#',
-          isActive: true
+          title: 'Edit a grade data',
+          url: '/admin/grade/edit'
         },
         {
-          title: 'Fetch a grade data',
-          url: '/admin/grade'
+          title: 'Import a grade data',
+          url: '/admin/grade/create'
         }
       ]
     }
