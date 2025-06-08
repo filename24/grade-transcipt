@@ -30,7 +30,11 @@ export default function UserMenu({ session }: { session: Session | null }) {
             Хувийн мэдээлэл
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem
+          onClick={() => {
+            signOut()
+          }}
+        >
           <div className="flex gap-1">
             <LogOut size={20} />
             Гарах

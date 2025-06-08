@@ -18,7 +18,7 @@ export async function loginWithRegister(
       errors: loginData.error.flatten().fieldErrors
     }
   }
-
+  console.log(loginData.data.registerNumber)
   try {
     await signIn('credentials', formData)
   } catch (error) {
