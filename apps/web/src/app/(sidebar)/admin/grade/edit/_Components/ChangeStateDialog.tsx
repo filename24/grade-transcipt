@@ -48,7 +48,8 @@ export const EditGradeSchema = z.object({
   classType: z.string(),
   status: z.string(),
   classGrade: z.string().optional(),
-  semester: z.string({ message: '학기를 세팅해주세요.' })
+  semester: z.string({ message: '학기를 세팅해주세요.' }),
+  action: z.string()
 })
 
 export function GradeStateDialog() {
@@ -189,6 +190,32 @@ export function GradeStateDialog() {
                               {GradeStatus[value]}
                             </SelectItem>
                           ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-3">
+                <Label>Action</Label>
+
+                <FormField
+                  control={form.control}
+                  name="action"
+                  render={(field) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.field.onChange}
+                        defaultValue={field.field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a semester" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="edit">상태 변경</SelectItem>
+                          <SelectItem value="delete">
+                            삭제 후 다시 작성
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormItem>

@@ -10,23 +10,40 @@ export async function editGradeData(data: z.infer<typeof EditGradeSchema>) {
   const status = data.status as GradeStatusType
 
   try {
-    const payload = await prisma.grade.updateMany({
-      where: {
-        classCode,
-        classGrade,
-        semester: Number(data.semester)
-      },
-      data: {
-        classCode,
-        classGrade,
-        status
+    if (data.action === 'edit') {
+      const payload = await prisma.grade.updateMany({
+        where: {
+          classCode,
+          classGrade,
+          semester: Number(data.semester)
+        },
+        data: {
+          classCode,
+          classGrade,
+          status
+        }
+      })
+      return {
+        message: 'Grades updated successfully',
+        payload
       }
-    })
-
-    return {
-      message: 'Grades updated successfully',
-      payload
     }
+
+    if (data.action === 'delete') {
+      const payload = await prisma.grade.deleteMany({
+        where: {
+          classCode,
+          classGrade,
+          semester: Number(data.semester)
+        }
+      })
+      return {
+        message: 'Grades delete successfully',
+        payload
+      }
+    }
+
+    throw new TypeError('action is undefined')
   } catch (error) {
     console.error('Error updating grades:', error)
     throw error
