@@ -66,7 +66,7 @@ export default function GradeAverage({
             </p>
             {semester2.length === 0 ? undefined : (
               <CardDescription className="text-xs">
-                {semester2.length === 20
+                {semester2.length === 19
                   ? 'Бүх хичээлийн дүн гарж дууссан байна.'
                   : `Одоогоор ${semester2.length} хичээлийн дүн гарсан байна.`}
               </CardDescription>
