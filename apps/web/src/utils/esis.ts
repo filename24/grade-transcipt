@@ -12,8 +12,6 @@ const esis = new ESISClient({
   password: process.env.ESIS_PASSWORD
 })
 
-const token = (await redis.get(RedisKeys.esisToken)) as string | null
-
 if (process.env.NODE_ENV !== 'production') {
   esis.on('debug', (message) => {
     console.debug(`[ESIS DEBUG] ${message}`)
@@ -36,6 +34,7 @@ async function refreshToken() {
 }
 
 export async function connectEsis() {
+  const token = (await redis.get(RedisKeys.esisToken)) as string | null
   try {
     if (token) {
       try {

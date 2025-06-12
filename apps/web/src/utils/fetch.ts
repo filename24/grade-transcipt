@@ -74,6 +74,8 @@ export async function getGradeData(registerNumber: string) {
  * Need migrate for hub api
  */
 export async function fetchStudentGrades(groupId: string) {
+  const token = await connectEsis()
+  esis.connect(token)
   const semesterInfo = await esis.get<ResponseData<HalfYearInfo[]>>(
     `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
   )
