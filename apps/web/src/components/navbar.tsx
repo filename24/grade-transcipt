@@ -50,7 +50,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
                   variant={'ghost'}
                   className="font-extrabold text-muted-foreground"
                 >
-                  {getDDay(semesterDate.END)}
+                  {getDDay(semesterDate.START)}
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">
