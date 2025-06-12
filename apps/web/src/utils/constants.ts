@@ -44,7 +44,7 @@ export const SEMESTER_DATE = {
     },
     3: {
       START: new Date('2026-04-14'),
-      END: new Date('2025-06-13')
+      END: new Date('2026-06-13')
     }
   }
 }
