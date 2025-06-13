@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model Grade {
@@ -27,8 +27,11 @@ model Grade {
   classGrade     String
   // gradeId	
   grade          String
-  point          Int
-  status         String
+  point          Float
+  status         Status
+  user           User?   @relation(fields: [systemId], references: [id])
+
+  @@index([classCode, systemId])
 }
 
 model Exam {
@@ -41,40 +44,56 @@ model Exam {
   type          String
   academicLevel String
   grade         String
-  point         Int
-  status        String
+  point         Float
+  status        Status
+  user          User?  @relation(fields: [systemId], references: [id])
+
+  @@index([systemId])
 }
 
 model User {
   id       String @id @default(uuid())
   // institutionId
-  schoolId String @default("40301")
+  schoolId String
   // Student groupId
-  classId  String @default("100004237680887")
-  systemId String
+  classId  String
+  systemId String @unique
 
-  name           String?
+  firstName      String?
+  lastName       String?
+  name           String
   email          String?
   registerNumber String
-  type           UserType  @default(ESIS)
+  type           UserType @default(ESIS)
   role           Role
-  accounts       Account[]
-  sessions       Session[]
+
+  grades   Grade[]
+  exams    Exam[]
+  accounts Account[]
+  sessions Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([registerNumber, systemId])
 }
 
 enum UserType {
   Medle
   ESIS
-  GrandIT
 }
 
 enum Role {
   STUDENT
   TEACHER
   ADMIN
+}
+
+enum Status {
+  APPROVED
+  PENDING
+  REJECTED
+  NEW
 }
 
 model Account {

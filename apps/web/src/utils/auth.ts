@@ -82,16 +82,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new GradeAuthError('Буруу утга оруулсан байна.')
           }
 
-          const gradeData = await prisma.grade.findFirst({
-            where: {
-              registerNumber: loginData.data.registerNumber
-            }
-          })
-
-          if (!gradeData) {
-            throw new GradeAuthError('Knea - Grade system бүртгэлгүй байна.')
-          }
-
           user = await prisma.user.findFirst({
             where: {
               registerNumber: loginData.data.registerNumber
@@ -106,6 +96,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
 
           if (!user) {
+            const gradeData = await prisma.grade.findFirst({
+              where: {
+                registerNumber: loginData.data.registerNumber
+              }
+            })
+
+            if (!gradeData) {
+              throw new GradeAuthError('Knea - Grade system бүртгэлгүй байна.')
+            }
+
             user = await prisma.user.create({
               data: {
                 name: gradeData.displayName,

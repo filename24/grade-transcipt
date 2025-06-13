@@ -30,17 +30,25 @@ export const getStudentGradeRecords = unstable_cache(
       { cache: 'force-cache' }
     )
 
-    const record: StudentGradeRecord[] = rawRecords.map((record) => ({
-      className: resolveClassCode(
-        `${record.subjectAreaCode} ${record.courseClassification === '1' ? 'заавал' : 'сонгон'}`
-      ),
-      classCode: record.subjectAreaCode,
-      point: Number(record.gradeMark),
-      grade: record.gradeCode,
-      schoolName: record.organizationName,
-      academicLevel: record.academicLevel,
-      academicYear: record.academicYear
-    }))
+    const record: StudentGradeRecord[] = rawRecords
+      .map((record) => ({
+        id: record.subjectAreaId,
+        className: resolveClassCode(
+          `${record.subjectAreaCode} ${record.courseClassification === '1' ? 'заавал' : 'сонгон'}`
+        ),
+        classCode: record.subjectAreaCode,
+        point: Number(record.gradeMark),
+        grade: record.gradeCode,
+        schoolName: record.organizationName,
+        academicLevel: record.academicLevel,
+        academicYear: record.academicYear
+      }))
+      .sort((a, b) => {
+        if (Number(b.academicLevel) !== Number(a.academicLevel)) {
+          return Number(b.academicLevel) - Number(a.academicLevel)
+        }
+        return a.id - b.id
+      })
 
     return record
   },
@@ -49,6 +57,7 @@ export const getStudentGradeRecords = unstable_cache(
 )
 
 export interface StudentGradeRecord {
+  id: number
   className: string
   classCode: string
   point: number
