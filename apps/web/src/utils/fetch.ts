@@ -5,7 +5,8 @@ import type {
   HalfYearInfo,
   StudentGrade,
   ExamSession,
-  StudentExamPayload
+  StudentExamPayload,
+  GradeStatusType
 } from '@gt/esis'
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
@@ -79,170 +80,7 @@ export async function getGradeData(registerNumber: string) {
   })
 }
 
-/**
- * Need migrate for hub api
- */
-export async function fetchStudentGrades(groupId: string) {
-  const token = await connectEsis()
-  esis.connect(token)
-  const semesterInfo = await esis.get<ResponseData<HalfYearInfo[]>>(
-    `journal/terms/list/${SCHOOL_ID}/${ACADEMIC_YEAR}`
-  )
-
-  const currectSemester = semesterInfo[CURRECT_SEMESTER]
-
-  const gradeInfo = await esis.get<ResponseData<CourseInfo[]>>(
-    `/journal/group/list/${SCHOOL_ID}/${groupId}/${currectSemester.termId}`
-  )
-
-  const studentGrades: Omit<Prisma.GradeCreateInput, 'id'>[] = []
-
-  await Promise.all(
-    gradeInfo.map(async (classInfo) => {
-      const gradeList = await esis.get<ResponseData<StudentGrade[]>>(
-        `/journal/group/student/list/${SCHOOL_ID}/${classInfo.classId}/${groupId}/${ACADEMIC_YEAR}/${currectSemester.termId}`
-      )
-
-      if (!gradeList) return console.log('No grade list')
-
-      console.log(gradeList[0].className, ' : ', gradeList.length)
-      const grades = gradeList.map((student): (typeof studentGrades)[0] => {
-        return {
-          className: student.className,
-          classCode: `${student.className.split(' ')[0]} ${student.className
-            .split(' ')
-            .pop()
-            ?.toLowerCase()}`,
-          displayName: student.displayName,
-          gradeId: student.studentClassGradeId,
-          grade: student.gradeCode,
-          point: Number(student.gradeMark),
-          registerNumber: student.primaryNidNumber,
-          status: student.approvalStatus,
-          termId: student.termId,
-          teacherName: classInfo.instructorName,
-          classGrade: student.studentGroupName,
-          semester: Number(currectSemester.termSeq),
-          academicYear: ACADEMIC_YEAR || String(new Date().getUTCFullYear()),
-          systemId: student.personId
-        }
-      })
-
-      studentGrades.push(...grades)
-    })
-  )
-
-  return studentGrades
-}
-
 export type FetchType = 'create' | 'edit' | 'forceEdit'
-export async function fetchGradeData(
-  groupId: string,
-  type: 'create'
-): Promise<number>
-export async function fetchGradeData(
-  groupId: string,
-  type: 'edit'
-): Promise<Prisma.GradeCreateInput[]>
-export async function fetchGradeData(
-  groupId: string,
-  type: 'forceEdit'
-): Promise<Prisma.GradeCreateInput[]>
-export async function fetchGradeData(
-  groupId: string,
-  type: FetchType
-): Promise<number | Prisma.GradeCreateInput[]> {
-  const studentGrades = await fetchStudentGrades(groupId)
-  const fetchedData: Prisma.GradeCreateInput[] = []
-  const originData: Omit<Prisma.GradeCreateInput, 'id'>[] =
-    await prisma.grade.findMany({
-      where: {
-        registerNumber: {
-          in: studentGrades.map((student) => student.registerNumber)
-        }
-      },
-      select: {
-        point: true,
-        className: true,
-        classCode: true,
-        displayName: true,
-        gradeId: true,
-        grade: true,
-        registerNumber: true,
-        status: true,
-        termId: true,
-        classGrade: true,
-        semester: true,
-        teacherName: true,
-        academicYear: true,
-        systemId: true
-      }
-    })
-
-  if (type === 'create') {
-    const existingGradeIds = originData.map((grade) => grade.gradeId)
-    const newGrades = studentGrades.filter(
-      (grade) => !existingGradeIds.includes(grade.gradeId)
-    )
-
-    if (newGrades.length === 0) return 0
-
-    const data = await prisma.grade.createMany({
-      data: newGrades
-    })
-
-    return data.count
-  }
-
-  if (type === 'forceEdit') {
-    for (const student of studentGrades) {
-      try {
-        await prisma.grade.upsert({
-          where: { gradeId: student.gradeId },
-          update: student,
-          create: student
-        })
-        fetchedData.push(student)
-      } catch (e) {
-        console.error(student)
-        console.error(e)
-      }
-    }
-  }
-
-  if (type === 'edit') {
-    for (const student of studentGrades) {
-      const originStudent = originData.find(
-        (origin) => origin.gradeId === student.gradeId
-      )
-
-      if (originStudent) {
-        // Check if there are any differences
-        const hasChanges = Object.keys(student).some(
-          (key) =>
-            student[key as keyof typeof student] !==
-            originStudent[key as keyof typeof originStudent]
-        )
-
-        if (hasChanges) {
-          try {
-            await prisma.grade.update({
-              where: { gradeId: originStudent.gradeId },
-              data: student
-            })
-            fetchedData.push(student)
-          } catch (e) {
-            console.error(student)
-            console.log('origin:', originStudent)
-            console.error(e)
-          }
-        }
-      }
-    }
-  }
-
-  return fetchedData
-}
 
 export async function fetchStudentTests(groupId: string) {
   if (!esis.isReady()) {
@@ -252,7 +90,7 @@ export async function fetchStudentTests(groupId: string) {
     `/svc/api/hub/service/exam/component/sessions/${groupId}`,
     { cache: 'force-cache' }
   )
-  const studentExamData: Omit<Prisma.ExamCreateInput, 'id'>[] = []
+  const studentExamData: Omit<Prisma.ExamCreateManyInput, 'id'>[] = []
 
   for (let index = 0; index < examSchedules.length; index++) {
     const examSchedule = examSchedules[index]
@@ -272,7 +110,7 @@ export async function fetchStudentTests(groupId: string) {
         grade: examData.GRADE_CODE,
         name: examData.EXAM_NAME,
         point: examData.PERCENTILE,
-        status: examData.APPROVAL_STATUS,
+        status: examData.APPROVAL_STATUS as GradeStatusType,
         systemId: String(examData.PERSON_ID),
         testId: String(examData.TEST_CAND_COMPONENT_ID),
         type: examData.EXAM_TYPE
