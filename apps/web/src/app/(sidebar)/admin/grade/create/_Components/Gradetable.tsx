@@ -14,7 +14,7 @@ import {
 import 'handsontable/styles/handsontable.min.css'
 import 'handsontable/styles/ht-theme-main.min.css'
 import { calculateGradeCode, SnowflakeId } from '@/utils'
-import type { Grade } from '@gt/database'
+import { Status, type Grade } from '@gt/database'
 import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { toast } from 'sonner'
 import { createGrades } from '../actions'
@@ -176,6 +176,6 @@ function generateEmptyData(rows: number, config?: GradeConfig): GradeData[] {
     classGrade: config?.classGrade || '',
     point: 0,
     grade: '',
-    status: config?.status || ''
+    status: config?.status || Status.NEW
   }))
 }

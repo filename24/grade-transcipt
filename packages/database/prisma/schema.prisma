@@ -29,7 +29,7 @@ model Grade {
   grade          String
   point          Float
   status         Status
-  user           User?   @relation(fields: [systemId], references: [id])
+  user           User?   @relation(fields: [systemId], references: [systemId])
 
   @@index([classCode, systemId])
 }
@@ -46,7 +46,7 @@ model Exam {
   grade         String
   point         Float
   status        Status
-  user          User?  @relation(fields: [systemId], references: [id])
+  user          User?  @relation(fields: [systemId], references: [systemId])
 
   @@index([systemId])
 }

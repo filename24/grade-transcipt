@@ -16,8 +16,8 @@ export default async function GradePage() {
     redirect('/teacher')
   }
 
-  const semester1GradeRaw = await getStudentGrade(session.user.name, 1)
-  const semester2GradeRaw = await getStudentGrade(session.user.name, 2)
+  const semester1GradeRaw = await getStudentGrade(session.user.systemId, 1)
+  const semester2GradeRaw = await getStudentGrade(session.user.systemId, 2)
 
   const semester1Data = semester1GradeRaw.map(
     (grade): GradeTableData => ({

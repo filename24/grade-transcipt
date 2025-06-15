@@ -20,9 +20,9 @@ export default async function DashboardPage() {
     redirect('/teacher')
   }
 
-  const semester1Grade = await getStudentGrade(session.user.name, 1)
+  const semester1Grade = await getStudentGrade(session.user.systemId, 1)
 
-  const semester2Grade = await getStudentGrade(session.user.name, 2)
+  const semester2Grade = await getStudentGrade(session.user.systemId, 2)
 
   return (
     <main className="grid gap-4">

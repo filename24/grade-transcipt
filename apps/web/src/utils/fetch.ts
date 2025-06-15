@@ -235,11 +235,11 @@ export async function getStudentExams(systemId: string): Promise<Exam[]> {
 }
 
 export async function getStudentGrade(
-  displayName: string,
+  systemId: string,
   semester: number
 ): Promise<Grade[]> {
   const data = await prisma.grade.findMany({
-    where: { displayName, semester },
+    where: { systemId, semester },
     orderBy: {
       point: 'desc'
     }
