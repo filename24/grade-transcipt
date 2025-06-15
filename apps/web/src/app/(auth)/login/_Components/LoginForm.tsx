@@ -51,6 +51,21 @@ export function RegisterLoginForm({
                   </p>
                 )}
               </div>
+              <div className="grid gap-3">
+                <Label htmlFor="password">Нууц үг</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder=""
+                  disabled={true}
+                />
+                {/* {state?.errors?.registerNumber && (
+                  <p className="text-red-400 text-sm">
+                    {state.errors.registerNumber}
+                  </p>
+                )} */}
+              </div>
               <Button type="submit" disabled={pending} className="w-full">
                 {pending ? (
                   <>

@@ -6,14 +6,10 @@ import RecordLayout from './_Components/RecordLayout'
 export default async function RecordPage() {
   const session = await auth()
 
-  if (!session?.user?.name) return redirect('/login')
-
-  const userData = await getStudentDataWithName(session.user.name)
-
-  if (!userData) return redirect('/login')
+  if (!session?.user) return redirect('/login')
 
   const academicYears: AcademicYearData[] = []
-  const studentRecords = await getStudentGradeRecords(userData.systemId)
+  const studentRecords = await getStudentGradeRecords(session.user.systemId)
 
   studentRecords.map((data) => {
     if (
