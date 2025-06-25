@@ -4,13 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, BarChart3, User, FileCheck } from 'lucide-react'
 import { cn } from '@/utils'
-const mainTabs = [
-  {
-    name: 'Home',
-    href: '/dash',
-    icon: Home
-  }
-]
 
 const subTabs = [
   {

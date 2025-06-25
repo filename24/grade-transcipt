@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
     fetches: {
       fullUrl: true
     }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'svr.knea.space',
+        port: '7000',
+        pathname: '/grade-transcript/**'
+      }
+    ]
   }
 }
 
