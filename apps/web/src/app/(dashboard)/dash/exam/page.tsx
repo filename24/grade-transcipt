@@ -1,4 +1,3 @@
-import { resolveClassCode } from '@/utils'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import type { ExamTableData } from './_Components/ExamTable'

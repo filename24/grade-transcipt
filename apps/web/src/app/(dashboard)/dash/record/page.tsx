@@ -1,4 +1,4 @@
-import { getStudentDataWithName, getStudentGradeRecords } from '@/utils/fetch'
+import { getStudentGradeRecords } from '@/utils/fetch'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import RecordLayout from './_Components/RecordLayout'
