@@ -9,8 +9,7 @@ import { SignJWT } from 'jose'
 import { SCHOOL_ID, STUDENT_GROUP_ID } from './constants'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // biome-ignore lint/suspicious/noExplicitAny: <단일 풀더로 generate 된건 이상하게 오류뿜음>
-  adapter: PrismaAdapter(prisma as any),
+  adapter: PrismaAdapter(prisma),
   debug: process.env.NODE_ENV === 'development',
   cookies: {
     csrfToken: { name: 'knea.gt.csrf' },
@@ -38,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      session.user = token.user
+      session.user = token.user as typeof session.user
 
       const scope = Sentry.getCurrentScope()
 

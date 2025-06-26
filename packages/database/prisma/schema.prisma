@@ -75,7 +75,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([registerNumber, systemId])
+  @@index([firstName, lastName])
 }
 
 enum UserType {

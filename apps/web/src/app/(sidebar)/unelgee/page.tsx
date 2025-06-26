@@ -1,8 +1,7 @@
 import {
   BreadcrumbItem,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
+  BreadcrumbPage
 } from '@/components/ui/breadcrumb'
 import { AppSidebarHeader } from '../_Components/Header'
 

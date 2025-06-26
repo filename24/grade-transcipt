@@ -1,16 +1,12 @@
 import type {
   SubjectCourseData,
-  CourseInfo,
   ResponseData,
-  HalfYearInfo,
-  StudentGrade,
   ExamSession,
   StudentExamPayload,
   GradeStatusType
 } from '@gt/esis'
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
-import { ACADEMIC_YEAR, CURRECT_SEMESTER, SCHOOL_ID } from './constants'
 import { resolveClassCode, toSentenceCase } from '.'
 import { unstable_cache } from 'next/cache'
 import axios from 'axios'
@@ -325,3 +321,13 @@ export async function getUnelgeeStudents(
     data: responseData
   }
 }
+
+export const getUser = unstable_cache(
+  async (systemId?: string) =>
+    await prisma.user.findFirst({
+      where: {
+        systemId: systemId
+      }
+    }),
+  ['user']
+)

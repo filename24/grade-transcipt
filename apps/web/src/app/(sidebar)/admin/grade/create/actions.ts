@@ -5,7 +5,6 @@ import prisma, { type Grade } from '@gt/database'
 import type { GradeData } from './_Components/Gradetable'
 import { ACADEMIC_YEAR, CURRECT_SEMESTER } from '@/utils/constants'
 import { SnowflakeId } from '@/utils'
-import { GradeStatus } from '@gt/esis'
 
 export async function createGrades(
   state: GetUnelgeeDataFormState,

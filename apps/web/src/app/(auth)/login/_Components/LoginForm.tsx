@@ -57,7 +57,7 @@ export function RegisterLoginForm({
                   id="password"
                   name="password"
                   type="password"
-                  placeholder=""
+                  placeholder="Тун удахгүй..."
                   disabled={true}
                 />
                 {/* {state?.errors?.registerNumber && (

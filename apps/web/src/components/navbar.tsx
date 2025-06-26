@@ -1,10 +1,8 @@
 'use client'
-import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, ChartArea, LogOut, Menu, Notebook } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button, buttonVariants } from './ui/button'
 import Image from 'next/image'
-import { signOut } from 'next-auth/react'
 import UserMenu from './user-menu'
 import type { Session } from 'next-auth'
 import { getCurrentSemesters, getDDay } from '@/utils'
@@ -14,12 +12,9 @@ import ThemeSwitcher from './theme-switcher'
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggleMenu = () => setIsOpen(!isOpen)
 
   return (
-    <nav className="sticky z-50 flex w-full flex-col bg-card text-card-foreground shadow-sm backdrop-blur-lg">
+    <nav className="sticky top-0 z-50 flex w-full flex-col border-b bg-card backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="flex h-14 items-center">
         <div className="container mx-auto flex max-w-4xl items-center justify-between px-4">
           <Link href="/dash" className="flex items-center gap-x-3">
@@ -75,61 +70,9 @@ const Navbar = ({ session }: { session: Session | null }) => {
             </HoverCard>
             <UserMenu session={session} />
             <ThemeSwitcher />
-
-            <Button
-              variant="outline"
-              size="icon"
-              className="md:hidden"
-              onClick={toggleMenu}
-            >
-              <Menu />
-            </Button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden">
-          <Link
-            href="/dash"
-            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
-          >
-            <ChartArea size={20} />
-            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-              Dashboard
-            </p>
-          </Link>
-          <Link
-            href="/dash/grade"
-            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
-          >
-            <Notebook size={20} />
-            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-              Хичээлийн дүн
-            </p>
-          </Link>
-          <Link
-            href="/dash/record"
-            className="flex flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
-          >
-            <Notebook size={20} />
-            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-              Хувийн хэргийн дүн
-            </p>
-          </Link>
-          {/* <button
-            type="button"
-            onClick={() => signOut()}
-            className="flex w-full flex-row gap-1 border-t px-5 pt-3 pb-3 sm:px-3"
-          >
-            <LogOut size={20} />
-            <p className="text-center font-medium text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
-              Гарах
-            </p>
-          </button> */}
-        </div>
-      )}
     </nav>
   )
 }

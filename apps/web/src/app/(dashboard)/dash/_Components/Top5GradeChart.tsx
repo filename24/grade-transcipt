@@ -64,9 +64,9 @@ export default function Top5GradeChart({
       <CardHeader>
         <CardTitle>Хамгийн өндөр 5 дүн</CardTitle>
         <CardDescription>
-          {topFiveSemester1.length === 0
-            ? '2-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'
-            : '1-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'}
+          {topFiveSemester2.length === 0
+            ? '1-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'
+            : '2-р хагас жилийн дүнгийн мэдээлэлээр өндөр дүн тооцоолов.'}
         </CardDescription>
       </CardHeader>
       <CardContent>

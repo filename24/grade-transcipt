@@ -1,6 +1,6 @@
 'use client'
 import { useActionState, useEffect, useState } from 'react'
-import { HotColumn, HotTable } from '@handsontable/react-wrapper'
+import { HotTable } from '@handsontable/react-wrapper'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +13,7 @@ import {
 
 import 'handsontable/styles/handsontable.min.css'
 import 'handsontable/styles/ht-theme-main.min.css'
-import { calculateGradeCode, SnowflakeId } from '@/utils'
+import { calculateGradeCode } from '@/utils'
 import { Status, type Grade } from '@gt/database'
 import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { toast } from 'sonner'
