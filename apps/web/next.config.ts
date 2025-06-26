@@ -15,9 +15,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'svr.knea.space',
-        port: '7000',
+        protocol: 'https',
+        hostname: 'cdn.knea.space',
         pathname: '/grade-transcript/**'
       }
     ]

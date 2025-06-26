@@ -27,13 +27,13 @@ export default function PersonalInfo({ userData }: { userData: User }) {
             <div>
               <span className="mr-2 font-normal">
                 {isVisible
-                  ? userData.registerNumber
-                  : userData.registerNumber.slice(0, 2) +
+                  ? userData.registerNumber.toUpperCase()
+                  : userData.registerNumber.slice(0, 2).toUpperCase() +
                     '*'.repeat(userData.registerNumber.length - 2)}
               </span>
               <button
                 type="button"
-                className={'text-blue-200'}
+                className={'text-link'}
                 onClick={() => setIsVisible(!isVisible)}
               >
                 {isVisible ? 'нуух' : 'харах'}
