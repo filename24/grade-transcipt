@@ -23,7 +23,7 @@ export default function PersonalInfo({ userData }: { userData: User }) {
           </div>
 
           <div className="grid gap-1">
-            <h2 className="font-medium text-lg">Регистрын дугаар</h2>
+            <h2 className="font-medium text-lg">Регистрийн дугаар</h2>
             <div>
               <span className="mr-2 font-normal">
                 {isVisible
