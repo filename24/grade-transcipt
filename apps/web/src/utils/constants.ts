@@ -64,3 +64,4 @@ export type EducationLevel = keyof typeof SEMESTER_DATE
 export const RedisKeys = {
   esisToken: 'gt.knea.esis.token'
 } as const
+export const CDN_ENDPOINT = 'https://cdn.knea.space/grade-transcript'

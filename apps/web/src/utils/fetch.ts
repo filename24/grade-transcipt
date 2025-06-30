@@ -322,12 +322,15 @@ export async function getUnelgeeStudents(
   }
 }
 
-export const getUser = unstable_cache(
-  async (systemId?: string) =>
-    await prisma.user.findFirst({
-      where: {
-        systemId: systemId
-      }
-    }),
-  ['user']
-)
+export async function getUser(systemId?: string) {
+  return unstable_cache(
+    async () =>
+      await prisma.user.findFirst({
+        where: {
+          systemId: systemId
+        }
+      }),
+    [systemId || 'user-unknown'],
+    { tags: ['users', `user-${systemId}`], revalidate: 60 * 5 }
+  )()
+}

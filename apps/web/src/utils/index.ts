@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge'
 import { CourseCode } from '@gt/esis'
 import type { Grade } from '@gt/database'
 import {
+  CDN_ENDPOINT,
   type EducationLevel,
   SEMESTER_DATE,
   type SemesterLevel
@@ -258,3 +259,7 @@ import { Snowflake } from '@sapphire/snowflake'
 
 const epoch = new Date(2023, 9, 1)
 export const SnowflakeId = new Snowflake(epoch)
+
+export function getUserDefaultAvatarUrl(registerNumber: string) {
+  return `${CDN_ENDPOINT}/profile/default_${Number(registerNumber.replace(/\D/g, '')) % 7}.png`
+}
