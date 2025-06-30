@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BarChart3, User, FileCheck } from 'lucide-react'
+import { Home, BarChart3, FileCheck } from 'lucide-react'
 import { cn, getUserDefaultAvatarUrl } from '@/utils'
 import type { Session } from 'next-auth'
 import Image from 'next/image'

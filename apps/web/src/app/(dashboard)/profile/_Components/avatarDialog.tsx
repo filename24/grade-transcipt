@@ -4,16 +4,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Loader2, Pencil } from 'lucide-react'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import type { User } from '@gt/database'
-import type { z } from 'zod'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
@@ -21,7 +17,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage
 } from '@/components/ui/form'
 import Cropper, { type ReactCropperElement } from 'react-cropper'
