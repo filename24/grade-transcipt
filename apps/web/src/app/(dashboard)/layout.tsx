@@ -17,7 +17,7 @@ export default async function DashboardLayout({
         <div className="p-2">{children}</div>
       </main>
       <Footer />
-      <BottomTabBar />
+      <BottomTabBar session={session} />
     </div>
   )
 }

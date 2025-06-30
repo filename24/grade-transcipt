@@ -1,4 +1,5 @@
 'use client'
+
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Button, buttonVariants } from './ui/button'
@@ -9,10 +10,11 @@ import { getCurrentSemesters, getDDay } from '@/utils'
 import { SEMESTER_DATE } from '@/utils/constants'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import ThemeSwitcher from './theme-switcher'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]
-
+  const isMobile = useIsMobile()
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b bg-card backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="flex h-14 items-center">
@@ -68,7 +70,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
                 </Link>
               </HoverCardContent>
             </HoverCard>
-            <UserMenu session={session} />
+            {isMobile ? null : <UserMenu session={session} />}
             <ThemeSwitcher />
           </div>
         </div>

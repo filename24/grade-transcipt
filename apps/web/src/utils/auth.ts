@@ -11,6 +11,15 @@ import { SCHOOL_ID, STUDENT_GROUP_ID } from './constants'
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   debug: process.env.NODE_ENV === 'development',
+  events: {
+    signOut(message) {
+      if ('session' in message && message.session) {
+        console.log('sign out: ', message.session.userId)
+      } else if ('token' in message && message.token) {
+        console.log('sign out: ', message.token.name)
+      }
+    }
+  },
   cookies: {
     csrfToken: { name: 'knea.gt.csrf' },
     sessionToken: { name: 'knea.gt.session' },
@@ -91,7 +100,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               name: true,
               registerNumber: true,
               role: true,
-              systemId: true
+              systemId: true,
+              avatar: true,
+              banner: true
             }
           })
 
@@ -114,6 +125,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 systemId: gradeData.systemId,
                 classId: STUDENT_GROUP_ID,
                 schoolId: SCHOOL_ID
+              },
+              select: {
+                id: true,
+                name: true,
+                registerNumber: true,
+                role: true,
+                systemId: true,
+                avatar: true,
+                banner: true
               }
             })
           }

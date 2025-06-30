@@ -26,6 +26,9 @@ export default function GradeLoading() {
         <h3 className="font-semibold text-2xl tracking-tight">Хичээлийн дүн</h3>
       </div>
 
+      <div className="mb-4">
+        <Skeleton className="h-[160px] w-full" />
+      </div>
       <div className="mb-2">
         <Skeleton className="h-8 w-[180px]" />
       </div>

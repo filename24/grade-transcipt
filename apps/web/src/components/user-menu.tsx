@@ -12,12 +12,25 @@ import {
 import { User2, LogOut } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { CDN_ENDPOINT } from '@/utils/constants'
+import { getUserDefaultAvatarUrl } from '@/utils'
 
 export default function UserMenu({ session }: { session: Session | null }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <User2 />
+        <Image
+          src={
+            session?.user?.avatar
+              ? `${CDN_ENDPOINT}/avatar/${session.user.avatar}.png`
+              : getUserDefaultAvatarUrl(session?.user?.registerNumber || '0')
+          }
+          width={32}
+          height={32}
+          alt="Profile avatar"
+          className="size-8 rounded-lg"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>

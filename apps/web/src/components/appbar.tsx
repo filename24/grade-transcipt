@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BarChart3, User, FileCheck } from 'lucide-react'
-import { cn } from '@/utils'
+import { Home, BarChart3, FileCheck } from 'lucide-react'
+import { cn, getUserDefaultAvatarUrl } from '@/utils'
+import type { Session } from 'next-auth'
+import Image from 'next/image'
+import { CDN_ENDPOINT } from '@/utils/constants'
 
 const subTabs = [
   {
@@ -20,15 +23,10 @@ const subTabs = [
     name: 'Хувийн хэрэг',
     href: '/dash/record',
     icon: FileCheck
-  },
-  {
-    name: 'Profile',
-    href: '/profile',
-    icon: User
   }
 ]
 
-export function BottomTabBar() {
+export function BottomTabBar({ session }: { session: Session | null }) {
   const pathname = usePathname()
 
   return (
@@ -43,19 +41,41 @@ export function BottomTabBar() {
               key={tab.name}
               href={tab.href}
               className={cn(
-                'flex flex-col items-center justify-center px-1 py-4 text-xs transition-colors',
+                'flex flex-col items-center justify-center px-1 py-4 transition-colors',
                 isActive
                   ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <Icon
-                className={cn('mb-1 h-5 w-5', isActive && 'text-primary')}
-              />
-              <span className="text-sm leading-none">{tab.name}</span>
+              <Icon className={cn('mb-1 size-7', isActive && 'text-primary')} />
+              <span className="text-xs leading-none">{tab.name}</span>
             </Link>
           )
         })}
+        <Link
+          key="profile"
+          href="/profile"
+          className={cn(
+            'flex flex-col items-center justify-center px-1 py-4 transition-colors',
+            pathname === '/profile'
+              ? 'text-primary'
+              : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <Image
+            src={
+              session?.user?.avatar
+                ? `${CDN_ENDPOINT}/avatar/${session.user.avatar}.png`
+                : getUserDefaultAvatarUrl(session?.user?.registerNumber || '0')
+            }
+            width={100}
+            height={100}
+            alt="Profile avatar"
+            className="mb-1 size-7 rounded-full"
+          />
+
+          <span className="text-xs leading-none">Profile</span>
+        </Link>
       </div>
     </div>
   )

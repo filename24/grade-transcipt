@@ -7,6 +7,8 @@ declare module 'next-auth' {
     registerNumber: string
     role: Role
     systemId: string
+    avatar: string | null
+    banner: string | null
   }
 }
 
