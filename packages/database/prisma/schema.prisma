@@ -66,6 +66,8 @@ model User {
   registerNumber String
   type           UserType @default(ESIS)
   role           Role
+  avatar         String?
+  banner         String?
 
   grades   Grade[]
   exams    Exam[]
