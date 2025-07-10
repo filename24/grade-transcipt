@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import Head from 'next/head'
 
 export const metadata: Metadata = {
+  applicationName: 'Grade transcript',
   title: 'Knea - Grade transcript',
   description: 'Knea - Grade transcript',
   authors: {
@@ -15,17 +16,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'mn_MN',
-    url: 'https://knea-gt.vercel.app',
     siteName: 'Knea - Grade transcript',
     title: 'Knea - Grade transcript',
     description: 'Сурагчын дүнгийн систем'
   },
   appleWebApp: {
     statusBarStyle: 'black-translucent',
-    title: 'Knea - Grate transcript'
-  },
-  keywords: ['дүнгийн систем', 'knea', 'дүн харах']
+    title: 'Knea - Grade transcript'
+  }
 }
 
 export const viewport: Viewport = {

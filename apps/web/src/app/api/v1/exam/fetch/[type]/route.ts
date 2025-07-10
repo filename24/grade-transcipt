@@ -9,7 +9,7 @@ export async function GET(
     return Response.json(
       {
         data: null,
-        message: 'Params is required'
+        message: 'Params are required'
       },
       { status: 400 }
     )

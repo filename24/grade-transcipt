@@ -2,6 +2,17 @@ import { getStudentGradeRecords } from '@/utils/fetch'
 import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import RecordLayout from './_Components/RecordLayout'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Knea - Хувийн хэрэг',
+  openGraph: {
+    type: 'website',
+    siteName: 'Knea - Хувийн хэрэг',
+    title: 'Knea - Хувийн хэрэг',
+    description: 'Сурагчын дүнгийн систем'
+  }
+}
 
 export default async function RecordPage() {
   const session = await auth()

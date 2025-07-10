@@ -4,6 +4,17 @@ import { redirect } from 'next/navigation'
 import PersonalInfo from './_Components/personalInfo'
 import AvatarDialog from './_Components/avatarDialog'
 import DangerZone from './_Components/dangerZone'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Knea - Profile',
+  openGraph: {
+    type: 'website',
+    siteName: 'Knea - Profile',
+    title: 'Knea - Profile',
+    description: 'Сурагчын дүнгийн систем'
+  }
+}
 
 export default async function Profile() {
   const session = await auth()

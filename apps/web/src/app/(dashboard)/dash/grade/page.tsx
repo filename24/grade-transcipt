@@ -5,6 +5,17 @@ import { redirect } from 'next/navigation'
 import type { GradeTableData } from './_Components/GradeTable'
 import GradeLayout from './_Components/GradeLayout'
 import { getStudentGrade } from '@/utils/fetch'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Knea - Хичээлийн дүн',
+  openGraph: {
+    type: 'website',
+    siteName: 'Knea - Хичээлийн дүн',
+    title: 'Knea - Хичээлийн дүн',
+    description: 'Сурагчын дүнгийн систем'
+  }
+}
 
 export default async function GradePage() {
   const session = await auth()
