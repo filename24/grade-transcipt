@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.knea.space',
+        hostname: 'cdn.flnm.dev',
         pathname: '/grade-transcript/**'
       }
     ]
