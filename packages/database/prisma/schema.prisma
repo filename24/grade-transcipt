@@ -59,15 +59,16 @@ model User {
   classId  String
   systemId String @unique
 
-  firstName      String?
-  lastName       String?
-  name           String
-  email          String?
-  registerNumber String
-  type           UserType @default(ESIS)
-  role           Role
-  avatar         String?
-  banner         String?
+  firstName            String?
+  lastName             String?
+  name                 String
+  email                String?
+  registerNumber       String
+  type                 UserType @default(ESIS)
+  role                 Role
+  avatar               String?
+  banner               String?
+  currectAcademicLevel Int      @default(12)
 
   grades   Grade[]
   exams    Exam[]
