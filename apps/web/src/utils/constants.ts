@@ -8,45 +8,61 @@ export const SEMESTER_DATE = {
   ELEMENTARY: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2025-12-15')
+      END: new Date('2025-12-13')
     },
     2: {
       START: new Date('2026-01-26'),
-      END: new Date('2026-04-07')
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
-      END: new Date('2026-06-09')
+      START: new Date('2026-04-13'),
+      END: new Date('2026-06-13')
     }
   },
   MIDDLE: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2025-12-22')
+      END: new Date('2025-12-20')
     },
     2: {
       START: new Date('2026-01-26'),
-      END: new Date('2026-04-07')
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
-      END: new Date('2026-06-16')
+      START: new Date('2026-04-13'),
+      END: new Date('2026-06-13')
     }
   },
   HIGH: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2026-12-22')
+      END: new Date('2026-12-20')
     },
     2: {
       START: new Date('2026-01-26'),
-      END: new Date('2026-04-07')
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
+      START: new Date('2026-04-13'),
       END: new Date('2026-06-13')
     }
   }
+}
+
+export const FREE_LEARNING_WEEK = [
+  {
+    START: new Date('2025-10-20'),
+    END: new Date('2025-10-26')
+  },
+  {
+    START: new Date('2026-03-30'),
+    END: new Date('2026-04-5')
+  },
+]
+
+export const EXAM_DATE = {
+  START: new Date('2026-06-8'),
+  END: new Date('2026-06-12')
 }
 
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
