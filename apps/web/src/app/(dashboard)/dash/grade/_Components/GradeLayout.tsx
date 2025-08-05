@@ -22,6 +22,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { GradeStatus } from '@gt/esis'
 import { Badge } from '@/components/ui/badge'
+import { CURRECT_SEMESTER } from '@/utils/constants'
 
 export default function GradeLayout({
   semester1,
@@ -92,7 +93,7 @@ export default function GradeLayout({
 
       <div className="flex flex-row justify-between">
         <Select
-          defaultValue="2"
+          defaultValue={String(CURRECT_SEMESTER + 1)}
           onValueChange={(value: '1' | '2') => {
             setSelects(value === '1' ? semester1 : semester2)
           }}

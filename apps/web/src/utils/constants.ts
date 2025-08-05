@@ -36,7 +36,7 @@ export const SEMESTER_DATE = {
   HIGH: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2026-12-20')
+      END: new Date('2025-12-20')
     },
     2: {
       START: new Date('2026-01-26'),
@@ -66,7 +66,7 @@ export const EXAM_DATE = {
 }
 
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
-export const ACADEMIC_YEAR = '2025' as const
+export const ACADEMIC_YEAR = '2024' as const
 
 /**
  * Class ID
