@@ -2,51 +2,67 @@
  * 0 - 1 semester
  * 1 - 2 semester
  */
-export const CURRECT_SEMESTER = 1
+export const CURRECT_SEMESTER = 0
 
 export const SEMESTER_DATE = {
   ELEMENTARY: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2025-12-23')
+      END: new Date('2025-12-13')
     },
     2: {
-      START: new Date('2026-01-24'),
-      END: new Date('2026-04-07')
+      START: new Date('2026-01-26'),
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
-      END: new Date('2026-06-09')
+      START: new Date('2026-04-13'),
+      END: new Date('2026-06-13')
     }
   },
   MIDDLE: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2025-12-30')
+      END: new Date('2025-12-20')
     },
     2: {
-      START: new Date('2026-01-24'),
-      END: new Date('2026-04-07')
+      START: new Date('2026-01-26'),
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
-      END: new Date('2026-06-16')
+      START: new Date('2026-04-13'),
+      END: new Date('2026-06-13')
     }
   },
   HIGH: {
     1: {
       START: new Date('2025-09-01'),
-      END: new Date('2026-01-06')
+      END: new Date('2025-12-20')
     },
     2: {
-      START: new Date('2026-01-24'),
-      END: new Date('2026-04-07')
+      START: new Date('2026-01-26'),
+      END: new Date('2026-04-04')
     },
     3: {
-      START: new Date('2026-04-14'),
+      START: new Date('2026-04-13'),
       END: new Date('2026-06-13')
     }
   }
+}
+
+export const FREE_LEARNING_WEEK = [
+  {
+    START: new Date('2025-10-20'),
+    END: new Date('2025-10-26')
+  },
+  {
+    START: new Date('2026-03-30'),
+    END: new Date('2026-04-5')
+  }
+]
+
+export const EXAM_DATE = {
+  START: new Date('2026-06-8'),
+  END: new Date('2026-06-12')
 }
 
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
@@ -55,7 +71,7 @@ export const ACADEMIC_YEAR = '2024' as const
 /**
  * Class ID
  */
-export const STUDENT_GROUP_ID = '100004237680887'
+export const STUDENT_GROUP_ID = '100005190720739'
 export const SCHOOL_ID = '40301'
 
 export type SemesterLevel = 1 | 2 | 3

@@ -84,7 +84,7 @@
       BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
       "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic",
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-    --radius: 0.5rem;
+    --radius: 0.625rem;
     --background: 220 23.076923191547394% 94.90196108818054%; /* base */
     --foreground: 240 10% 3.9%; /* text */
 
@@ -135,12 +135,12 @@
     --link: #1e66f5;
   }
   .dark {
-    --radius: 0.5rem;
+    --radius: 0.625rem;
     --background: 240, 23%, 9%; /* base */
     --foreground: 226 63.93442749977112% 88.03921341896057%; /* text */
 
     --muted: 237 16.239316761493683% 22.94117659330368%; /* surface0 */
-    --muted-foreground: 227 35.29411852359772% 80.0000011920929%; /* subtext1 */
+    --muted-foreground: 227 35% 80%; /* subtext1 */
 
     --popover: 240 21.052631735801697% 14.901961386203766%; /* base */
     --popover-foreground: 226 63.93442749977112% 88.03921341896057%; /* text */

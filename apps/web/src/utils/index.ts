@@ -5,6 +5,9 @@ import type { Grade } from '@gt/database'
 import {
   CDN_ENDPOINT,
   type EducationLevel,
+  EXAM_DATE,
+  FREE_LEARNING_WEEK,
+  GRADUATION_DATE,
   SEMESTER_DATE,
   type SemesterLevel
 } from './constants'
@@ -92,35 +95,51 @@ export function countGrades(gradesArray: Grade[]): GradeCounts {
 }
 
 /**
+ * 특정 날짜를 입력받아 오늘과의 차이에 따라 D-Day 숫자를 반환하는 함수
+ * 0 일경우 D-Day
+ * `-number` 일경우 D-number
+ * `+number` 일경우 D+number
+ * @param targetDate 목표 날짜 (Date 형식)
+ * @param returnType 받을 타입 (string | number)
+ * @returns 목표 날짜까지 남은 일 수에 따른 day 숫자
+ */
+export function getDDay(targetDate: Date, returnType: 'number'): number
+/**
  * 특정 날짜를 입력받아 오늘과의 차이에 따라 D-Day 문구를 반환하는 함수
  * @param targetDate 목표 날짜 (Date 형식)
+ * @param returnType 받을 타입 (string | number)
  * @returns 목표 날짜까지 남은 일 수에 따른 D-Day 문자열
  */
-export function getDDay(targetDate: Date): string {
-  const today = new Date()
-  const currentDate = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  )
-  const eventDate = new Date(
-    targetDate.getFullYear(),
-    targetDate.getMonth(),
-    targetDate.getDate()
-  )
+export function getDDay(targetDate: Date, returnType: 'string'): string
+/**
+ * 특정 날짜를 입력받아 오늘과의 차이에 따라 D-Day 문구를 반환하는 함수
+ * @param targetDate 목표 날짜 (Date 형식)
+ * @param returnType 받을 타입 (string | number)
+ * @returns 목표 날짜까지 남은 일 수에 따른 D-Day 문자열
+ */
+export function getDDay(targetDate: Date): string
+export function getDDay(
+  targetDate: Date,
+  returnType: 'string' | 'number' = 'string'
+): string | number {
+  const today = Date.now()
 
-  const diffTime = eventDate.getTime() - currentDate.getTime()
-
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24))
+  const diffDays = Math.max(
+    0,
+    Math.ceil((targetDate.getTime() - today) / (1000 * 60 * 60 * 24))
+  )
 
   if (diffDays === 0) {
-    return 'D-Day'
+    if (returnType === 'string') return 'D-Day'
+    return 0
   }
   if (diffDays > 0) {
-    return `D-${diffDays}`
+    if (returnType === 'string') return `D-${diffDays}`
+    return Number(`-${diffDays}`)
   }
 
-  return `D+${Math.abs(diffDays)}`
+  if (returnType === 'string') return `D+${Math.abs(diffDays)}`
+  return diffDays
 }
 
 /**
@@ -262,4 +281,53 @@ export const SnowflakeId = new Snowflake(epoch)
 
 export function getUserDefaultAvatarUrl(registerNumber: string) {
   return `${CDN_ENDPOINT}/profile/default_${Number(registerNumber.replace(/\D/g, '')) % 7}.png`
+}
+
+export function makeDashboardMessage(now: Date) {
+  let semesterLevel: 1 | 2 | 3 = 1
+  for (const key of [1, 2, 3] as const) {
+    const { START, END } = SEMESTER_DATE.HIGH[key]
+    if (now >= START && now <= END) {
+      semesterLevel = key
+      break
+    }
+  }
+  const semesterDates = SEMESTER_DATE.HIGH[semesterLevel]
+  const vacationStart = semesterDates.END
+  const vacationEnd = semesterLevel === 1 ? SEMESTER_DATE.HIGH[2].START : null
+
+  const isFreeLearningWeek = FREE_LEARNING_WEEK.some(
+    (w) => now >= w.START && now <= w.END
+  )
+  const isExamWeek = now >= EXAM_DATE.START && now <= EXAM_DATE.END
+  // getDDay가 3번째 인자를 받지 않으므로 직접 계산
+  const graduationDiff = Math.ceil(
+    (GRADUATION_DATE.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  )
+  const isGraduationSoon = graduationDiff <= 30 && graduationDiff > 0
+  const isGraduated = now > GRADUATION_DATE
+  const vacationDiff = vacationEnd
+    ? Math.ceil((vacationEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    : null
+  const vacationStartDiff = Math.ceil(
+    (vacationStart.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+  )
+  const isVacation = now > vacationStart && vacationEnd && now < vacationEnd
+
+  let dashboardMessage = ''
+  if (isGraduated) {
+    dashboardMessage =
+      'Амжилттай төгссөн танд баяр хүргэе. Цаашдын ажилд амжилт хүсье!'
+  } else if (isExamWeek) {
+    dashboardMessage = `${semesterLevel}-р улирал үргэлжилж байна. Улсын шалгалт явагдаж байна.`
+  } else if (isFreeLearningWeek) {
+    dashboardMessage = 'Бие даалтын долоо хоног үргэлжилж байна.'
+  } else if (isVacation) {
+    dashboardMessage = `${semesterLevel}-р улирлын амралт үргэлжилж байна. Амралт дуусахад ${vacationDiff !== null ? vacationDiff : ''} хоног үлдсэн байна.`
+  } else if (isGraduationSoon) {
+    dashboardMessage = `${semesterLevel}-р улирал үргэлжилж байна. Төгсөлт хүртэл ${graduationDiff} хоног үлдсэн байна.`
+  } else {
+    dashboardMessage = `${semesterLevel}-р улирал үргэлжилж байна. ${semesterLevel}-р улирлын амралт эхэлтэл ${vacationStartDiff} хоног үлдсэн байна.`
+  }
+  return dashboardMessage
 }
