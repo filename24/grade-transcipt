@@ -9,12 +9,7 @@ import { ArrowRight, Terminal } from 'lucide-react'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { EXAM_DATE } from '@/utils/constants'
-import {
-  SEMESTER_DATE,
-  FREE_LEARNING_WEEK,
-  GRADUATION_DATE
-} from '@/utils/constants'
-import { getDDay, makeDashboardMessage } from '@/utils'
+import { makeDashboardMessage } from '@/utils'
 
 export default async function DashboardPage() {
   const session = await auth()
