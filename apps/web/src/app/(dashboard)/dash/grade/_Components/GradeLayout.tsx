@@ -1,6 +1,11 @@
 'use client'
-import { Suspense, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+
 import { columns, DataTable, type GradeTableData } from './GradeTable'
+
+import { buttonVariants } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -8,9 +13,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import Link from 'next/link'
-import { buttonVariants } from '@/components/ui/button'
-import { ArrowRight, Terminal } from 'lucide-react'
 import { CURRECT_SEMESTER } from '@/utils/constants'
 
 export default function GradeLayout({

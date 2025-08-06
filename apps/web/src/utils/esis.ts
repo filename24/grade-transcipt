@@ -1,5 +1,6 @@
-import { ESISClient } from '@gt/esis'
 import { redis } from '@gt/database'
+import { ESISClient } from '@gt/esis'
+
 import { RedisKeys } from './constants'
 
 const RETRY_LIMIT = 5

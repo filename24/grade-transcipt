@@ -1,5 +1,7 @@
-import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
+
+import { AppSidebarHeader } from '../_Components/Header'
+
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -7,7 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { AppSidebarHeader } from '../_Components/Header'
+import { auth } from '@/utils/auth'
 export default async function AdminPage() {
   const session = await auth()
 

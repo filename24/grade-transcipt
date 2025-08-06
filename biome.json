@@ -1,9 +1,7 @@
 {
-  "root": false,
   "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "files": {
-    "ignoreUnknown": false,
-    "includes": ["**"]
+    "ignoreUnknown": false
   },
   "linter": {
     "rules": {
@@ -19,8 +17,12 @@
           "level": "error",
           "fix": "safe",
           "options": {
-            "attributes": ["className"],
-            "functions": ["cn"]
+            "attributes": [
+              "className"
+            ],
+            "functions": [
+              "cn"
+            ]
           }
         }
       },
@@ -48,7 +50,13 @@
     "attributePosition": "auto",
     "useEditorconfig": true
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "double",

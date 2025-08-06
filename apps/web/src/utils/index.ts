@@ -1,7 +1,8 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-import { CourseCode } from '@gt/esis'
 import type { Grade } from '@gt/database'
+import { CourseCode } from '@gt/esis'
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
 import {
   CDN_ENDPOINT,
   type EducationLevel,

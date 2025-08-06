@@ -1,22 +1,24 @@
-import type {
-  SubjectCourseData,
-  ResponseData,
-  ExamSession,
-  StudentExamPayload,
-  GradeStatusType
-} from '@gt/esis'
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
-import { resolveClassCode, toSentenceCase } from '.'
-import { unstable_cache } from 'next/cache'
+import type {
+  ExamSession,
+  GradeStatusType,
+  ResponseData,
+  StudentExamPayload,
+  SubjectCourseData
+} from '@gt/esis'
 import axios from 'axios'
+import { unstable_cache } from 'next/cache'
+
+import { resolveClassCode, toSentenceCase } from '.'
+import { ACADEMIC_YEAR } from './constants'
+import esis, { connectEsis } from './esis'
+
 import type {
   AsuulgaData,
   EECResponseData,
   LoginResponse
 } from '@/types/unelgee'
-import esis, { connectEsis } from './esis'
-import { ACADEMIC_YEAR } from './constants'
 
 export const getStudentGradeRecords = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {

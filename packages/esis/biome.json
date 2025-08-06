@@ -1,8 +1,11 @@
 {
+  "root": false,
   "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**"]
+    "includes": [
+      "**"
+    ]
   },
   "linter": {
     "rules": {
@@ -26,7 +29,13 @@
     "attributePosition": "auto",
     "useEditorconfig": true
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "double",

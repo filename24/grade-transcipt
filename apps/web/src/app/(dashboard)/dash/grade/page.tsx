@@ -1,12 +1,13 @@
-import { resolveClassCode } from '@/utils'
-import { auth } from '@/utils/auth'
+import { GradeStatus } from '@gt/esis'
+import { Terminal } from 'lucide-react'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
-import type { GradeTableData } from './_Components/GradeTable'
 import GradeLayout from './_Components/GradeLayout'
-import { getStudentGrade } from '@/utils/fetch'
-import type { Metadata } from 'next'
+import type { GradeTableData } from './_Components/GradeTable'
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,10 +16,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { GradeStatus } from '@gt/esis'
-import { Badge } from '@/components/ui/badge'
-import { Terminal } from 'lucide-react'
+import { resolveClassCode } from '@/utils'
+import { auth } from '@/utils/auth'
+import { getStudentGrade } from '@/utils/fetch'
 
 export const metadata: Metadata = {
   title: 'Knea - Хичээлийн дүн',

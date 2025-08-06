@@ -1,12 +1,14 @@
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import prisma from '@gt/database'
 import * as Sentry from '@sentry/nextjs'
-import { RegisterLoginSchema } from '@/schemas/login'
+import { SignJWT } from 'jose'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import prisma from '@gt/database'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { GradeAuthError } from './error'
-import { SignJWT } from 'jose'
+
 import { SCHOOL_ID, STUDENT_GROUP_ID } from './constants'
+import { GradeAuthError } from './error'
+
+import { RegisterLoginSchema } from '@/schemas/login'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
