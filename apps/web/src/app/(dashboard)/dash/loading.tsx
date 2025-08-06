@@ -1,6 +1,9 @@
 import { Skeleton } from '@/components/ui/skeleton'
+import { makeDashboardMessage } from '@/utils'
 
 export default function DashboardLoading() {
+  const now = new Date()
+  const dashboardMessage = makeDashboardMessage(now)
   return (
     <main>
       <div className="mb-4">
@@ -13,6 +16,7 @@ export default function DashboardLoading() {
             dateStyle: 'full'
           }).format(Date.now())}
         </p>
+        <p className="text-muted-foreground text-sm">{dashboardMessage}</p>
       </div>
 
       <div className="grid gap-4">

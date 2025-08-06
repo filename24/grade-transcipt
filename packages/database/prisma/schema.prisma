@@ -68,7 +68,7 @@ model User {
   role                 Role
   avatar               String?
   banner               String?
-  currectAcademicLevel Int      @default(12)
+  currectAcademicLevel Int
 
   grades   Grade[]
   exams    Exam[]

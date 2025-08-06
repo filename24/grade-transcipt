@@ -7,6 +7,19 @@ import GradeLayout from './_Components/GradeLayout'
 import { getStudentGrade } from '@/utils/fetch'
 import type { Metadata } from 'next'
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { GradeStatus } from '@gt/esis'
+import { Badge } from '@/components/ui/badge'
+import { Terminal } from 'lucide-react'
+
 export const metadata: Metadata = {
   title: 'Knea - Хичээлийн дүн',
   openGraph: {
@@ -17,8 +30,13 @@ export const metadata: Metadata = {
   }
 }
 
-export default async function GradePage() {
+export default async function GradePage({
+  searchParams
+}: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>
+}) {
   const session = await auth()
+  const params = await searchParams
 
   if (!session?.user?.name) {
     return redirect('/login')
@@ -27,8 +45,16 @@ export default async function GradePage() {
     redirect('/teacher')
   }
 
-  const semester1GradeRaw = await getStudentGrade(session.user.systemId, 1)
-  const semester2GradeRaw = await getStudentGrade(session.user.systemId, 2)
+  const semester1GradeRaw = await getStudentGrade(
+    session.user.systemId,
+    1,
+    params?.academicYear
+  )
+  const semester2GradeRaw = await getStudentGrade(
+    session.user.systemId,
+    2,
+    params?.academicYear
+  )
 
   const semester1Data = semester1GradeRaw.map(
     (grade): GradeTableData => ({
@@ -50,5 +76,67 @@ export default async function GradePage() {
     })
   )
 
-  return <GradeLayout semester1={semester1Data} semester2={semester2Data} />
+  return (
+    <main>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/dash">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Хичээлийн дүн</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="mb-4">
+        <h3 className="font-semibold text-2xl tracking-tight">Хичээлийн дүн</h3>
+      </div>
+
+      <Alert className="mb-4">
+        <Terminal />
+        <AlertTitle>Дүнгийн төлөвийн мэдээлэл</AlertTitle>
+        <AlertDescription className="grid gap-2">
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#c0f1b6] text-[#548164] dark:bg-[#375841] dark:text-[#64d88d]"
+            >
+              {GradeStatus.APPROVED}
+            </Badge>{' '}
+            Дүн менежерээр батлуулагдсан
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#c1e6f4] text-[#487CA5] dark:bg-[#2f4469] dark:text-[#63a1fc]"
+            >
+              {GradeStatus.NEW}
+            </Badge>{' '}
+            Мэргэжлийн багш дүнгээ шивсэн
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#eedeaa] text-[#C29343] dark:bg-[#836534] dark:text-[#e4ab43]"
+            >
+              {GradeStatus.PENDING}
+            </Badge>{' '}
+            Мэргэжлийн багш дүнгээ менежерт илгээсэн
+          </div>
+          <div>
+            <Badge
+              variant="secondary"
+              className="bg-[#f6baba] text-[#C4554D] dark:bg-[#673932] dark:text-[#e66359]"
+            >
+              {GradeStatus.REJECTED}
+            </Badge>{' '}
+            Мэргэжлийн багш эсвэл менежерийн хүсэлтээр дүн цуцалсан
+          </div>
+        </AlertDescription>
+      </Alert>
+
+      <GradeLayout semester1={semester1Data} semester2={semester2Data} />
+    </main>
+  )
 }

@@ -98,11 +98,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             select: {
               id: true,
               name: true,
-              registerNumber: true,
               role: true,
               systemId: true,
               avatar: true,
-              banner: true
+              banner: true,
+              currectAcademicLevel: true
             }
           })
 
@@ -124,16 +124,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 role: 'STUDENT',
                 systemId: gradeData.systemId,
                 classId: STUDENT_GROUP_ID,
-                schoolId: SCHOOL_ID
+                schoolId: SCHOOL_ID,
+                currectAcademicLevel: Number(
+                  gradeData.classGrade.replace(/\D/g, '')
+                )
               },
               select: {
                 id: true,
                 name: true,
-                registerNumber: true,
                 role: true,
                 systemId: true,
                 avatar: true,
-                banner: true
+                banner: true,
+                currectAcademicLevel: true
               }
             })
           }

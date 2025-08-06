@@ -25,7 +25,10 @@ export default async function GradePage() {
     redirect('/teacher')
   }
 
-  const examDataRaw = await getStudentExams(session.user.systemId)
+  const examDataRaw = await getStudentExams(
+    session.user.systemId,
+    String(session.user.currectAcademicLevel)
+  )
 
   const data = examDataRaw.map(
     (exam): ExamTableData => ({
