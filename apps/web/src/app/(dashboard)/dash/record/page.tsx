@@ -1,8 +1,10 @@
-import { getStudentGradeRecords } from '@/utils/fetch'
-import { auth } from '@/utils/auth'
-import { redirect } from 'next/navigation'
-import RecordLayout from './_Components/RecordLayout'
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+
+import RecordLayout from './_Components/RecordLayout'
+
+import { auth } from '@/utils/auth'
+import { getStudentGradeRecords } from '@/utils/fetch'
 
 export const metadata: Metadata = {
   title: 'Knea - Хувийн хэрэг',

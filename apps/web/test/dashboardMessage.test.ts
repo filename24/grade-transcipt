@@ -1,10 +1,10 @@
-import {
-  SEMESTER_DATE,
-  FREE_LEARNING_WEEK,
-  EXAM_DATE,
-  GRADUATION_DATE
-} from '../src/utils/constants'
 import { makeDashboardMessage } from '../src/utils'
+import {
+  EXAM_DATE,
+  FREE_LEARNING_WEEK,
+  GRADUATION_DATE,
+  SEMESTER_DATE
+} from '../src/utils/constants'
 
 describe('Dashboard message by date', () => {
   it('shows graduation message after graduation date', () => {

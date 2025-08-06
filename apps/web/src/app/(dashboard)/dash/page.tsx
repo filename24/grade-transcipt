@@ -1,15 +1,17 @@
 import { ArrowRight, Terminal } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+
+import GradeAverage from './_Components/GradeAverage'
+import GradePieChart from './_Components/GradePieChart'
+import Top5GradeChart from './_Components/Top5GradeChart'
+
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { buttonVariants } from '@/components/ui/button'
 import { makeDashboardMessage } from '@/utils'
 import { auth } from '@/utils/auth'
 import { EXAM_DATE } from '@/utils/constants'
 import { getStudentGrade } from '@/utils/fetch'
-import GradeAverage from './_Components/GradeAverage'
-import GradePieChart from './_Components/GradePieChart'
-import Top5GradeChart from './_Components/Top5GradeChart'
 
 export default async function DashboardPage() {
   const session = await auth()

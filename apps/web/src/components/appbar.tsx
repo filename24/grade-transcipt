@@ -1,11 +1,12 @@
 'use client'
 
+import { BarChart3, FileCheck, Home } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BarChart3, FileCheck } from 'lucide-react'
-import { cn, getUserDefaultAvatarUrl } from '@/utils'
 import type { Session } from 'next-auth'
-import Image from 'next/image'
+
+import { cn, getUserDefaultAvatarUrl } from '@/utils'
 import { CDN_ENDPOINT } from '@/utils/constants'
 
 const subTabs = [
@@ -66,7 +67,7 @@ export function BottomTabBar({ session }: { session: Session | null }) {
             src={
               session?.user?.avatar
                 ? `${CDN_ENDPOINT}/avatar/${session.user.avatar}.png`
-                : getUserDefaultAvatarUrl(session?.user?.registerNumber || '0')
+                : getUserDefaultAvatarUrl(session?.user?.systemId || '0')
             }
             width={100}
             height={100}

@@ -1,6 +1,8 @@
 'use client'
 import { Suspense } from 'react'
+
 import { columns, DataTable, type ExamTableData } from './ExamTable'
+
 import {
   Breadcrumb,
   BreadcrumbItem,

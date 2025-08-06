@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
-import { auth } from '@/utils/auth'
-import { getStudentExams } from '@/utils/fetch'
 import ExamLayout from './_Components/ExamLayout'
 import type { ExamTableData } from './_Components/ExamTable'
+
+import { auth } from '@/utils/auth'
+import { getStudentExams } from '@/utils/fetch'
 
 export const metadata: Metadata = {
   title: 'Knea - Шалгалтын дүн',

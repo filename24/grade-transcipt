@@ -1,9 +1,10 @@
 'use client'
 
+import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useState } from 'react'
+
 import { Button } from './ui/button'
-import { Moon, Sun } from 'lucide-react'
 
 function ThemeSwitcher() {
   const { setTheme, theme } = useTheme()

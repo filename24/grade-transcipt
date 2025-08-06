@@ -1,3 +1,17 @@
+import {
+  CourseCode,
+  CourseCodeKeys,
+  GradeStatus,
+  GradeStatusKeys,
+  type GradeStatusType
+} from '@gt/esis'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { type Dispatch, type SetStateAction, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+import type { GradeConfig } from './Gradetable'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,17 +23,9 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import { Form, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useState, type Dispatch, type SetStateAction } from 'react'
-import type { GradeConfig } from './Gradetable'
-import {
-  GradeStatus,
-  GradeStatusKeys,
-  type GradeStatusType,
-  CourseCodeKeys,
-  CourseCode
-} from '@gt/esis'
 import {
   Select,
   SelectContent,
@@ -27,10 +33,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormField, FormItem } from '@/components/ui/form'
 
 const FormSchema = z.object({
   className: z.string().optional(),
@@ -40,11 +42,9 @@ const FormSchema = z.object({
 })
 
 export function GradeConfigDialog({
-  config,
   setConfig
 }: {
   setConfig: Dispatch<SetStateAction<GradeConfig>>
-  config: GradeConfig
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema)

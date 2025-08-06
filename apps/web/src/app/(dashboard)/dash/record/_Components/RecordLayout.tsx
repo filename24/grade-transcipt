@@ -1,15 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 'use client'
 import { useState } from 'react'
+
+import type { AcademicYearData } from '../page'
 import { columns, DataTable } from './RecordTable'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { filterUniqueClassNames } from '@/utils'
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,7 +13,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import type { AcademicYearData } from '../page'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { filterUniqueClassNames } from '@/utils'
 import type { StudentGradeRecord } from '@/utils/fetch'
 
 export default function RecordLayout({

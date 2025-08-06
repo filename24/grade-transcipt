@@ -1,6 +1,11 @@
 'use client'
 
+import { LogOut, User2 } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import type { Session } from 'next-auth'
+import { signOut } from 'next-auth/react'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { User2, LogOut } from 'lucide-react'
-import { signOut } from 'next-auth/react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { CDN_ENDPOINT } from '@/utils/constants'
 import { getUserDefaultAvatarUrl } from '@/utils'
+import { CDN_ENDPOINT } from '@/utils/constants'
 
 export default function UserMenu({ session }: { session: Session | null }) {
   return (
@@ -24,7 +25,7 @@ export default function UserMenu({ session }: { session: Session | null }) {
           src={
             session?.user?.avatar
               ? `${CDN_ENDPOINT}/avatar/${session.user.avatar}.png`
-              : getUserDefaultAvatarUrl(session?.user?.registerNumber || '0')
+              : getUserDefaultAvatarUrl(session?.user?.systemId || '0')
           }
           width={32}
           height={32}

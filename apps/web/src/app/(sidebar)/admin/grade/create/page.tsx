@@ -1,5 +1,8 @@
-import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
+
+import { AppSidebarHeader } from '../../../_Components/Header'
+import GradeTable from './_Components/Gradetable'
+
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -7,8 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { AppSidebarHeader } from '../../../_Components/Header'
-import GradeTable from './_Components/Gradetable'
+import { auth } from '@/utils/auth'
 
 export default async function AdminPage() {
   const session = await auth()

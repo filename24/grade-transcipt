@@ -1,5 +1,6 @@
-import { auth } from '@/utils/auth'
 import { redirect } from 'next/navigation'
+
+import { auth } from '@/utils/auth'
 
 export default async function Home() {
   const session = await auth()

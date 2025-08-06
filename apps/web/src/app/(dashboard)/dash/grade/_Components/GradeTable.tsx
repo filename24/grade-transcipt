@@ -1,5 +1,6 @@
 'use client'
 
+import { type CourseCode, GradeStatus, type GradeStatusType } from '@gt/esis'
 import {
   type ColumnDef,
   flexRender,
@@ -8,7 +9,11 @@ import {
   type SortingState,
   useReactTable
 } from '@tanstack/react-table'
+import { ArrowUpDown } from 'lucide-react'
+import { useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -18,17 +23,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ArrowUpDown } from 'lucide-react'
-import { type CourseCode, GradeStatus, type GradeStatusType } from '@gt/esis'
 import {
   calcAverageGrade,
   calculateGradeCode,
   type GradePointOnly
 } from '@/utils'
 import { ClassIcon } from '@/utils/icons'
-import { Badge } from '@/components/ui/badge'
 
 export type GradeTableData = {
   className: string

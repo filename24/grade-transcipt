@@ -1,8 +1,5 @@
 'use client'
-import { useActionState, useEffect, useState } from 'react'
 import { HotTable } from '@handsontable/react-wrapper'
-
-import { Button } from '@/components/ui/button'
 import {
   AutoColumnSize,
   Autofill,
@@ -10,18 +7,22 @@ import {
   CopyPaste,
   registerPlugin
 } from 'handsontable/plugins'
+import { useActionState, useEffect, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
 
 import 'handsontable/styles/handsontable.min.css'
 import 'handsontable/styles/ht-theme-main.min.css'
-import { calculateGradeCode } from '@/utils'
-import { Status, type Grade } from '@gt/database'
-import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
-import { toast } from 'sonner'
-import { createGrades } from '../actions'
-import { Loader2 } from 'lucide-react'
+import { type Grade, Status } from '@gt/database'
 import type { GradeStatus } from '@gt/esis'
+import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
+import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
+import { createGrades } from '../actions'
 import { GradeConfigDialog } from './GradeConfigDialog'
+
+import { calculateGradeCode } from '@/utils'
 
 registerCellType(NumericCellType)
 
@@ -104,7 +105,7 @@ export default function GradeTable() {
           Reset
         </Button>
 
-        <GradeConfigDialog config={config} setConfig={setConfig} />
+        <GradeConfigDialog setConfig={setConfig} />
       </div>
       <HotTable
         themeName="ht-theme-main-dark-auto"

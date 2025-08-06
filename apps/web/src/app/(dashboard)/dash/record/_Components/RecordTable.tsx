@@ -1,5 +1,6 @@
 'use client'
 
+import type { CourseCode } from '@gt/esis'
 import {
   type ColumnDef,
   flexRender,
@@ -8,7 +9,10 @@ import {
   type SortingState,
   useReactTable
 } from '@tanstack/react-table'
+import { ArrowUpDown } from 'lucide-react'
+import { useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -18,17 +22,13 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ArrowUpDown } from 'lucide-react'
 import {
   calcAverageGrade,
   calculateGradeCode,
   isElementarySchool
 } from '@/utils'
-import { ClassIcon } from '@/utils/icons'
-import type { CourseCode } from '@gt/esis'
 import type { StudentGradeRecord } from '@/utils/fetch'
+import { ClassIcon } from '@/utils/icons'
 
 export type GradeTableData = Omit<StudentGradeRecord, 'schoolName'>
 

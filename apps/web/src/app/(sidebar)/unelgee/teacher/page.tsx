@@ -1,3 +1,5 @@
+import { AppSidebarHeader } from '../../_Components/Header'
+
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -5,7 +7,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { AppSidebarHeader } from '../../_Components/Header'
 
 export default async function TeacherPage() {
   return (

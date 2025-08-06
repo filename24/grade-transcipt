@@ -40,7 +40,7 @@ export async function connectEsis() {
     if (token) {
       try {
         return await esis.connect(token)
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: 오류 예외
       } catch (error: any) {
         if (error.message?.includes('Unauthorized')) {
           esis.emit(

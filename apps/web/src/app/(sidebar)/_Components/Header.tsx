@@ -1,4 +1,5 @@
 'use client'
+
 import ThemeSwitcher from '@/components/theme-switcher'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { SidebarTrigger } from '@/components/ui/sidebar'

@@ -59,6 +59,9 @@
   },
   "assist": {
     "enabled": true,
+    "includes": [
+      "src/**"
+    ],
     "actions": {
       "source": {
         "organizeImports": {

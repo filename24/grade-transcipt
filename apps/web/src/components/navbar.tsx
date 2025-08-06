@@ -1,16 +1,18 @@
 'use client'
 
-import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { Button, buttonVariants } from './ui/button'
 import Image from 'next/image'
-import UserMenu from './user-menu'
+import Link from 'next/link'
 import type { Session } from 'next-auth'
+
+import ThemeSwitcher from './theme-switcher'
+import { Button, buttonVariants } from './ui/button'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
+import UserMenu from './user-menu'
+
+import { useIsMobile } from '@/hooks/use-mobile'
 import { getCurrentSemesters, getDDay } from '@/utils'
 import { SEMESTER_DATE } from '@/utils/constants'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
-import ThemeSwitcher from './theme-switcher'
-import { useIsMobile } from '@/hooks/use-mobile'
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]

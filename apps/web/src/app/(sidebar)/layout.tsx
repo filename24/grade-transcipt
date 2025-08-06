@@ -1,5 +1,6 @@
-import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from './_Components/Sidebar'
+
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { auth } from '@/utils/auth'
 
 export default async function Layout({

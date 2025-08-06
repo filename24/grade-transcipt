@@ -7,7 +7,7 @@ import prisma from '@gt/database'
 import { z } from 'zod'
 
 export async function getUnelgeeData(
-  state: GetUnelgeeDataFormState,
+  _state: GetUnelgeeDataFormState,
   formData: FormData
 ): Promise<GetUnelgeeDataFormState> {
   const schemas = UnelgeeFetchSchema.safeParse({
