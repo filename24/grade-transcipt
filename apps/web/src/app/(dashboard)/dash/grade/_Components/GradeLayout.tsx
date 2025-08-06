@@ -16,7 +16,10 @@ import { CURRECT_SEMESTER } from '@/utils/constants'
 export default function GradeLayout({
   semester1,
   semester2
-}: { semester1: GradeTableData[]; semester2: GradeTableData[] }) {
+}: {
+  semester1: GradeTableData[]
+  semester2: GradeTableData[]
+}) {
   const [select, setSelects] = useState<GradeTableData[]>(
     CURRECT_SEMESTER === 0 ? semester1 : semester2
   )

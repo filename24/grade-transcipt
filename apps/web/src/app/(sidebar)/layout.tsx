@@ -4,7 +4,9 @@ import { auth } from '@/utils/auth'
 
 export default async function Layout({
   children
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode
+}) {
   const session = await auth()
   return (
     <SidebarProvider>

@@ -24,7 +24,10 @@ import type { StudentGradeRecord } from '@/utils/fetch'
 export default function RecordLayout({
   gradeRecords,
   academicYears
-}: { gradeRecords: StudentGradeRecord[]; academicYears: AcademicYearData[] }) {
+}: {
+  gradeRecords: StudentGradeRecord[]
+  academicYears: AcademicYearData[]
+}) {
   const highestAcademicYear = academicYears.reduce((max, current) => {
     return Number.parseInt(current.academicYear) >
       Number.parseInt(max.academicYear)

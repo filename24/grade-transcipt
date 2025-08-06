@@ -42,7 +42,10 @@ const FormSchema = z.object({
 export function GradeConfigDialog({
   config,
   setConfig
-}: { setConfig: Dispatch<SetStateAction<GradeConfig>>; config: GradeConfig }) {
+}: {
+  setConfig: Dispatch<SetStateAction<GradeConfig>>
+  config: GradeConfig
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema)
   })
