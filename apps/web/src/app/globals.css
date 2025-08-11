@@ -54,7 +54,7 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
-  --color-link: var(--link);
+  --color-link: hsl(var(--link));
 }
 
 /*
@@ -94,13 +94,13 @@
     --popover: 220 23.076923191547394% 94.90196108818054%; /* base */
     --popover-foreground: 240 10% 3.9%; /* text */
 
-    --card: 220 23.076923191547394% 94.90196108818054%; /* base */
+    --card: 220 22% 92%; /* base */
     --card-foreground: 240 10% 3.9%; /* text */
 
     --border: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
     --input: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
 
-    --primary: 240, 21%, 10%; /* accent - Blue */
+    --primary: 220 91.49% 53.92%; /* accent - Blue */
     --primary-foreground: 220 23.076923191547394% 94.90196108818054%; /* base */
 
     --secondary: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
@@ -131,7 +131,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    --link: #1e66f5;
+    --link: 220 91% 57%;
   }
   .dark {
     --radius: 0.625rem;
@@ -150,7 +150,7 @@
     --border: 234 13.20754736661911% 31.176471710205078%; /* surface1 */
     --input: 234 13.20754736661911% 31.176471710205078%; /* surface1 */
 
-    --primary: 220, 23%, 95%; /* accent - Blue */
+    --primary: 217 91.87% 75.88%; /* accent - Blue */
     --primary-foreground: 240 21.052631735801697% 14.901961386203766%; /* base */
 
     --secondary: 237 16.239316761493683% 22.94117659330368%; /* surface0 */
@@ -181,7 +181,7 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    --link: 218 93% 83%;
+    --link: 217.2 91.9% 75.9%;
   }
 }
 

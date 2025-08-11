@@ -1,8 +1,10 @@
 'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useState } from 'react'
+import { LogOut } from 'lucide-react'
 import { signOut } from 'next-auth/react'
+import { useState } from 'react'
+
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import { LogOut } from 'lucide-react'
 
 export default function DangerZone() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)

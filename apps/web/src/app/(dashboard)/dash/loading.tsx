@@ -10,7 +10,7 @@ export default function DashboardLoading() {
         <h3 className="font-semibold text-2xl tracking-tight">
           Тавтай морилно уу,
         </h3>
-        <p className="">
+        <p className="text-muted-foreground">
           Өнөөдөр{' '}
           {Intl.DateTimeFormat('mn', {
             dateStyle: 'full'

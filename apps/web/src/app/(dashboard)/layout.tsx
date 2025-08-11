@@ -1,6 +1,6 @@
+import { BottomTabBar } from '@/components/appbar'
 import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
-import { BottomTabBar } from '@/components/appbar'
 import { auth } from '@/utils/auth'
 
 export default async function DashboardLayout({
@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   const session = await auth()
 
   return (
-    <div className="flex min-h-svh flex-1 flex-col border-grid">
+    <div className="flex min-h-dvh flex-1 flex-col border-grid">
       <Navbar session={session} />
       <main className="mx-auto w-full max-w-6xl grow py-4">
         <div className="p-2">{children}</div>
