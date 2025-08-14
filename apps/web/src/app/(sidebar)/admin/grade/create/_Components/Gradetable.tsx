@@ -19,10 +19,10 @@ import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { calculateGradeCode } from '@/utils'
+
 import { createGrades } from '../actions'
 import { GradeConfigDialog } from './GradeConfigDialog'
-
-import { calculateGradeCode } from '@/utils'
 
 registerCellType(NumericCellType)
 
@@ -33,13 +33,7 @@ registerPlugin(ContextMenu)
 
 export type GradeData = Pick<
   Grade,
-  | 'classCode'
-  | 'classGrade'
-  | 'point'
-  | 'registerNumber'
-  | 'displayName'
-  | 'grade'
-  | 'status'
+  'classCode' | 'classGrade' | 'point' | 'displayName' | 'grade' | 'status'
 >
 
 export type GradeConfig = Partial<
@@ -51,7 +45,7 @@ export type GradeConfig = Partial<
 export default function GradeTable() {
   const [state, action, pending] = useActionState(createGrades, undefined)
   const [config, setConfig] = useState<GradeConfig>({})
-  const [data, setData] = useState<GradeData[]>([...generateEmptyData(42)])
+  const [data, setData] = useState<GradeData[]>([...generateEmptyData(45)])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: data 의존시 무한로프 돎
   useEffect(() => {
@@ -99,7 +93,7 @@ export default function GradeTable() {
           type="button"
           className="w-fit"
           onClick={() => {
-            setData([...generateEmptyData(42, config)])
+            setData([...generateEmptyData(45, config)])
           }}
         >
           Reset
@@ -113,26 +107,15 @@ export default function GradeTable() {
         rowHeaders={true}
         dataSchema={{
           displayName: null,
-          registerNumber: null,
           classCode: null,
           classGrade: null,
           point: null,
           grade: null
         }}
-        colHeaders={[
-          'Нэр',
-          'Регистын дугаар',
-          'Хичээлын код',
-          'Анги',
-          'Дүн',
-          'Түвшин'
-        ]}
+        colHeaders={['Нэр', 'Хичээлын код', 'Анги', 'Дүн', 'Түвшин']}
         columns={[
           {
             data: 'displayName'
-          },
-          {
-            data: 'registerNumber'
           },
           {
             data: 'classCode'
@@ -172,7 +155,6 @@ export default function GradeTable() {
 function generateEmptyData(rows: number, config?: GradeConfig): GradeData[] {
   return Array.from({ length: rows }, () => ({
     displayName: '',
-    registerNumber: '',
     classCode: config?.classCode || '',
     classGrade: config?.classGrade || '',
     point: 0,

@@ -1,6 +1,7 @@
+import prisma from '@gt/database'
+
 import { resolveClassCode } from '@/utils'
 import { auth } from '@/utils/auth'
-import prisma from '@gt/database'
 
 export const GET = auth(
   async (

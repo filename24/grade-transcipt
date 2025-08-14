@@ -1,8 +1,9 @@
 'use server'
-import type { z } from 'zod'
-import type { EditGradeSchema } from './_Components/ChangeStateDialog'
-import type { GradeStatusType } from '@gt/esis'
 import prisma from '@gt/database'
+import type { GradeStatusType } from '@gt/esis'
+import type { z } from 'zod'
+
+import type { EditGradeSchema } from './_Components/ChangeStateDialog'
 
 export async function editGradeData(data: z.infer<typeof EditGradeSchema>) {
   const { className, classType, classGrade } = data

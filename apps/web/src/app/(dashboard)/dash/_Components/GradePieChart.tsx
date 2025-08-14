@@ -70,7 +70,7 @@ export default function GradePieChart({
           config={chartConfig}
           className="mx-auto aspect-square max-h-[320px]"
         >
-          <RadarChart data={chartData} margin={{ top: -40, bottom: -10 }}>
+          <RadarChart data={chartData} margin={{ top: -50, bottom: -10 }}>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}

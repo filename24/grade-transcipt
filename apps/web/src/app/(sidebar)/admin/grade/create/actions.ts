@@ -3,60 +3,57 @@
 import '@gt/database'
 import prisma, { type Grade } from '@gt/database'
 
-import type { GradeData } from './_Components/Gradetable'
-
 import { SnowflakeId } from '@/utils'
 import { ACADEMIC_YEAR, CURRECT_SEMESTER } from '@/utils/constants'
+
+import type { GradeData } from './_Components/Gradetable'
 
 export async function createGrades(
   _state: GetUnelgeeDataFormState,
   gradeData: GradeData[]
 ): Promise<GetUnelgeeDataFormState> {
   const reslovedData: Omit<Grade, 'id'>[] = []
+  try {
+    const users = await prisma.user.findMany()
+    for (let index = 0; index < gradeData.length; index++) {
+      const item = gradeData[index]
+      const user = users.find((user) => user.name === item.displayName)
 
-  const users = await prisma.user.findMany()
-  for (let index = 0; index < gradeData.length; index++) {
-    const item = gradeData[index]
-    const user = users.find(
-      (user) =>
-        user.registerNumber === item.registerNumber &&
-        user.name === item.displayName
-    )
-
-    if (!item.point) {
-      continue
-    }
-    if (item.point === 0) {
-      continue
-    }
-    if (!user) {
-      return {
-        errors: {
-          message: `Сурагчын мэдээлэл олдсонгүй. Регистрын дугаар: ${item.registerNumber}, Нэр: ${item.displayName}`
+      if (!item.point) {
+        continue
+      }
+      if (item.point === 0) {
+        continue
+      }
+      if (!user) {
+        return {
+          errors: {
+            message: `Сурагчын мэдээлэл олдсонгүй. Нэр: ${item.displayName}`
+          }
         }
       }
+
+      reslovedData.push({
+        displayName: item.displayName,
+        registerNumber:
+          users.find((user) => user.name === item.displayName)
+            ?.registerNumber || '',
+        classCode: item.classCode,
+        classGrade: item.classGrade,
+        point: Number(item.point),
+        grade: item.grade,
+        academicYear: ACADEMIC_YEAR,
+        gradeId: SnowflakeId.generate().toString(),
+        status: item.status,
+        className: null,
+        semester: CURRECT_SEMESTER + 1,
+        teacherName: null,
+        termId: null,
+        systemId:
+          users.find((user) => user.name === item.displayName)?.systemId || ''
+      })
     }
 
-    reslovedData.push({
-      displayName: item.displayName,
-      registerNumber: item.registerNumber,
-      classCode: item.classCode,
-      classGrade: item.classGrade,
-      point: Number(item.point),
-      grade: item.grade,
-      academicYear: ACADEMIC_YEAR,
-      gradeId: SnowflakeId.generate().toString(),
-      status: item.status,
-      className: null,
-      semester: CURRECT_SEMESTER + 1,
-      teacherName: null,
-      termId: null,
-      systemId:
-        users.find((user) => user.registerNumber === item.registerNumber)
-          ?.systemId || ''
-    })
-  }
-  try {
     const payload = await prisma.grade.createMany({
       data: reslovedData
     })
