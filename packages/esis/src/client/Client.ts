@@ -1,12 +1,12 @@
+import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter'
 import { decodeJwt } from 'jose'
 import {
-  type If,
-  type TokenData,
+  type ClientEventsTypes,
   ESIS_BASE_URL,
+  type If,
   type ResponseData,
-  type ClientEventsTypes
+  type TokenData
 } from '../'
-import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter'
 
 export class ESISClient<
   Ready extends boolean = boolean
@@ -67,7 +67,6 @@ export class ESISClient<
             'debug',
             'Client received organization info. Marking as fully ready.'
           )
-          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           this.data = tokenData as any
           this.#token = token
           this._ready = true as Ready

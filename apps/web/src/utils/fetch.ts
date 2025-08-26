@@ -4,21 +4,22 @@ import type {
   ExamSession,
   GradeStatusType,
   ResponseData,
+  Student,
   StudentExamPayload,
   SubjectCourseData
 } from '@gt/esis'
 import axios from 'axios'
 import { unstable_cache } from 'next/cache'
 
-import { resolveClassCode, toSentenceCase } from '.'
-import { ACADEMIC_YEAR } from './constants'
-import esis, { connectEsis } from './esis'
-
 import type {
   AsuulgaData,
   EECResponseData,
   LoginResponse
 } from '@/types/unelgee'
+
+import { resolveClassCode, toSentenceCase } from '.'
+import { ACADEMIC_YEAR } from './constants'
+import esis, { connectEsis } from './esis'
 
 export const getStudentGradeRecords = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {
@@ -340,4 +341,30 @@ export async function getUser(systemId?: string) {
     [systemId || 'user-unknown'],
     { tags: ['users', `user-${systemId}`], revalidate: 60 * 5 }
   )()
+}
+
+export async function fetchUserInfo(
+  groupId: string
+): Promise<Student[] | undefined>
+export async function fetchUserInfo(
+  groupId: string,
+  systemId: string
+): Promise<Student | undefined>
+export async function fetchUserInfo(
+  groupId: string,
+  systemId?: string
+): Promise<Student | Student[] | undefined> {
+  const groupStudents = await esis.get<ResponseData<Student[]>>(
+    `/svc/api/hub/group/student/list/${groupId}`,
+    { cache: 'force-cache' }
+  )
+
+  if (systemId) {
+    const student = groupStudents.find(
+      (s) => String(s.PERSON_ID) === String(systemId)
+    )
+    return student
+  }
+
+  return groupStudents
 }

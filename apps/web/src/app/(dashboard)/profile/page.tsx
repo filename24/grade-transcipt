@@ -1,10 +1,13 @@
-import { auth } from '@/utils/auth'
-import { getUser } from '@/utils/fetch'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import PersonalInfo from './_Components/personalInfo'
+
+import { auth } from '@/utils/auth'
+import { fetchUserInfo, getUser } from '@/utils/fetch'
+
 import AvatarDialog from './_Components/avatarDialog'
 import DangerZone from './_Components/dangerZone'
-import type { Metadata } from 'next'
+import PersonalInfo from './_Components/personalInfo'
+import SystemInfo from './_Components/systemInfo'
 
 export const metadata: Metadata = {
   title: 'Knea - Profile',
@@ -22,6 +25,7 @@ export default async function Profile() {
   const userData = await getUser(session?.user?.systemId)
 
   if (!userData) return redirect('/login')
+  const systemData = await fetchUserInfo(userData.classId, userData.systemId)
 
   return (
     <main>
@@ -34,9 +38,13 @@ export default async function Profile() {
           <h1 className="font-bold text-2xl">{userData.name}</h1>
         </div>
 
-        <div className="grid gap-2">
+        <div className="mb-2 grid gap-2 md:grid-cols-2">
           <PersonalInfo userData={userData} />
 
+          {systemData && <SystemInfo systemData={systemData} />}
+        </div>
+
+        <div className="grid gap-2">
           <DangerZone />
         </div>
       </div>
