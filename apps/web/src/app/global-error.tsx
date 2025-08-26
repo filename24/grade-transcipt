@@ -1,7 +1,10 @@
 'use client'
 import * as Sentry from '@sentry/nextjs'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect } from 'react'
+
+import { Button, buttonVariants } from '@/components/ui/button'
 
 export default function RootErrorHandler({
   error
@@ -12,6 +15,9 @@ export default function RootErrorHandler({
     Sentry.captureException(error)
   }, [error])
 
+  const handleReload = () => {
+    window.location.reload() // Forces a full browser reload
+  }
   return (
     <html lang="mn">
       <head>
@@ -37,29 +43,29 @@ export default function RootErrorHandler({
         />
         <style>
           {`
-          html,body {
-            font-family: font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-            height: auto;
-            min-height: 100vh;
-            width: 100%;
-            max-width: 100vw;
-            background-color: #ffffff;
-            color: #1e1e2e;
-            font-size: 16px;
-          }
-          
-          @media (prefers-color-scheme: dark) {
-            html,body {
-              background-color: #1e1e2e;
-              color: #ffffff;
-            }
-          }
-          .lg\:w-2\/6 {
-            @media (width >= 64rem /* 1024px */) {
-              width: calc(2/6 * 100%);
-            }
-          }
-        `}
+                html,body {
+                  font-family: font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+                  height: auto;
+                  min-height: 100vh;
+                  width: 100%;
+                  max-width: 100vw;
+                  background-color: #ffffff;
+                  color: #1e1e2e;
+                  font-size: 16px;
+                }
+                
+                @media (prefers-color-scheme: dark) {
+                  html,body {
+                    background-color: #1e1e2e;
+                    color: #ffffff;
+                  }
+                }
+                .lg\:w-2\/6 {
+                  @media (width >= 64rem /* 1024px */) {
+                    width: calc(2/6 * 100%);
+                  }
+                }
+              `}
         </style>
       </head>
       <body>
@@ -82,10 +88,21 @@ export default function RootErrorHandler({
             sizes="100vw"
             className="lg:w-2/6"
           />
-          <h1 style={{ fontSize: '4rem', fontWeight: '600' }}>
-            Holyy fu** shit!!
-          </h1>
-          <p>Something veryyyyyyyy wrong. Pls report this</p>
+          <h1 style={{ fontSize: '4rem', fontWeight: '600' }}>Алдаа гарлаа</h1>
+          <p className="text-center">
+            Хуудас ачаалахад алдаа гарлаа.
+            <br />
+            Та дахин оролдоно уу эсвэл эхлэл хуудас руу буцна уу.
+          </p>
+          <div className="flex gap-4">
+            <Button onClick={handleReload}>Дахин оролдох</Button>
+            <Link
+              href="/dash"
+              className={buttonVariants({ variant: 'secondary' })}
+            >
+              Эхлэл рүү буцах
+            </Link>
+          </div>
         </main>
       </body>
     </html>

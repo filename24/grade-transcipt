@@ -13,7 +13,7 @@ export default function PersonalInfo({ userData }: { userData: User }) {
         <CardTitle className="text-lg">Хувийн мэдээлэл</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6">
+        <div className="grid gap-4">
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Овог</h2>
             <span className="font-normal">{userData.lastName}</span>
@@ -21,6 +21,13 @@ export default function PersonalInfo({ userData }: { userData: User }) {
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Нэр</h2>
             <span className="font-normal">{userData.firstName}</span>
+          </div>
+
+          <div className="grid gap-1">
+            <h2 className="font-medium text-lg">Анги</h2>
+            <span className="font-normal">
+              {userData.currectAcademicLevel}-р анги
+            </span>
           </div>
 
           <div className="grid gap-1">
