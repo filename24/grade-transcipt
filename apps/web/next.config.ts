@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
         pathname: '/grade-transcript/**'
       }
     ]
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '30mb'
+    }
   }
 }
 
