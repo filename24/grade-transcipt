@@ -74,7 +74,7 @@ esis.once('ready', () => {
 
 if (!esis.isReady()) {
   esis.emit('debug', 'ESIS server not ready reconnecting...')
-  connectEsis()
+  await connectEsis()
     .then(() => {
       esis.emit('debug', 'ESIS server connected successfully')
     })

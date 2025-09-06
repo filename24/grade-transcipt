@@ -48,7 +48,7 @@ export function BottomTabBar({ session }: { session: Session | null }) {
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <Icon className={cn('mb-1 size-7', isActive && 'text-primary')} />
+              <Icon className={cn('mb-1 size-6', isActive && 'text-primary')} />
               <span className="text-xs leading-none">{tab.name}</span>
             </Link>
           )
@@ -72,7 +72,7 @@ export function BottomTabBar({ session }: { session: Session | null }) {
             width={100}
             height={100}
             alt="Profile avatar"
-            className="mb-1 size-7 rounded-full"
+            className="mb-1 size-6 rounded-full"
           />
 
           <span className="text-xs leading-none">Profile</span>

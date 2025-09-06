@@ -5,14 +5,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Session } from 'next-auth'
 
+import { useIsMobile } from '@/hooks/use-mobile'
+import { getCurrentSemesters, getDDay } from '@/utils'
+import { SEMESTER_DATE } from '@/utils/constants'
+
 import ThemeSwitcher from './theme-switcher'
 import { Button, buttonVariants } from './ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import UserMenu from './user-menu'
-
-import { useIsMobile } from '@/hooks/use-mobile'
-import { getCurrentSemesters, getDDay } from '@/utils'
-import { SEMESTER_DATE } from '@/utils/constants'
 
 const Navbar = ({ session }: { session: Session | null }) => {
   const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]
@@ -49,7 +49,11 @@ const Navbar = ({ session }: { session: Session | null }) => {
                   variant={'ghost'}
                   className="font-extrabold text-muted-foreground"
                 >
-                  {getDDay(semesterDate.START)}
+                  {getDDay(
+                    semesterDate.START >= new Date(Date.now())
+                      ? semesterDate.START
+                      : semesterDate.END
+                  )}
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">

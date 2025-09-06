@@ -16,16 +16,16 @@ export default function PersonalInfo({ userData }: { userData: User }) {
         <div className="grid gap-4">
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Овог</h2>
-            <span className="font-normal">{userData.lastName}</span>
+            <span className="text-sm ">{userData.lastName}</span>
           </div>
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Нэр</h2>
-            <span className="font-normal">{userData.firstName}</span>
+            <span className="text-sm ">{userData.firstName}</span>
           </div>
 
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Анги</h2>
-            <span className="font-normal">
+            <span className="text-sm ">
               {userData.currectAcademicLevel}-р анги
             </span>
           </div>
@@ -33,7 +33,7 @@ export default function PersonalInfo({ userData }: { userData: User }) {
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Регистрийн дугаар</h2>
             <div>
-              <span className="mr-2 font-normal">
+              <span className="mr-2 text-sm ">
                 {isVisible
                   ? userData.registerNumber.toUpperCase()
                   : userData.registerNumber.slice(0, 2).toUpperCase() +

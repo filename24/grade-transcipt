@@ -14,9 +14,13 @@ export default function ProfileLoading() {
           <Skeleton className="h-8 w-48" />
         </div>
 
-        <div className="grid gap-2">
-          <Skeleton className="h-[315px] w-full" />
+        <div className="mb-2 grid gap-2 md:grid-cols-2">
+          <Skeleton className="h-[360px] w-full" />
 
+          <Skeleton className="h-[360px] w-full" />
+        </div>
+
+        <div className="grid gap-2">
           <Skeleton className="h-[135px] w-full" />
         </div>
       </div>
