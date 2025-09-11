@@ -1,7 +1,14 @@
 'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import type { User } from '@gt/database'
 import { Loader2, Pencil } from 'lucide-react'
+import { useRef, useState } from 'react'
+import Cropper, { type ReactCropperElement } from 'react-cropper'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -9,9 +16,12 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import type { User } from '@gt/database'
-import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {
   Form,
   FormControl,
@@ -19,21 +29,14 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form'
-import Cropper, { type ReactCropperElement } from 'react-cropper'
-import { Button } from '@/components/ui/button'
-import { deleteAvatar, uploadAvatar } from '../actions'
-import { toast } from 'sonner'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
 
+import { deleteAvatar, uploadAvatar } from '../actions'
+
 import '@/styles/crop.css'
-import { CDN_ENDPOINT } from '@/utils/constants'
+
 import { getUserDefaultAvatarUrl } from '@/utils'
+import { CDN_ENDPOINT } from '@/utils/constants'
 
 export default function ({ userData }: { userData: User }) {
   const [preview, setPreview] = useState<string | null>(null)
@@ -43,7 +46,7 @@ export default function ({ userData }: { userData: User }) {
   const [avatarUrl, setAvatarUrl] = useState(
     userData.avatar
       ? `${CDN_ENDPOINT}/avatar/${userData.avatar}.png`
-      : getUserDefaultAvatarUrl(userData.registerNumber)
+      : getUserDefaultAvatarUrl(userData.systemId)
   )
   const cropperRef = useRef<ReactCropperElement>(null)
   const form = useForm<{ avatar: File | undefined }>()
