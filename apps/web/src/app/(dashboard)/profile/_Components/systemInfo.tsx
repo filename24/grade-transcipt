@@ -33,7 +33,7 @@ export default function SystemInfo({ systemData }: { systemData: Student }) {
 
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Нууц үг</h2>
-            <div>
+            <div className="items-center-safe flex">
               <span className="mr-2 text-sm">
                 {isVisible ? systemData.MICROSOFT_PASSWORD : '*'.repeat(8)}
               </span>
@@ -44,11 +44,12 @@ export default function SystemInfo({ systemData }: { systemData: Student }) {
               >
                 {isVisible ? 'нуух' : 'харах'}
               </button>
+              <CopyButton textToCopy={systemData.MICROSOFT_PASSWORD} />
             </div>
           </div>
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">bagshsystem.mn нууц үг</h2>
-            <div>
+            <div className="items-center-safe flex">
               <span className="mr-2 text-sm">
                 {isVisible
                   ? formatDateToYYYYMMDD(systemData.DATE_OF_BIRTH)
@@ -61,6 +62,9 @@ export default function SystemInfo({ systemData }: { systemData: Student }) {
               >
                 {isVisible ? 'нуух' : 'харах'}
               </button>
+              <CopyButton
+                textToCopy={formatDateToYYYYMMDD(systemData.DATE_OF_BIRTH)}
+              />
             </div>
           </div>
         </div>

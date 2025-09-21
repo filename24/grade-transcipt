@@ -1,5 +1,9 @@
 'use client'
-import { cn } from '@/utils'
+import { Loader2 } from 'lucide-react'
+import { useActionState } from 'react'
+import { toast } from 'sonner'
+
+import { loginWithRegister } from '@/app/(auth)/login/actions'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -10,10 +14,8 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useActionState } from 'react'
-import { loginWithRegister } from '@/app/(auth)/login/actions'
-import { Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { cn } from '@/utils'
+
 import RegisterUnknow from './RegisterDialog'
 
 export function RegisterLoginForm({
@@ -51,7 +53,7 @@ export function RegisterLoginForm({
                   </p>
                 )}
               </div>
-              <div className="grid gap-3">
+              {/* <div className="grid gap-3">
                 <Label htmlFor="password">Нууц үг</Label>
                 <Input
                   id="password"
@@ -64,8 +66,8 @@ export function RegisterLoginForm({
                   <p className="text-red-400 text-sm">
                     {state.errors.registerNumber}
                   </p>
-                )} */}
-              </div>
+                )} 
+              </div> */}
               <Button type="submit" disabled={pending} className="w-full">
                 {pending ? (
                   <>

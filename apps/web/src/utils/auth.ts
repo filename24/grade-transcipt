@@ -5,10 +5,10 @@ import { SignJWT } from 'jose'
 import NextAuth, { type User } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
+import { RegisterLoginSchema } from '@/schemas/login'
+
 import { SCHOOL_ID, STUDENT_GROUP_ID } from './constants'
 import { GradeAuthError } from './error'
-
-import { RegisterLoginSchema } from '@/schemas/login'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
