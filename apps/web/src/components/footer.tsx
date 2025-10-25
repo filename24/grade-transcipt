@@ -14,9 +14,8 @@ export default function Footer() {
           filename24
         </Link>
         .
-        <p className="text-nowrap">
-          Copyright © {new Date().getFullYear()} - All right reserved by Knea
-          Project and CrativeLab
+        <p className="">
+          Copyright © {new Date().getFullYear()} - Knea Project and CrativeLab
         </p>
       </div>
     </footer>
