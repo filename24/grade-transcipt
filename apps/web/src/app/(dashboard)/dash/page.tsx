@@ -2,10 +2,6 @@ import { ArrowRight, Terminal } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import GradeAverage from './_Components/GradeAverage'
-import GradePieChart from './_Components/GradePieChart'
-import Top5GradeChart from './_Components/Top5GradeChart'
-
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { buttonVariants } from '@/components/ui/button'
 import { makeDashboardMessage } from '@/utils'
@@ -13,8 +9,17 @@ import { auth } from '@/utils/auth'
 import { EXAM_DATE } from '@/utils/constants'
 import { getStudentGrade } from '@/utils/fetch'
 
-export default async function DashboardPage() {
+import GradeAverage from './_Components/GradeAverage'
+import GradePieChart from './_Components/GradePieChart'
+import Top5GradeChart from './_Components/Top5GradeChart'
+
+export default async function DashboardPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>
+}) {
   const session = await auth()
+  const params = await searchParams
 
   if (!session?.user?.name) {
     return redirect('/login')
@@ -24,9 +29,17 @@ export default async function DashboardPage() {
     redirect('/teacher')
   }
 
-  const semester1Grade = await getStudentGrade(session.user.systemId, 1)
+  const semester1Grade = await getStudentGrade(
+    session.user.systemId,
+    1,
+    params?.academicYear
+  )
 
-  const semester2Grade = await getStudentGrade(session.user.systemId, 2)
+  const semester2Grade = await getStudentGrade(
+    session.user.systemId,
+    2,
+    params?.academicYear
+  )
 
   const now = new Date()
   const dashboardMessage = makeDashboardMessage(now)
@@ -67,16 +80,22 @@ export default async function DashboardPage() {
           </AlertDescription>
         </Alert>
       ) : (
-        <Alert>
-          <Terminal />
-          <AlertTitle>Мэдэгдэл</AlertTitle>
-          <AlertDescription>
-            <p>
-              2024-2025 оны хичээлийн жилийн дүнгийн мэдээллийг 9-р сарын
-              20-ноос хойш өөр газар руу шилжүүлэх тул ашиглахдаа анхаарна уу.
-            </p>
-          </AlertDescription>
-        </Alert>
+        !params?.academicYear && (
+          <Alert>
+            <Terminal />
+            <AlertTitle>Мэдэгдэл</AlertTitle>
+            <AlertDescription>
+              <p>
+                2024-2025 оны хичээлийн жилийн дүнгийн мэдээллийг 9-р сарын
+                20-ноос хойш архивлагдсан тул{' '}
+                <Link href={'/dash?academicYear=2024'} className="text-link">
+                  энд дарж
+                </Link>{' '}
+                харна уу.
+              </p>
+            </AlertDescription>
+          </Alert>
+        )
       )}
 
       <div className="grid gap-4 md:grid-cols-2">

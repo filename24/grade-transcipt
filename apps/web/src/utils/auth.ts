@@ -11,6 +11,7 @@ import { SCHOOL_ID, STUDENT_GROUP_ID } from './constants'
 import { GradeAuthError } from './error'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  // @ts-ignore
   adapter: PrismaAdapter(prisma),
   debug: process.env.NODE_ENV === 'development',
   events: {
