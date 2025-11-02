@@ -1,10 +1,11 @@
 'use server'
 
-import { uploadAvatarSchema } from '@/schemas/uploadAvatar'
-import { SnowflakeId } from '@/utils'
 import prisma, { DeleteObjectCommand, PutObjectCommand, s3 } from '@gt/database'
 import { revalidateTag } from 'next/cache'
 import type { z } from 'zod'
+
+import { uploadAvatarSchema } from '@/schemas/uploadAvatar'
+import { SnowflakeId } from '@/utils'
 
 export async function uploadAvatar(
   data: z.infer<typeof uploadAvatarSchema>
@@ -58,7 +59,7 @@ export async function uploadAvatar(
     throw new Error('Серверийн алдаа гарлаа. Та дараа дахин оролдон уу.')
   }
 
-  revalidateTag(`user-${userId}`)
+  revalidateTag(`user-${userId}`, 'max')
   return {
     message:
       'Амжилттай хадгалагдлаа. Хэрэв зураг бүтэн ороогүй тохиолдолд системээс гараад дахин нэвтэрнэ үү',
@@ -102,7 +103,7 @@ export async function deleteAvatar(
     throw new Error('Серверийн алдаа гарлаа. Та дараа дахин оролдон уу.')
   }
 
-  revalidateTag(`user-${systemId}`)
+  revalidateTag(`user-${systemId}`, 'max')
   return {
     message:
       'Амжилттай устгагдлаа. Хэрэв зураг бүтэн ороогүй тохиолдолд системээс гараад дахин нэвтэрнэ үү'

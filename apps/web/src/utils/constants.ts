@@ -66,7 +66,7 @@ export const EXAM_DATE = {
 }
 
 export const GRADUATION_DATE = SEMESTER_DATE.HIGH[3].END
-export const ACADEMIC_YEAR = '2025' as const
+export const CURRECT_ACADEMIC_YEAR = '2025' as const
 
 /**
  * Class ID

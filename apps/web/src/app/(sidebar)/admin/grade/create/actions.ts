@@ -4,7 +4,7 @@ import '@gt/database'
 import prisma, { type Grade } from '@gt/database'
 
 import { SnowflakeId } from '@/utils'
-import { ACADEMIC_YEAR, CURRECT_SEMESTER } from '@/utils/constants'
+import { CURRECT_ACADEMIC_YEAR, CURRECT_SEMESTER } from '@/utils/constants'
 
 import type { GradeData } from './_Components/Gradetable'
 
@@ -42,7 +42,7 @@ export async function createGrades(
         classGrade: item.classGrade,
         point: Number(item.point),
         grade: item.grade,
-        academicYear: ACADEMIC_YEAR,
+        academicYear: CURRECT_ACADEMIC_YEAR,
         gradeId: SnowflakeId.generate().toString(),
         status: item.status,
         className: null,

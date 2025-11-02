@@ -1,9 +1,9 @@
 import { STUDENT_GROUP_ID } from '@/utils/constants'
-import { fetchTestData, type FetchType } from '@/utils/fetch'
+import { type FetchType, fetchTestData } from '@/utils/fetch'
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ type: FetchType }> }
+  { params }: { params: Promise<{ type: string }> }
 ) {
   if (!params) {
     return Response.json(
@@ -14,7 +14,7 @@ export async function GET(
       { status: 400 }
     )
   }
-  const type = (await params).type
+  const type = (await params).type as FetchType
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error

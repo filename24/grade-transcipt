@@ -1,5 +1,7 @@
 'use client'
 
+import type { Grade } from '@gt/database'
+
 import {
   Card,
   CardContent,
@@ -9,8 +11,7 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { calcAverageGrade, calcGPA } from '@/utils'
-import { ACADEMIC_YEAR } from '@/utils/constants'
-import type { Grade } from '@gt/database'
+import { CURRECT_ACADEMIC_YEAR } from '@/utils/constants'
 
 export default function GradeAverage({
   semester1,
@@ -19,17 +20,16 @@ export default function GradeAverage({
   semester1: Grade[]
   semester2: Grade[]
 }) {
+  const ACADEMIC_YEAR = semester1[0]?.academicYear || CURRECT_ACADEMIC_YEAR
   const academicYear = `${ACADEMIC_YEAR}-${Number(ACADEMIC_YEAR) + 1}`
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-nowrap">Дүнгийн дундаж</CardTitle>
-        {semester1.length === 0 ? undefined : (
-          <CardDescription>
-            {academicYear} хичээлийн жилийн дүнгийн дундаж
-          </CardDescription>
-        )}
+        <CardDescription>
+          {academicYear} хичээлийн жилийн дүнгийн дундаж
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid w-full grid-flow-col items-center gap-4">

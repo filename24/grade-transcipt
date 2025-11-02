@@ -18,7 +18,7 @@ import type {
 } from '@/types/unelgee'
 
 import { resolveClassCode, toSentenceCase } from '.'
-import { ACADEMIC_YEAR } from './constants'
+import { CURRECT_ACADEMIC_YEAR } from './constants'
 import esis, { connectEsis } from './esis'
 
 export const getStudentGradeRecords = unstable_cache(
@@ -243,7 +243,11 @@ export async function getStudentGrade(
   academicYear?: string
 ): Promise<Grade[]> {
   const data = await prisma.grade.findMany({
-    where: { systemId, semester, academicYear: academicYear ?? ACADEMIC_YEAR },
+    where: {
+      systemId,
+      semester,
+      academicYear: academicYear ?? CURRECT_ACADEMIC_YEAR
+    },
     orderBy: {
       point: 'desc'
     }
