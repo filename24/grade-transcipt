@@ -39,7 +39,7 @@ jobs:
           genai.configure(api_key=os.environ["GEMINI_API_KEY"])
           
           # 1. Pro 모델 사용
-          model = genai.GenerativeModel('gemini-1.5-pro')
+          model = genai.GenerativeModel('gemini-3-flash')
 
           base_ref = "${{ github.base_ref }}"
           diff = subprocess.check_output(f"git diff origin/{base_ref}...HEAD", shell=True).decode('utf-8')
