@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Google AI SDK
         # 최신 모델(Gemini 3) 인식을 위해 latest 버전을 설치합니다.
-        run: pnpm add @google/generative-ai@latest -D
+        run: pnpm add @google/generative-ai@latest -D -w
 
       - name: Run Gemini 3 Review
         env:
