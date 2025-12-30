@@ -3,6 +3,7 @@ import prisma from '@gt/database'
 import type {
   ExamSession,
   GradeStatusType,
+  GroupStudent,
   ResponseData,
   Student,
   StudentExamPayload,
@@ -32,22 +33,38 @@ export const getStudentGradeRecords = unstable_cache(
     )
 
     const record: StudentGradeRecord[] = rawRecords
-      .map((record) => ({
-        id: record.subjectAreaId,
-        className: resolveClassCode(
-          `${record.subjectAreaCode} ${record.courseClassification === '1' ? 'заавал' : 'сонгон'}`
-        ),
-        classCode: record.subjectAreaCode,
-        point: Number(record.gradeMark),
-        grade: record.gradeCode,
-        schoolName: record.organizationName,
-        academicLevel: record.academicLevel,
-        academicYear: record.academicYear
-      }))
+      .map((record) => {
+        const isCompulsory =
+          record.courseClassification === '1' ||
+          record.courseClassificationName?.toLowerCase().includes('Заавал')
+
+        return {
+          id: record.subjectAreaId,
+          className: resolveClassCode(
+            `${record.subjectAreaCode} ${record.courseClassification === '1' ? '' : 'сонгон'}`
+          ),
+          classCode: record.subjectAreaCode,
+          point: Number(record.gradeMark),
+          grade: record.gradeCode,
+          schoolName: record.organizationName,
+          academicLevel: record.academicLevel,
+          academicYear: record.academicYear,
+          isCompulsory
+        }
+      })
       .sort((a, b) => {
+        // 1순위: 학년 (높은 학년이 위로)
         if (Number(b.academicLevel) !== Number(a.academicLevel)) {
           return Number(b.academicLevel) - Number(a.academicLevel)
         }
+
+        // 2순위: 필수/선택 (필수 과목이 위로)
+        // true(1)인 경우가 false(0)보다 먼저 오도록 내림차순 정렬 (-1 반환)
+        if (a.isCompulsory !== b.isCompulsory) {
+          return a.isCompulsory ? -1 : 1
+        }
+
+        // 3순위: ID (기존 순서 유지)
         return a.id - b.id
       })
 
@@ -66,6 +83,7 @@ export interface StudentGradeRecord {
   schoolName: string
   academicLevel: string
   academicYear: string
+  isCompulsory: boolean
 }
 export async function getGradeData(registerNumber: string) {
   return await prisma.grade.findMany({
@@ -347,18 +365,18 @@ export async function getUser(systemId?: string) {
   )()
 }
 
-export async function fetchUserInfo(
+export async function getUserInfoById(
   groupId: string
-): Promise<Student[] | undefined>
-export async function fetchUserInfo(
+): Promise<GroupStudent[] | undefined>
+export async function getUserInfoById(
   groupId: string,
   systemId: string
-): Promise<Student | undefined>
-export async function fetchUserInfo(
+): Promise<GroupStudent | undefined>
+export async function getUserInfoById(
   groupId: string,
   systemId?: string
-): Promise<Student | Student[] | undefined> {
-  const groupStudents = await esis.get<ResponseData<Student[]>>(
+): Promise<GroupStudent | GroupStudent[] | undefined> {
+  const groupStudents = await esis.get<ResponseData<GroupStudent[]>>(
     `/svc/api/hub/group/student/list/${groupId}`,
     { cache: 'force-cache' }
   )
@@ -371,4 +389,26 @@ export async function fetchUserInfo(
   }
 
   return groupStudents
+}
+
+export async function fetchStudentByRegisterNumber(registerNumber: string) {
+  if (!esis.isReady()) {
+    await connectEsis()
+  }
+
+  try {
+    const response = await esis.get<ResponseData<Student[]>>(
+      `/svc/api/hub/students/${registerNumber}`,
+      { cache: 'no-store' }
+    )
+
+    if (Array.isArray(response) && response.length > 0) {
+      return response[0]
+    }
+    return null
+  } catch (error) {
+    console.error('Error fetching student by registerNumber:', error)
+
+    return null
+  }
 }

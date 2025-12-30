@@ -31,7 +31,7 @@ export function BottomTabBar({ session }: { session: Session | null }) {
   const pathname = usePathname()
 
   return (
-    <div className="sticky right-0 bottom-10 left-0 z-50 mx-10 rounded-3xl border shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-card/10 md:hidden">
+    <div className="sticky right-0 bottom-10 left-0 z-50 mx-10 rounded-3xl border shadow-2xl backdrop-blur supports-backdrop-filter:bg-card/10 md:hidden">
       <div className="grid grid-cols-4">
         {subTabs.map((tab) => {
           const Icon = tab.icon

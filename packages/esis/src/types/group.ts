@@ -1,3 +1,15 @@
+export interface GroupStudent extends Student {
+  TEACHER_ID: number | null
+  TEACHER_NAME: string | null
+  PROGRAM_STAGE_ID: number
+  MICROSOFT_PASSWORD: string
+  GOOGLE_PASSWORD: string
+  /**
+   * @format ISO 8601
+   */
+  ACTION_DATE: string
+}
+
 export interface Student {
   PERSON_ID: string
   FIRST_NAME: string
@@ -13,20 +25,14 @@ export interface Student {
   STUDENT_GROUP_NAME: string
   PROGRAM_OF_STUDY_ID: number
   PROGRAM_PLAN_ID: number
-  TEACHER_ID: number | null
-  TEACHER_NAME: string | null
-  PROGRAM_STAGE_ID: number
   MICROSOFT_EMAIL: string
-  MICROSOFT_PASSWORD: string
   GOOGLE_EMAIL: string
-  GOOGLE_PASSWORD: string
-  /**
-   * @format ISO 8601
-   */
-  ACTION_DATE: string
+  PRIMARY_NID_NUMBER: string
+  PROGRAM_STAGE_ID: number
   ACADEMIC_YEAR: string
   CIVIL_ID: number
   INSTITUTION_ID: number
+  INSTITUTION_NAME: string
   REGISTER: string
   FIRST_NAME_MGL: string
   LAST_NAME_MGL: string

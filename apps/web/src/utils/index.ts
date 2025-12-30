@@ -21,7 +21,7 @@ export function cn(...inputs: ClassValue[]) {
 export function resolveClassCode(classCode: string) {
   const [className, section] = classCode.split(' ')
 
-  return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'заавал' ? '' : section}`
+  return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'сонгон' ? '/ Сонгон судлах /' : ''}`
 }
 
 export function calcGPA(grades: GradePointOnly[]): number {
@@ -331,4 +331,15 @@ export function makeDashboardMessage(now: Date) {
     dashboardMessage = `${semesterLevel}-р улирал үргэлжилж байна. ${semesterLevel}-р улирлын амралт эхэлтэл ${vacationStartDiff} хоног үлдсэн байна.`
   }
   return dashboardMessage
+}
+
+export function formatDateToYYYYMMDD(isoDate: string): string {
+  const date = new Date(isoDate)
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`Invalid date format: ${isoDate}`)
+  }
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months start from 0, so add 1
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
