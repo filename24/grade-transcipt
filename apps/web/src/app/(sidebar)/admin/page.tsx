@@ -1,7 +1,5 @@
 import { redirect } from 'next/navigation'
 
-import { AppSidebarHeader } from '../_Components/Header'
-
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -10,6 +8,8 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { auth } from '@/utils/auth'
+
+import { AppSidebarHeader } from '../_Components/Header'
 export default async function AdminPage() {
   const session = await auth()
 

@@ -42,6 +42,10 @@ const data = {
         {
           title: 'Import a grade data',
           url: '/admin/grade/create'
+        },
+        {
+          title: 'Export grade data',
+          url: '/admin/grade/export'
         }
       ]
     }

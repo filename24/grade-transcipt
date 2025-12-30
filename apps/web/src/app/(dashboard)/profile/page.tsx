@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { auth } from '@/utils/auth'
-import { fetchUserInfo, getUser } from '@/utils/fetch'
+import { getUser, getUserInfoById } from '@/utils/fetch'
 
 import AvatarDialog from './_Components/avatarDialog'
 import DangerZone from './_Components/dangerZone'
@@ -25,7 +25,7 @@ export default async function Profile() {
   const userData = await getUser(session?.user?.systemId)
 
   if (!userData) return redirect('/login')
-  const systemData = await fetchUserInfo(userData.classId, userData.systemId)
+  const systemData = await getUserInfoById(userData.classId, userData.systemId)
 
   return (
     <main>

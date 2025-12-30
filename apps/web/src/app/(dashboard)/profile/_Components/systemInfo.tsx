@@ -1,11 +1,16 @@
 'use client'
-import type { Student } from '@gt/esis'
+import type { GroupStudent } from '@gt/esis'
 import { useState } from 'react'
 
 import { CopyButton } from '@/components/copy-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatDateToYYYYMMDD } from '@/utils'
 
-export default function SystemInfo({ systemData }: { systemData: Student }) {
+export default function SystemInfo({
+  systemData
+}: {
+  systemData: GroupStudent
+}) {
   const [isVisible, setIsVisible] = useState(false)
 
   return (
@@ -71,15 +76,4 @@ export default function SystemInfo({ systemData }: { systemData: Student }) {
       </CardContent>
     </Card>
   )
-}
-
-function formatDateToYYYYMMDD(isoDate: string): string {
-  const date = new Date(isoDate)
-  if (Number.isNaN(date.getTime())) {
-    throw new Error(`Invalid date format: ${isoDate}`)
-  }
-  const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0') // Months start from 0, so add 1
-  const day = String(date.getUTCDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }

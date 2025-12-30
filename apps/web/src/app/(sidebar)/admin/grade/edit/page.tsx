@@ -1,5 +1,7 @@
-import { auth } from '@/utils/auth'
+import prisma from '@gt/database'
 import { redirect } from 'next/navigation'
+
+import { AppSidebarHeader } from '@/app/(sidebar)/_Components/Header'
 import {
   BreadcrumbItem,
   BreadcrumbLink,
@@ -7,10 +9,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { AppSidebarHeader } from '@/app/(sidebar)/_Components/Header'
-import { GradeAdminTable } from './_Components/GradeAdminTable'
-import prisma from '@gt/database'
+import { auth } from '@/utils/auth'
 import { CURRECT_SEMESTER } from '@/utils/constants'
+
+import { GradeAdminTable } from './_Components/GradeAdminTable'
+
 export default async function AdminPage() {
   const session = await auth()
 
