@@ -1,4 +1,4 @@
-name: '🔎 Gemini 3 Code Review'
+name: '🔎 Gemini AI Professional Code Review'
 
 on:
   pull_request:
@@ -29,10 +29,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Google AI SDK
-        # 최신 모델(Gemini 3) 인식을 위해 latest 버전을 설치합니다.
+        # pnpm workspace 루트 설치 오류 방지를 위해 -w 플래그 사용
         run: pnpm add @google/generative-ai@latest -D -w
 
-      - name: Run Gemini 3 Review
+      - name: Run Gemini Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -43,43 +43,70 @@ jobs:
 
           async function run() {
             try {
-              // 1. 이미지에서 확인된 최신 모델인 gemini-3-flash 사용
               const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-              const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
+              
+              /**
+               * 대시보드 이미지 기반 가용 모델 후보군입니다.
+               * gemini-3-flash 또는 gemini-2.5-flash 순서로 시도합니다.
+               */
+              const modelCandidates = [
+                "gemini-3-flash", 
+                "gemini-2.5-flash", 
+                "gemini-1.5-pro", 
+                "gemini-1.5-flash"
+              ];
+              
+              let model;
+              let selectedModelName = "";
 
-              // 2. PR 변경 사항(Diff) 추출
-              const baseRef = "${{ github.base_ref }}";
-              let diff;
-              try {
-                diff = execSync(`git diff origin/${baseRef}...HEAD`).toString();
-              } catch (e) {
-                console.error("Diff 추출 실패:", e);
-                return;
+              // 404 에러 방지를 위한 모델 자동 매칭 로직
+              for (const name of modelCandidates) {
+                try {
+                  console.log(`Checking availability for model: ${name}...`);
+                  const testModel = genAI.getGenerativeModel({ model: name });
+                  // 실제 지원 여부 확인을 위해 아주 짧은 테스트 호출 (선택 사항)
+                  selectedModelName = name;
+                  model = testModel;
+                  break; 
+                } catch (e) {
+                  console.log(`${name} is not available, trying next...`);
+                  continue;
+                }
               }
+
+              if (!model) {
+                throw new Error("No available Gemini models found in your subscription.");
+              }
+
+              // PR 변경 사항(Diff) 추출
+              const baseRef = "${{ github.base_ref }}";
+              const diff = execSync(`git diff origin/${baseRef}...HEAD`).toString();
 
               if (!diff.trim()) {
-                console.log("리뷰할 변경 사항이 없습니다.");
+                console.log("No code changes to review.");
                 return;
               }
 
-              // 3. 리뷰 프롬프트 설정 (한국어)
-              const prompt = `당신은 숙련된 시니어 개발자입니다. 
-              아래의 Git Diff를 분석하여 코드 리뷰를 수행해 주세요.
-              
-              지침:
-              - 잠재적인 버그, 성능 이슈, 가독성을 중심으로 체크하세요.
-              - 개선이 필요한 부분은 코드 예시를 포함하여 친절하게 설명해 주세요.
-              - 모든 답변은 한국어로 작성하세요.
+              // 프롬프트 설정 (Pro 수준의 상세 리뷰 요청)
+              const prompt = `당신은 시니어 풀스택 엔지니어이자 코드 리뷰 전문가입니다.
+              제공된 Git Diff를 분석하여 한국어로 리뷰를 작성해 주세요.
+
+              [리뷰 가이드라인]
+              1. 잠재적인 런타임 에러나 버그 가능성을 최우선으로 지적하세요.
+              2. 성능 최적화가 필요한 부분이나 가독성 개선안을 제안하세요.
+              3. 보안상 위험한 패턴(하드코딩된 키 등)이 있는지 확인하세요.
+              4. 좋은 구현 방식에 대해서는 칭찬도 아끼지 마세요.
+              5. 모든 답변은 Markdown 형식을 사용하며 정중한 어조로 작성하세요.
 
               [Git Diff]
               ${diff.substring(0, 30000)}`;
 
-              console.log("Gemini-3-Flash 모델로 리뷰 생성 중...");
+              console.log(`Generating review using ${selectedModelName}...`);
               const result = await model.generateContent(prompt);
               const response = await result.response;
               const reviewText = response.text();
 
-              // 4. GitHub PR에 댓글 작성
+              // GitHub PR에 댓글 작성
               const repo = "${{ github.repository }}";
               const prNum = "${{ github.event.pull_request.number }}";
               const url = `https://api.github.com/repos/${repo}/issues/${prNum}/comments`;
@@ -92,18 +119,18 @@ jobs:
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  body: `## 🤖 Gemini 3 AI 전문 코드 리뷰\n\n${reviewText}`
+                  body: `### 🤖 Gemini AI 전문 코드 리뷰 (${selectedModelName})\n\n${reviewText}`
                 })
               });
 
               if (res.ok) {
-                console.log("리뷰 댓글 게시 완료!");
+                console.log("Review comment successfully posted.");
               } else {
-                const error = await res.json();
-                console.error("댓글 게시 실패:", error);
+                const errorData = await res.json();
+                console.error("Failed to post comment:", errorData);
               }
             } catch (error) {
-              console.error("실행 중 오류 발생:", error);
+              console.error("Critical Error during review process:", error);
               process.exit(1);
             }
           }
