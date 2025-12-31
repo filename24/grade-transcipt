@@ -6,7 +6,7 @@ import { getUser, getUserInfoById } from '@/utils/fetch'
 
 import AvatarDialog from './_Components/avatarDialog'
 import DangerZone from './_Components/dangerZone'
-import PersonalInfo from './_Components/personalInfo'
+import PersonalInfo, { type ExtendedUser } from './_Components/personalInfo'
 import SystemInfo from './_Components/systemInfo'
 
 export const metadata: Metadata = {
@@ -27,6 +27,11 @@ export default async function Profile() {
   if (!userData) return redirect('/login')
   const systemData = await getUserInfoById(userData.classId, userData.systemId)
 
+  const userExtendedData: ExtendedUser = {
+    ...userData,
+    firstNameMgl: systemData?.FIRST_NAME_MGL,
+    lastNameMgl: systemData?.LAST_NAME_MGL
+  }
   return (
     <main>
       <div className="px-6 py-4">
@@ -39,7 +44,7 @@ export default async function Profile() {
         </div>
 
         <div className="mb-2 grid gap-2 md:grid-cols-2">
-          <PersonalInfo userData={userData} />
+          <PersonalInfo userData={userExtendedData} />
 
           {systemData && <SystemInfo systemData={systemData} />}
         </div>
