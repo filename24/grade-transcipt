@@ -53,8 +53,8 @@ describe('Dashboard message by date', () => {
   })
 
   it('shows graduation soon message when graduation is near', () => {
-    // 졸업 1~30일 전 랜덤 날짜
-    const offset = Math.floor(Math.random() * 30 + 1)
+    // 졸업 6~30일 전 랜덤 날짜 (시험기간 1~5일 전 제외)
+    const offset = Math.floor(Math.random() * 25 + 6)
     const now = new Date(
       GRADUATION_DATE.getTime() - 1000 * 60 * 60 * 24 * offset
     )
@@ -71,7 +71,8 @@ describe('Dashboard message by date', () => {
     const vacationDays = Math.floor(
       (vacationEnd - vacationStart) / (1000 * 60 * 60 * 24)
     )
-    const offset = Math.floor(Math.random() * (vacationDays + 1))
+    // vacationStart < now < vacationEnd 이어야 하므로 offset은 1부터 vacationDays-1 까지
+    const offset = Math.floor(Math.random() * (vacationDays - 1)) + 1
     const now = new Date(vacationStart + 1000 * 60 * 60 * 24 * offset)
     jest.spyOn(Date, 'now').mockReturnValue(now.getTime())
     const message = makeDashboardMessage(now)
@@ -80,9 +81,9 @@ describe('Dashboard message by date', () => {
   })
 
   it('shows normal semester message during 1st semester', () => {
-    // 1학기 내 랜덤 날짜
+    // 1학기 내 랜덤 날짜 (자율학습주 피하기 위해 9월달로 제한)
     const start = SEMESTER_DATE.HIGH[1].START.getTime()
-    const end = SEMESTER_DATE.HIGH[1].END.getTime()
+    const end = new Date('2025-09-30').getTime()
     const days = Math.floor((end - start) / (1000 * 60 * 60 * 24))
     const offset = Math.floor(Math.random() * (days + 1))
     const now = new Date(start + 1000 * 60 * 60 * 24 * offset)
@@ -95,9 +96,9 @@ describe('Dashboard message by date', () => {
   })
 
   it('shows normal semester message during 2nd semester', () => {
-    // 2학기 내 랜덤 날짜
-    const start = SEMESTER_DATE.HIGH[2].START.getTime()
-    const end = SEMESTER_DATE.HIGH[2].END.getTime()
+    // 2학기 내 랜덤 날짜 (자율학습주 피하기 위해 2월달로 제한)
+    const start = new Date('2026-02-01').getTime()
+    const end = new Date('2026-02-28').getTime()
     const days = Math.floor((end - start) / (1000 * 60 * 60 * 24))
     const offset = Math.floor(Math.random() * (days + 1))
     const now = new Date(start + 1000 * 60 * 60 * 24 * offset)

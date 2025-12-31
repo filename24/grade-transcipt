@@ -125,9 +125,8 @@ export function getDDay(
 ): string | number {
   const today = Date.now()
 
-  const diffDays = Math.max(
-    0,
-    Math.ceil((targetDate.getTime() - today) / (1000 * 60 * 60 * 24))
+  const diffDays = Math.ceil(
+    (targetDate.getTime() - today) / (1000 * 60 * 60 * 24)
   )
 
   if (diffDays === 0) {
