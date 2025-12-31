@@ -399,7 +399,7 @@ export async function fetchStudentByRegisterNumber(registerNumber: string) {
   try {
     const response = await esis.get<ResponseData<Student[]>>(
       `/svc/api/hub/students/${registerNumber}`,
-      { cache: 'no-store' }
+      { cache: 'force-cache' }
     )
 
     if (Array.isArray(response) && response.length > 0) {
