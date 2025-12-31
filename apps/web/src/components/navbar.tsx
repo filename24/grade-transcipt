@@ -6,7 +6,7 @@ import Link from 'next/link'
 import type { Session } from 'next-auth'
 
 import { useIsMobile } from '@/hooks/use-mobile'
-import { getCurrentSemesters, getDDay } from '@/utils'
+import { getDDay } from '@/utils'
 import { SEMESTER_DATE } from '@/utils/constants'
 
 import ThemeSwitcher from './theme-switcher'
@@ -15,7 +15,21 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import UserMenu from './user-menu'
 
 const Navbar = ({ session }: { session: Session | null }) => {
-  const semesterDate = SEMESTER_DATE.HIGH[getCurrentSemesters().HIGH || 1]
+  const now = new Date()
+  let targetDate = SEMESTER_DATE.HIGH[3].END
+
+  for (const level of [1, 2, 3] as const) {
+    const { START, END } = SEMESTER_DATE.HIGH[level]
+    if (now < START) {
+      targetDate = START
+      break
+    }
+    if (now <= END) {
+      targetDate = END
+      break
+    }
+  }
+
   const isMobile = useIsMobile()
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b bg-card backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -49,11 +63,7 @@ const Navbar = ({ session }: { session: Session | null }) => {
                   variant={'ghost'}
                   className="font-extrabold text-muted-foreground"
                 >
-                  {getDDay(
-                    semesterDate.START >= new Date(Date.now())
-                      ? semesterDate.START
-                      : semesterDate.END
-                  )}
+                  {getDDay(targetDate)}
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="w-auto">

@@ -80,6 +80,21 @@ describe('Dashboard message by date', () => {
     expect(message).toMatch(/амралт үргэлжилж байна/)
   })
 
+  it('shows vacation message during 2nd semester vacation period', () => {
+    // 2학기 방학기간 내 랜덤 날짜 (2학기 끝~3학기 시작 사이)
+    const vacationStart = SEMESTER_DATE.HIGH[2].END.getTime()
+    const vacationEnd = SEMESTER_DATE.HIGH[3].START.getTime()
+    const vacationDays = Math.floor(
+      (vacationEnd - vacationStart) / (1000 * 60 * 60 * 24)
+    )
+    const offset = Math.floor(Math.random() * (vacationDays - 1)) + 1
+    const now = new Date(vacationStart + 1000 * 60 * 60 * 24 * offset)
+    jest.spyOn(Date, 'now').mockReturnValue(now.getTime())
+    const message = makeDashboardMessage(now)
+    console.log(`[TEST] Date: ${now.toISOString()} | Message: ${message}`)
+    expect(message).toMatch(/амралт үргэлжилж байна/)
+  })
+
   it('shows normal semester message during 1st semester', () => {
     // 1학기 내 랜덤 날짜 (자율학습주 피하기 위해 9월달로 제한)
     const start = SEMESTER_DATE.HIGH[1].START.getTime()

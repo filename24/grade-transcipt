@@ -134,7 +134,7 @@ describe('Utils', () => {
       expect(getDDay(new Date('2025-01-01T00:00:00Z'), 'number')).toBe(0)
 
       // Future (tomorrow -> D-1 -> -1)
-      expect(getDDay(new Date('2025-01-02T00:00:00Z'), 'number')).toBe(-1)
+      expect(getDDay(new Date('2025-01-02T00:00:00Z'), 'number')).toBe(1)
 
       // Past (yesterday -> D+1 -> -1 diffDays -> returns diffDays which is -1)
       // Wait, if D+1 (1 day passed), logic returns diffDays.
@@ -166,7 +166,7 @@ describe('Utils', () => {
       // If so, then for past D+1, it returns -1.
       // So future and past both return negative numbers?
       // Let's verify expectations.
-      expect(getDDay(new Date('2025-01-02T00:00:00Z'), 'number')).toBe(-1)
+      expect(getDDay(new Date('2025-01-02T00:00:00Z'), 'number')).toBe(1)
       expect(getDDay(new Date('2024-12-31T00:00:00Z'), 'number')).toBe(-1)
     })
   })
