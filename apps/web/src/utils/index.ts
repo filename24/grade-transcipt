@@ -102,45 +102,49 @@ export function countGrades(gradesArray: Grade[]): GradeCounts {
  * `+number` 일경우 D+number
  * @param targetDate 목표 날짜 (Date 형식)
  * @param returnType 받을 타입 (string | number)
+ * @param fromDate 시작 날짜 (기본값: 오늘)
  * @returns 목표 날짜까지 남은 일 수에 따른 day 숫자
  */
-export function getDDay(targetDate: Date, returnType: 'number'): number
+export function getDDay(
+  targetDate: Date,
+  returnType: 'number',
+  fromDate?: Date
+): number
 /**
  * 특정 날짜를 입력받아 오늘과의 차이에 따라 D-Day 문구를 반환하는 함수
  * @param targetDate 목표 날짜 (Date 형식)
  * @param returnType 받을 타입 (string | number)
+ * @param fromDate 시작 날짜 (기본값: 오늘)
  * @returns 목표 날짜까지 남은 일 수에 따른 D-Day 문자열
  */
-export function getDDay(targetDate: Date, returnType: 'string'): string
+export function getDDay(
+  targetDate: Date,
+  returnType: 'string',
+  fromDate?: Date
+): string
 /**
  * 특정 날짜를 입력받아 오늘과의 차이에 따라 D-Day 문구를 반환하는 함수
  * @param targetDate 목표 날짜 (Date 형식)
- * @param returnType 받을 타입 (string | number)
  * @returns 목표 날짜까지 남은 일 수에 따른 D-Day 문자열
  */
 export function getDDay(targetDate: Date): string
 export function getDDay(
   targetDate: Date,
-  returnType: 'string' | 'number' = 'string'
+  returnType: 'string' | 'number' = 'string',
+  fromDate?: Date
 ): string | number {
-  const today = Date.now()
+  const today = fromDate ? fromDate.getTime() : Date.now()
 
-  const diffDays = Math.max(
-    0,
-    Math.ceil((targetDate.getTime() - today) / (1000 * 60 * 60 * 24))
+  const diffDays = Math.ceil(
+    (targetDate.getTime() - today) / (1000 * 60 * 60 * 24)
   )
 
-  if (diffDays === 0) {
-    if (returnType === 'string') return 'D-Day'
-    return 0
-  }
-  if (diffDays > 0) {
-    if (returnType === 'string') return `D-${diffDays}`
-    return Number(`-${diffDays}`)
-  }
+  if (returnType === 'number') return diffDays
 
-  if (returnType === 'string') return `D+${Math.abs(diffDays)}`
-  return diffDays
+  if (diffDays === 0) return 'D-Day'
+  if (diffDays > 0) return `D-${diffDays}`
+
+  return `D+${Math.abs(diffDays)}`
 }
 
 /**
@@ -286,16 +290,38 @@ export function getUserDefaultAvatarUrl(systemId: string) {
 
 export function makeDashboardMessage(now: Date) {
   let semesterLevel: 1 | 2 | 3 = 1
-  for (const key of [1, 2, 3] as const) {
-    const { START, END } = SEMESTER_DATE.HIGH[key]
-    if (now >= START && now <= END) {
-      semesterLevel = key
-      break
+
+  // Determine current semester or the semester that just ended if in vacation
+  const high = SEMESTER_DATE.HIGH
+  if (now >= high[1].START && now <= high[1].END) {
+    semesterLevel = 1
+  } else if (now >= high[2].START && now <= high[2].END) {
+    semesterLevel = 2
+  } else if (now >= high[3].START && now <= high[3].END) {
+    semesterLevel = 3
+  } else {
+    // Check for vacation periods
+    if (now > high[1].END && now < high[2].START) {
+      semesterLevel = 1 // Vacation after semester 1
+    } else if (now > high[2].END && now < high[3].START) {
+      semesterLevel = 2 // Vacation after semester 2
+    } else if (now > high[3].END) {
+      semesterLevel = 3 // After semester 3 (Graduation/Summer)
+    } else {
+      semesterLevel = 1 // Default/Before Sem 1
     }
   }
+
   const semesterDates = SEMESTER_DATE.HIGH[semesterLevel]
   const vacationStart = semesterDates.END
-  const vacationEnd = semesterLevel === 1 ? SEMESTER_DATE.HIGH[2].START : null
+
+  // Determine vacation end based on semester level
+  let vacationEnd: Date | null = null
+  if (semesterLevel === 1) {
+    vacationEnd = SEMESTER_DATE.HIGH[2].START
+  } else if (semesterLevel === 2) {
+    vacationEnd = SEMESTER_DATE.HIGH[3].START
+  }
 
   const isFreeLearningWeek = FREE_LEARNING_WEEK.some(
     (w) => now >= w.START && now <= w.END
