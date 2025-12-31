@@ -314,7 +314,7 @@ export function makeDashboardMessage(now: Date) {
 
   const semesterDates = SEMESTER_DATE.HIGH[semesterLevel]
   const vacationStart = semesterDates.END
-  
+
   // Determine vacation end based on semester level
   let vacationEnd: Date | null = null
   if (semesterLevel === 1) {
