@@ -34,18 +34,24 @@ export function RegisterLoginForm({
   const router = useRouter()
 
   useEffect(() => {
-    // Check if passkey is available
-    if (
-      typeof window !== 'undefined' &&
-      window.PublicKeyCredential &&
-      PublicKeyCredential.isConditionalMediationAvailable
-    ) {
-      PublicKeyCredential.isConditionalMediationAvailable().then(
-        (available) => {
-          setPasskeyAvailable(available)
-        }
-      )
+    // Check if passkey (WebAuthn) is available
+    const checkPasskeySupport = async () => {
+      if (typeof window === 'undefined' || !window.PublicKeyCredential) {
+        return
+      }
+
+      try {
+        // Check if platform authenticator is available (Face ID, Touch ID, Windows Hello, etc.)
+        const available =
+          await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        setPasskeyAvailable(available)
+      } catch {
+        // Fallback: if the check fails, still show the button if WebAuthn is supported
+        setPasskeyAvailable(true)
+      }
     }
+
+    checkPasskeySupport()
   }, [])
 
   // Handle password required response

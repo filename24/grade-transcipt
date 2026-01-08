@@ -13,9 +13,12 @@ export const auth = betterAuth({
   plugins: [
     registerNumberAuth(),
     passkey({
-      rpID: process.env.PASSKEY_RP_ID || 'localhost',
+      rpID: process.env.PASSKEY_RP_ID || process.env.VERCEL_URL || 'localhost',
       rpName: 'Grade Transcript',
-      origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      origin:
+        process.env.NEXT_PUBLIC_APP_URL ||
+        `https://${process.env.VERCEL_URL}` ||
+        'http://localhost:3000'
     }),
     nextCookies()
   ],

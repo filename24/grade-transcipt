@@ -62,13 +62,26 @@ export default function PasskeyManager({
     }
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: 함수를 요청할려고함
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 컴포넌트 마운트 시에만 실행
   useEffect(() => {
     // Check if WebAuthn is supported
-    if (typeof window !== 'undefined' && window.PublicKeyCredential) {
-      setIsSupported(true)
+    const checkWebAuthnSupport = async () => {
+      if (typeof window === 'undefined' || !window.PublicKeyCredential) {
+        return
+      }
+
+      try {
+        // Check if platform authenticator is available
+        const available =
+          await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        setIsSupported(available)
+      } catch {
+        // Fallback: if the check fails, assume supported if PublicKeyCredential exists
+        setIsSupported(true)
+      }
     }
 
+    checkWebAuthnSupport()
     fetchPasskeys()
   }, [])
   const handleAddPasskey = async () => {
