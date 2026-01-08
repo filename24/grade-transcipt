@@ -52,44 +52,42 @@ model Exam {
 }
 
 model User {
-  id       String @id @default(uuid())
-  // institutionId
-  schoolId String
-  // Student groupId
-  classId  String
-  systemId String @unique
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
 
-  firstName            String?
-  lastName             String?
-  name                 String
-  email                String?
-  registerNumber       String
-  type                 UserType @default(ESIS)
-  role                 Role
+  // Custom Fields
+  role                 String
+  systemId             String  @unique
   avatar               String?
   banner               String?
   currectAcademicLevel Int
+  registerNumber       String
+  classId              String
+  schoolId             String
+
+  // Legacy
+  firstName String
+  lastName  String
+  type      UserType @default(ESIS)
 
   grades   Grade[]
   exams    Exam[]
   accounts Account[]
   sessions Session[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  passkeys Passkey[]
 
   @@index([firstName, lastName])
+  @@map("user")
 }
 
 enum UserType {
   Medle
   ESIS
-}
-
-enum Role {
-  STUDENT
-  TEACHER
-  ADMIN
 }
 
 enum Status {
@@ -100,42 +98,67 @@ enum Status {
 }
 
 model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String    @id @default(uuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  idToken               String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@map("account")
 }
 
 model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime
+  updatedAt DateTime
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
 }
 
-model VerificationToken {
+model Verification {
+  id         String    @id @default(uuid())
   identifier String
-  token      String
-  expires    DateTime
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
 
-  @@id([identifier, token])
+  @@map("verification")
+}
+
+model Passkey {
+  id           String    @id @default(uuid())
+  name         String?
+  publicKey    String
+  userId       String
+  credentialID String    @unique
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  aaguid       String?
+  createdAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("passkey")
 }
 
 model UnelgeeSubjects {
