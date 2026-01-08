@@ -1,14 +1,19 @@
 import { BottomTabBar } from '@/components/appbar'
 import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
+import { headers } from 'next/headers'
+
+import PasswordSetupChecker from './_Components/PasswordSetupChecker'
 
 export default async function DashboardLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
   return (
     <div className="flex min-h-dvh flex-1 flex-col border-grid">
@@ -18,6 +23,7 @@ export default async function DashboardLayout({
       </main>
       <Footer />
       <BottomTabBar session={session} />
+      {session && <PasswordSetupChecker />}
     </div>
   )
 }
