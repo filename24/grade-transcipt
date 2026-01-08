@@ -9,13 +9,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
 import { CURRECT_SEMESTER } from '@/utils/constants'
+import { headers } from 'next/headers'
 
 import { GradeAdminTable } from './_Components/GradeAdminTable'
 
 export default async function AdminPage() {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
   const data = await prisma.grade.findMany({
     select: {

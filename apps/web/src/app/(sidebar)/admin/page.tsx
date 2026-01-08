@@ -7,11 +7,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
+import { headers } from 'next/headers'
 
 import { AppSidebarHeader } from '../_Components/Header'
 export default async function AdminPage() {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
   if (session?.user?.role === 'ADMIN') {
     return (

@@ -3,7 +3,7 @@
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Session } from 'next-auth'
+import type { authClient } from '@/utils/auth-client'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { getDDay } from '@/utils'
@@ -14,7 +14,11 @@ import { Button, buttonVariants } from './ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 import UserMenu from './user-menu'
 
-const Navbar = ({ session }: { session: Session | null }) => {
+const Navbar = ({
+  session
+}: {
+  session: typeof authClient.$Infer.Session | null
+}) => {
   const now = new Date()
   let targetDate = SEMESTER_DATE.HIGH[3].END
 

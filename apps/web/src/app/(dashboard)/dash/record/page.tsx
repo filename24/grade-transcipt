@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation'
 
 import RecordLayout from './_Components/RecordLayout'
 
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
 import { getStudentGradeRecords } from '@/utils/fetch'
+import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
   title: 'Knea - Хувийн хэрэг',
@@ -17,7 +18,9 @@ export const metadata: Metadata = {
 }
 
 export default async function RecordPage() {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
   if (!session?.user) return redirect('/login')
 

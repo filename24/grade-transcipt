@@ -14,8 +14,9 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 import { resolveClassCode } from '@/utils'
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
 import { getStudentGrade } from '@/utils/fetch'
+import { headers } from 'next/headers'
 
 import GradeLayout from './_Components/GradeLayout'
 import type { GradeTableData } from './_Components/GradeTable'
@@ -35,7 +36,9 @@ export default async function GradePage({
 }: {
   searchParams?: Promise<{ [key: string]: string | undefined }>
 }) {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   const params = await searchParams
 
   if (!session?.user?.name) {
