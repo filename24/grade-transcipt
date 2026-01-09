@@ -82,7 +82,10 @@ export const auth = betterAuth({
   },
   advanced: {
     cookiePrefix: 'knea-gt',
-    disableOriginCheck: process.env.NODE_ENV === 'development'
+    disableOriginCheck: process.env.NODE_ENV === 'development',
+    ipAddress: {
+      ipAddressHeaders: ['cf-connecting-ip', 'x-real-ip', 'x-forwarded-for']
+    }
   },
   appName: 'Grade Transcript',
   user: {
