@@ -110,12 +110,10 @@ export function SessionsDialog({
       <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>
           <DialogTitle>User Sessions</DialogTitle>
-          <DialogDescription>
-            Manage sessions for {userName}
-          </DialogDescription>
+          <DialogDescription>Manage sessions for {userName}</DialogDescription>
         </DialogHeader>
 
-        <div className="flex justify-end mb-4">
+        <div className="mb-4 flex justify-end">
           <Button
             variant="destructive"
             size="sm"
@@ -133,7 +131,7 @@ export function SessionsDialog({
           </Button>
         </div>
 
-        <div className="rounded-md border max-h-[400px] overflow-auto">
+        <div className="max-h-[400px] overflow-auto rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>

@@ -1,8 +1,5 @@
 import { createAccessControl } from 'better-auth/plugins/access'
-import {
-  adminAc,
-  defaultStatements
-} from 'better-auth/plugins/admin/access'
+import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access'
 
 // Use default admin statements (user, session permissions)
 const statement = {
