@@ -13,8 +13,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 import { authClient } from '@/utils/auth-client'
 
 interface PasswordSetupModalProps {
@@ -54,9 +54,12 @@ export default function PasswordSetupModal({
         confirmPassword
       })
 
-      if (result && 'error' in result && result.error) {
-        const errorObj = result.error as { message?: string }
-        setError(errorObj.message || '비밀번호 설정 실패')
+      if (result.data && 'error' in result.data) {
+        const errorMsg =
+          typeof result.data.error === 'string'
+            ? result.data.error
+            : 'Нууц үг тохируулахад алдаа гарлаа'
+        setError(errorMsg)
         return
       }
 
@@ -87,18 +90,17 @@ export default function PasswordSetupModal({
             Нууц үг тохируулах
           </DialogTitle>
           <DialogDescription>
-            Бүртгэлээ аюулгүй болгохын тулд нууц үг тохируулна уу. Passkey
-            ашиглахын тулд нууц үг шаардлагатай.
+            Таны мэдээллийн аюулгүй байдал бидэнд чухал тул та нууц үгээ
+            тохируулаарай. Хэрэв хүсвэл дараа нь тохируулж болно.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="new-password">Шинэ нууц үг</Label>
-            <Input
+            <PasswordInput
               id="new-password"
-              type="password"
-              placeholder="Хамгийн багадаа 8 тэмдэгт"
+              placeholder="Хамгийн багадаа 8 үсэг"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
@@ -108,9 +110,8 @@ export default function PasswordSetupModal({
 
           <div className="space-y-2">
             <Label htmlFor="confirm-password">Нууц үг баталгаажуулах</Label>
-            <Input
+            <PasswordInput
               id="confirm-password"
-              type="password"
               placeholder="Нууц үгээ дахин оруулна уу"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -124,7 +125,7 @@ export default function PasswordSetupModal({
           <DialogFooter className="flex-col gap-2 sm:flex-row">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={handleSkip}
               disabled={isLoading}
             >

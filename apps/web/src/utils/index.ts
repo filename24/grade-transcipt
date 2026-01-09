@@ -369,3 +369,86 @@ export function formatDateToYYYYMMDD(isoDate: string): string {
   const day = String(date.getUTCDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
+
+/**
+ * User Agent 문자열을 파싱하여 브라우저, OS, 기기 타입 정보를 반환하는 함수
+ * @param userAgent User Agent 문자열
+ * @returns 브라우저, OS, 기기 타입 정보를 담은 객체
+ */
+export function parseUserAgent(userAgent?: string): {
+  browser: string
+  os: string
+  deviceType: 'desktop' | 'mobile'
+} {
+  if (!userAgent) {
+    return { browser: 'Unknown Browser', os: 'Unknown OS', deviceType: 'desktop' }
+  }
+
+  let browser = 'Unknown Browser'
+  let os = 'Unknown OS'
+  let deviceType: 'desktop' | 'mobile' = 'desktop'
+
+  // Detect mobile
+  if (
+    userAgent.includes('Mobile') ||
+    userAgent.includes('Android') ||
+    userAgent.includes('iPhone')
+  ) {
+    deviceType = 'mobile'
+  }
+
+  // Detect browser
+  if (userAgent.includes('Edg/')) {
+    browser = 'Edge'
+  } else if (userAgent.includes('Chrome/') && !userAgent.includes('Edg/')) {
+    browser = 'Chrome'
+  } else if (userAgent.includes('Firefox/')) {
+    browser = 'Firefox'
+  } else if (userAgent.includes('Safari/') && !userAgent.includes('Chrome/')) {
+    browser = 'Safari'
+  } else if (userAgent.includes('OPR/') || userAgent.includes('Opera/')) {
+    browser = 'Opera'
+  }
+
+  // Detect OS
+  if (userAgent.includes('Windows')) {
+    os = 'Windows'
+  } else if (userAgent.includes('Mac OS X')) {
+    os = 'macOS'
+  } else if (userAgent.includes('Linux')) {
+    os = 'Linux'
+  } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+    os = 'iOS'
+  } else if (userAgent.includes('Android')) {
+    os = 'Android'
+  }
+
+  return { browser, os, deviceType }
+}
+
+/**
+ * 현재 브라우저와 OS 정보를 감지하여 Passkey 이름으로 사용할 문자열을 반환하는 함수
+ * @returns Passkey 이름 문자열
+ */
+export function getBrowserAndOS(): string {
+  if (typeof window === 'undefined') return 'Unknown device'
+
+  const ua = navigator.userAgent
+
+  // Check for password managers
+  if (ua.includes('1Password')) {
+    return '1Password'
+  }
+  if (ua.includes('Bitwarden')) {
+    return 'Bitwarden'
+  }
+
+  const { browser, os } = parseUserAgent(ua)
+
+  // Special case for Google Password Manager
+  if (browser === 'Chrome' && (os === 'Windows' || os === 'macOS')) {
+    return 'Google Password Manager'
+  }
+
+  return `${browser} on ${os}`
+}

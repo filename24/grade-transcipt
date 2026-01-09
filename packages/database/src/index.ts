@@ -1,9 +1,9 @@
 // import { PrismaClient } from '../generated/prisma'
 // import { withAccelerate } from '@prisma/extension-accelerate'
 
+import { S3Client } from '@aws-sdk/client-s3'
 import { PrismaClient } from '@prisma/client'
 import { Redis } from '@upstash/redis'
-import { S3Client } from '@aws-sdk/client-s3'
 
 const globalForDatabase = global as unknown as {
   prisma: PrismaClient
@@ -19,9 +19,7 @@ const s3 =
     forcePathStyle: true,
     region: 'us-east-1',
     credentials: {
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       accessKeyId: process.env.S3_USERNAME!,
-      // biome-ignore lint/style/noNonNullAssertion: <explanation>
       secretAccessKey: process.env.S3_PASSWORD!
     }
   })

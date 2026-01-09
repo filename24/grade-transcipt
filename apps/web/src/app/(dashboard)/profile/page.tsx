@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import { auth } from '@/utils/better-auth'
 import { getUser, getUserInfoById } from '@/utils/fetch'
@@ -27,7 +27,7 @@ export default async function Profile() {
   })
 
   const userData = await getUser(session?.user?.systemId)
-  console.log(session)
+
   if (!userData) return redirect('/login')
   const systemData =
     userData.classId && userData.systemId

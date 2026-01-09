@@ -1,6 +1,6 @@
 'use client'
 
-import { Fingerprint, Loader2, Plus, Shield, Trash2 } from 'lucide-react'
+import { Edit2, Fingerprint, Loader2, Plus, Shield, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -23,8 +23,17 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { getBrowserAndOS } from '@/utils'
 import { authClient } from '@/utils/auth-client'
 
 interface Passkey {
@@ -49,6 +58,11 @@ export default function PasskeyManager({
   const [newPasskeyName, setNewPasskeyName] = useState('')
   const [isSupported, setIsSupported] = useState(false)
 
+  // Edit passkey state
+  const [editingPasskey, setEditingPasskey] = useState<Passkey | null>(null)
+  const [editName, setEditName] = useState('')
+  const [isUpdating, setIsUpdating] = useState(false)
+
   const fetchPasskeys = async () => {
     try {
       const result = await authClient.passkey.listUserPasskeys()
@@ -72,9 +86,18 @@ export default function PasskeyManager({
 
       try {
         // Check if platform authenticator is available
-        const available =
+        const platformAvailable =
           await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-        setIsSupported(available)
+
+        // Check if conditional mediation is available (for cross-device passkeys)
+        const conditionalAvailable =
+          typeof PublicKeyCredential.isConditionalMediationAvailable ===
+          'function'
+            ? await PublicKeyCredential.isConditionalMediationAvailable()
+            : false
+
+        // Support passkeys if either platform authenticator or conditional mediation is available
+        setIsSupported(platformAvailable || conditionalAvailable)
       } catch {
         // Fallback: if the check fails, assume supported if PublicKeyCredential exists
         setIsSupported(true)
@@ -84,6 +107,7 @@ export default function PasskeyManager({
     checkWebAuthnSupport()
     fetchPasskeys()
   }, [])
+
   const handleAddPasskey = async () => {
     // Check if password is set
     if (!hasPassword) {
@@ -93,12 +117,19 @@ export default function PasskeyManager({
 
     setIsAdding(true)
     try {
+      // Use browser and OS info if no name is provided
+      const passkeyName = newPasskeyName.trim() || getBrowserAndOS()
+
       const result = await authClient.passkey.addPasskey({
-        name: newPasskeyName || undefined
+        name: passkeyName
       })
 
       if (result?.error) {
-        toast.error(result.error.message || 'Passkey нэмэхэд алдаа гарлаа.')
+        const errorMsg =
+          typeof result.error === 'object' && 'message' in result.error
+            ? result.error.message
+            : 'Passkey нэмэхэд алдаа гарлаа.'
+        toast.error(errorMsg)
         return
       }
 
@@ -119,7 +150,11 @@ export default function PasskeyManager({
       const result = await authClient.passkey.deletePasskey({ id })
 
       if (result?.error) {
-        toast.error(result.error.message || 'Passkey устгахад алдаа гарлаа.')
+        const errorMsg =
+          typeof result.error === 'object' && 'message' in result.error
+            ? result.error.message
+            : 'Passkey устгахад алдаа гарлаа.'
+        toast.error(errorMsg)
         return
       }
 
@@ -133,12 +168,50 @@ export default function PasskeyManager({
     }
   }
 
+  const handleUpdatePasskey = async () => {
+    if (!editingPasskey) return
+
+    setIsUpdating(true)
+    try {
+      const result = await authClient.passkey.updatePasskey({
+        id: editingPasskey.id,
+        name: editName
+      })
+
+      if (result?.error) {
+        const errorMsg =
+          typeof result.error === 'object' && 'message' in result.error
+            ? result.error.message
+            : 'Passkey засахад алдаа гарлаа.'
+        toast.error(errorMsg)
+        return
+      }
+
+      toast.success('Passkey амжилттай засагдлаа!')
+      setPasskeys(
+        passkeys.map((p) =>
+          p.id === editingPasskey.id ? { ...p, name: editName } : p
+        )
+      )
+      setEditingPasskey(null)
+      setEditName('')
+    } catch (error) {
+      console.error('Failed to update passkey:', error)
+      toast.error('Passkey засахад алдаа гарлаа.')
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const openEditDialog = (passkey: Passkey) => {
+    setEditingPasskey(passkey)
+    setEditName(passkey.name || '')
+  }
+
   const formatDate = (date: Date | null) => {
     if (!date) return 'Тодорхойгүй'
     return new Intl.DateTimeFormat('mn-MN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+      dateStyle: 'short'
     }).format(new Date(date))
   }
 
@@ -165,7 +238,8 @@ export default function PasskeyManager({
           Passkey удирдлага
         </CardTitle>
         <CardDescription>
-          Passkey ашиглан нууц үггүйгээр аюулгүй нэвтэрнэ үү.
+          Passkey ашиглан хурууны хээ эсвэл нүүр царайгаараа хурдан нэвтрээрэй.
+          Яг л Apple-ийн FaceID шиг хялбар!
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -187,13 +261,14 @@ export default function PasskeyManager({
             </Label>
             <Input
               id="passkey-name"
-              placeholder="Passkey нэр (жишээ: iPhone)"
+              placeholder="Passkey нэр (заавал биш)"
               value={newPasskeyName}
               onChange={(e) => setNewPasskeyName(e.target.value)}
               disabled={!hasPassword}
             />
           </div>
           <Button
+            size="sm"
             onClick={handleAddPasskey}
             disabled={isAdding || !hasPassword}
           >
@@ -218,63 +293,127 @@ export default function PasskeyManager({
             Бүртгэгдсэн Passkey байхгүй байна.
           </p>
         ) : (
-          <div className="space-y-2">
+          <div className="max-h-[240px] space-y-2 overflow-y-auto">
             {passkeys.map((passkey) => (
               <div
                 key={passkey.id}
-                className="flex items-center justify-between rounded-lg border p-3"
+                className="flex items-start justify-between gap-2 rounded-lg border p-3"
               >
-                <div className="flex items-center gap-3">
-                  <Fingerprint className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-sm">
+                <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+                  <Fingerprint className="h-5 w-5 shrink-0 text-muted-foreground" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-sm">
                       {passkey.name || 'Нэргүй Passkey'}
                     </p>
-                    <p className="text-muted-foreground text-xs">
+                    <p className="truncate text-muted-foreground text-xs">
                       {getDeviceTypeName(passkey.deviceType)} •{' '}
                       {formatDate(passkey.createdAt)}
                     </p>
                   </div>
                 </div>
 
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      disabled={deletingId === passkey.id}
-                    >
-                      {deletingId === passkey.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Passkey устгах</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Та "{passkey.name || 'Нэргүй Passkey'}" passkey-г
-                        устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах
-                        боломжгүй.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Цуцлах</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDeletePasskey(passkey.id)}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => openEditDialog(passkey)}
+                  >
+                    <Edit2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={deletingId === passkey.id}
                       >
-                        Устгах
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        {deletingId === passkey.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Passkey устгах</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Та "{passkey.name || 'Нэргүй Passkey'}" passkey-г
+                          устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах
+                          боломжгүй.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Цуцлах</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeletePasskey(passkey.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Устгах
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
             ))}
           </div>
         )}
+
+        {/* Edit Passkey Dialog */}
+        <Dialog
+          open={!!editingPasskey}
+          onOpenChange={(open) => {
+            if (!open) {
+              setEditingPasskey(null)
+              setEditName('')
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Passkey нэр засах</DialogTitle>
+              <DialogDescription>
+                Passkey-ийн нэрийг өөрчилнө үү.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-passkey-name">Passkey нэр</Label>
+                <Input
+                  id="edit-passkey-name"
+                  placeholder="Жишээ: iPhone"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  disabled={isUpdating}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingPasskey(null)
+                  setEditName('')
+                }}
+                disabled={isUpdating}
+              >
+                Цуцлах
+              </Button>
+              <Button onClick={handleUpdatePasskey} disabled={isUpdating}>
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Түр хүлээнэ үү...
+                  </>
+                ) : (
+                  'Хадгалах'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )

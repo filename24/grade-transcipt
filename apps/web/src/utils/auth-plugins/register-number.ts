@@ -105,7 +105,7 @@ export const registerNumberAuth = () => {
               data: {
                 name: gradeData.displayName,
                 registerNumber: gradeData.registerNumber,
-                email: `${gradeData.registerNumber}@knea.gt`,
+                email: `${gradeData.systemId}@knea.gt`,
                 emailVerified: true,
                 role: 'STUDENT',
                 systemId: gradeData.systemId,

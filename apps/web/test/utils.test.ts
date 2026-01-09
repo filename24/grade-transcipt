@@ -6,6 +6,7 @@ import {
   countGrades,
   filterUniqueClassNames,
   formatDateToYYYYMMDD,
+  getBrowserAndOS,
   getCurrentSemesterForLevel,
   getCurrentSemesters,
   getDDay,
@@ -15,6 +16,7 @@ import {
   getUserDefaultAvatarUrl,
   isElementarySchool,
   parseTextToArray,
+  parseUserAgent,
   resolveClassCode,
   toSentenceCase
 } from '../src/utils'
@@ -307,6 +309,200 @@ describe('Utils', () => {
 
     it('throws error for invalid date', () => {
       expect(() => formatDateToYYYYMMDD('invalid')).toThrow()
+    })
+  })
+
+  describe('parseUserAgent', () => {
+    it('returns default values when userAgent is undefined', () => {
+      const result = parseUserAgent(undefined)
+      expect(result).toEqual({
+        browser: 'Unknown Browser',
+        os: 'Unknown OS',
+        deviceType: 'desktop'
+      })
+    })
+
+    it('detects mobile device type', () => {
+      const mobileUA =
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
+      const result = parseUserAgent(mobileUA)
+      expect(result.deviceType).toBe('mobile')
+    })
+
+    it('detects Android mobile device', () => {
+      const androidUA =
+        'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36'
+      const result = parseUserAgent(androidUA)
+      expect(result.deviceType).toBe('mobile')
+      expect(result.os).toBe('Android')
+    })
+
+    it('detects Edge browser', () => {
+      const edgeUA =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59'
+      const result = parseUserAgent(edgeUA)
+      expect(result.browser).toBe('Edge')
+      expect(result.os).toBe('Windows')
+    })
+
+    it('detects Chrome browser', () => {
+      const chromeUA =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      const result = parseUserAgent(chromeUA)
+      expect(result.browser).toBe('Chrome')
+      expect(result.os).toBe('Windows')
+    })
+
+    it('detects Firefox browser', () => {
+      const firefoxUA =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'
+      const result = parseUserAgent(firefoxUA)
+      expect(result.browser).toBe('Firefox')
+      expect(result.os).toBe('Windows')
+    })
+
+    it('detects Safari browser', () => {
+      const safariUA =
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15'
+      const result = parseUserAgent(safariUA)
+      expect(result.browser).toBe('Safari')
+      expect(result.os).toBe('macOS')
+    })
+
+    it('detects Opera browser', () => {
+      const operaUA =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 OPR/77.0.4054.277'
+      const result = parseUserAgent(operaUA)
+      expect(result.browser).toBe('Opera')
+    })
+
+    it('detects macOS', () => {
+      const macUA =
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+      const result = parseUserAgent(macUA)
+      expect(result.os).toBe('macOS')
+    })
+
+    it('detects Linux', () => {
+      const linuxUA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+      const result = parseUserAgent(linuxUA)
+      expect(result.os).toBe('Linux')
+    })
+
+    it('detects iOS', () => {
+      const iosUA =
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
+      const result = parseUserAgent(iosUA)
+      expect(result.os).toBe('iOS')
+    })
+
+    it('detects iPad as iOS', () => {
+      const iPadUA =
+        'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15'
+      const result = parseUserAgent(iPadUA)
+      expect(result.os).toBe('iOS')
+    })
+  })
+
+  describe('getBrowserAndOS', () => {
+    const originalWindow = global.window
+    const originalNavigator = global.navigator
+
+    afterEach(() => {
+      global.window = originalWindow
+      global.navigator = originalNavigator
+    })
+
+    it('returns "Unknown device" when window is undefined', () => {
+      // @ts-ignore
+      global.window = undefined
+      const result = getBrowserAndOS()
+      expect(result).toBe('Unknown device')
+    })
+
+    it('detects 1Password', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'Mozilla/5.0 1Password' },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('1Password')
+    })
+
+    it('detects Bitwarden', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'Mozilla/5.0 Bitwarden' },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Bitwarden')
+    })
+
+    it('returns "Google Password Manager" for Chrome on Windows', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Google Password Manager')
+    })
+
+    it('returns "Google Password Manager" for Chrome on macOS', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Google Password Manager')
+    })
+
+    it('returns "browser on OS" format for Firefox on Linux', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (X11; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
+        },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Firefox on Linux')
+    })
+
+    it('returns "browser on OS" format for Safari on macOS', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15'
+        },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Safari on macOS')
+    })
+
+    it('returns "browser on OS" format for Chrome on Linux', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+        writable: true,
+        configurable: true
+      })
+      const result = getBrowserAndOS()
+      expect(result).toBe('Chrome on Linux')
     })
   })
 })

@@ -17,7 +17,7 @@ ALTER TABLE "session" ALTER COLUMN "createdAt" DROP DEFAULT;
 
 -- AlterTable: user
 -- 1. 먼저 NULL email을 가짜 email로 채움
-UPDATE "user" SET email = CONCAT("registerNumber", '@knea.gt') WHERE email IS NULL;
+UPDATE "user" SET email = CONCAT("systemId", '@knea.gt') WHERE email IS NULL;
 
 -- 2. PK 이름 변경
 ALTER TABLE "user" RENAME CONSTRAINT "User_pkey" TO "user_pkey";

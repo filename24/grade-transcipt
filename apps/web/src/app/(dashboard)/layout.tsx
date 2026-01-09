@@ -1,8 +1,9 @@
+import { headers } from 'next/headers'
+
 import { BottomTabBar } from '@/components/appbar'
 import Footer from '@/components/footer'
 import Navbar from '@/components/navbar'
 import { auth } from '@/utils/better-auth'
-import { headers } from 'next/headers'
 
 import PasswordSetupChecker from './_Components/PasswordSetupChecker'
 

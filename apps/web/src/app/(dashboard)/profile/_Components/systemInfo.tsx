@@ -22,29 +22,33 @@ export default function SystemInfo({
         <div className="grid gap-4">
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Medle цахим хаяг</h2>
-            <div className="items-center-safe flex">
-              <span className="text-sm">{systemData.MICROSOFT_EMAIL}</span>
+            <div className="flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {systemData.MICROSOFT_EMAIL}
+              </span>
               <CopyButton textToCopy={systemData.MICROSOFT_EMAIL} />
             </div>
           </div>
 
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Google цахим хаяг</h2>
-            <div className="items-center-safe flex">
-              <span className="text-sm">{systemData.GOOGLE_EMAIL}</span>
+            <div className="flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {systemData.GOOGLE_EMAIL}
+              </span>
               <CopyButton textToCopy={systemData.GOOGLE_EMAIL} />
             </div>
           </div>
 
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">Нууц үг</h2>
-            <div className="items-center-safe flex">
-              <span className="mr-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate text-sm">
                 {isVisible ? systemData.MICROSOFT_PASSWORD : '*'.repeat(8)}
               </span>
               <button
                 type="button"
-                className={'text-link'}
+                className={'shrink-0 text-link'}
                 onClick={() => setIsVisible(!isVisible)}
               >
                 {isVisible ? 'нуух' : 'харах'}
@@ -54,15 +58,15 @@ export default function SystemInfo({
           </div>
           <div className="grid gap-1">
             <h2 className="font-medium text-lg">bagshsystem.mn нууц үг</h2>
-            <div className="items-center-safe flex">
-              <span className="mr-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate text-sm">
                 {isVisible
                   ? formatDateToYYYYMMDD(systemData.DATE_OF_BIRTH)
                   : '*'.repeat(8)}
               </span>
               <button
                 type="button"
-                className={'text-link'}
+                className={'shrink-0 text-link'}
                 onClick={() => setIsVisible(!isVisible)}
               >
                 {isVisible ? 'нуух' : 'харах'}

@@ -1,7 +1,7 @@
 'use client'
 import { Fingerprint, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { loginWithRegister } from '@/app/(auth)/login/actions'
@@ -59,10 +59,15 @@ export function RegisterLoginForm({
     if (state?.requiresPassword && state.registerNumber) {
       setShowPassword(true)
       setSavedRegisterNumber(state.registerNumber)
-      // Focus password field after state update
-      setTimeout(() => passwordRef.current?.focus(), 100)
     }
   }, [state?.requiresPassword, state?.registerNumber])
+
+  // Focus password field after DOM update (synchronous)
+  useLayoutEffect(() => {
+    if (showPassword && passwordRef.current) {
+      passwordRef.current.focus()
+    }
+  }, [showPassword])
 
   // Show error messages (but not the "password required" prompt)
   useEffect(() => {
@@ -88,9 +93,11 @@ export function RegisterLoginForm({
       })
 
       if (result?.error) {
-        toast.error(
-          result.error.message || 'Passkey нэвтрэлт амжилтгүй боллоо.'
-        )
+        const errorMsg =
+          typeof result.error === 'object' && 'message' in result.error
+            ? result.error.message
+            : 'Passkey нэвтрэлт амжилтгүй боллоо.'
+        toast.error(errorMsg)
       }
     } catch (error) {
       console.error('Passkey login error:', error)

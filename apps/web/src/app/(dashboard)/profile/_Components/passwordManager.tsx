@@ -12,8 +12,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 import { authClient } from '@/utils/auth-client'
 
 interface PasswordManagerProps {
@@ -41,8 +41,8 @@ export default function PasswordManager({
   const checkPasswordStatus = async () => {
     try {
       const result = await authClient.hasPassword()
-      if (result && 'hasPassword' in result) {
-        const status = result.hasPassword as boolean
+      if (result.data && 'hasPassword' in result.data) {
+        const status = result.data.hasPassword
         setHasPassword(status)
         onPasswordStatusChange?.(status)
       }
@@ -79,9 +79,12 @@ export default function PasswordManager({
         confirmPassword
       })
 
-      if (result && 'error' in result && result.error) {
-        const errorObj = result.error as { message?: string }
-        setError(errorObj.message || '비밀번호 설정 실패')
+      if (result.data && 'error' in result.data) {
+        const errorMsg =
+          typeof result.data.error === 'string'
+            ? result.data.error
+            : 'Нууц үг тохируулахад алдаа гарлаа'
+        setError(errorMsg)
         return
       }
 
@@ -120,9 +123,12 @@ export default function PasswordManager({
         confirmPassword: changeConfirmPassword
       })
 
-      if (result && 'error' in result && result.error) {
-        const errorObj = result.error as { message?: string }
-        setError(errorObj.message || '비밀번호 변경 실패')
+      if (result.data && 'error' in result.data) {
+        const errorMsg =
+          typeof result.data.error === 'string'
+            ? result.data.error
+            : 'Нууц үг солиход алдаа гарлаа'
+        setError(errorMsg)
         return
       }
 
@@ -174,9 +180,8 @@ export default function PasswordManager({
 
             <div className="space-y-2">
               <Label htmlFor="new-password">Шинэ нууц үг</Label>
-              <Input
+              <PasswordInput
                 id="new-password"
-                type="password"
                 placeholder="Хамгийн багадаа 8 тэмдэгт"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -187,9 +192,8 @@ export default function PasswordManager({
 
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Нууц үг баталгаажуулах</Label>
-              <Input
+              <PasswordInput
                 id="confirm-password"
-                type="password"
                 placeholder="Нууц үгээ дахин оруулна уу"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -216,9 +220,8 @@ export default function PasswordManager({
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="current-password">Одоогийн нууц үг</Label>
-              <Input
+              <PasswordInput
                 id="current-password"
-                type="password"
                 placeholder="Одоогийн нууц үгээ оруулна уу"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -229,9 +232,8 @@ export default function PasswordManager({
 
             <div className="space-y-2">
               <Label htmlFor="change-new-password">Шинэ нууц үг</Label>
-              <Input
+              <PasswordInput
                 id="change-new-password"
-                type="password"
                 placeholder="Хамгийн багадаа 8 тэмдэгт"
                 value={changeNewPassword}
                 onChange={(e) => setChangeNewPassword(e.target.value)}
@@ -244,9 +246,8 @@ export default function PasswordManager({
               <Label htmlFor="change-confirm-password">
                 Шинэ нууц үг баталгаажуулах
               </Label>
-              <Input
+              <PasswordInput
                 id="change-confirm-password"
-                type="password"
                 placeholder="Шинэ нууц үгээ дахин оруулна уу"
                 value={changeConfirmPassword}
                 onChange={(e) => setChangeConfirmPassword(e.target.value)}
@@ -257,7 +258,7 @@ export default function PasswordManager({
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" size="sm" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

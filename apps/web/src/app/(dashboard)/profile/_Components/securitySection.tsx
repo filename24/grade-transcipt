@@ -6,6 +6,7 @@ import { authClient } from '@/utils/auth-client'
 
 import PasskeyManager from './passkeyManager'
 import PasswordManager from './passwordManager'
+import SessionManager from './sessionManager'
 
 export default function SecuritySection() {
   const [hasPassword, setHasPassword] = useState(false)
@@ -15,8 +16,11 @@ export default function SecuritySection() {
     const checkPasswordStatus = async () => {
       try {
         const result = await authClient.hasPassword()
-        if (result && 'hasPassword' in result) {
-          setHasPassword(result.hasPassword as boolean)
+        if (
+          result.data &&
+          'hasPassword' in result.data
+        ) {
+          setHasPassword(result.data.hasPassword)
         }
       } catch (error) {
         console.error('Failed to check password status:', error)
@@ -37,9 +41,12 @@ export default function SecuritySection() {
   }
 
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-2 lg:grid-cols-2">
       <PasswordManager onPasswordStatusChange={handlePasswordStatusChange} />
       <PasskeyManager hasPassword={hasPassword} />
+      <div className="lg:col-span-2">
+        <SessionManager />
+      </div>
     </div>
   )
 }
