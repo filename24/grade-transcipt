@@ -1,4 +1,5 @@
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import { BottomTabBar } from '@/components/appbar'
 import Footer from '@/components/footer'
@@ -16,6 +17,7 @@ export default async function DashboardLayout({
     headers: await headers()
   })
 
+  if (!session) redirect('/login')
   return (
     <div className="flex min-h-dvh flex-1 flex-col border-grid">
       <Navbar session={session} />

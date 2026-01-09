@@ -14,22 +14,22 @@ const registerNumberSchema = z.object({
 
 const setPasswordSchema = z
   .object({
-    password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다.'),
+    password: z.string().min(8, 'Нууц үг 8 оронгоос дээш байх ёстой.'),
     confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: '비밀번호가 일치하지 않습니다.',
+    message: 'Нууц үг тохирохгүй байна.',
     path: ['confirmPassword']
   })
 
 const changePasswordSchema = z
   .object({
     currentPassword: z.string(),
-    newPassword: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다.'),
+    newPassword: z.string().min(8, 'Нууц үг 8 оронгоос дээш байх ёстой.'),
     confirmPassword: z.string()
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: '비밀번호가 일치하지 않습니다.',
+    message: 'Нууц үг тохирохгүй байна.',
     path: ['confirmPassword']
   })
 
@@ -136,7 +136,7 @@ export const registerNumberAuth = () => {
               if (!password) {
                 return ctx.json(
                   {
-                    error: '비밀번호를 입력해주세요.',
+                    error: 'Нууц үг оруулна уу.',
                     requiresPassword: true
                   },
                   { status: 401 }
@@ -150,7 +150,7 @@ export const registerNumberAuth = () => {
 
               if (!isValid) {
                 return ctx.json(
-                  { error: '비밀번호가 일치하지 않습니다.' },
+                  { error: 'Нууц үг тохирохгүй байна.' },
                   { status: 401 }
                 )
               }
@@ -204,13 +204,13 @@ export const registerNumberAuth = () => {
             ctx.context.secret
           )
           if (!sessionToken) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const sessionData =
             await ctx.context.internalAdapter.findSession(sessionToken)
           if (!sessionData) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const adapter = ctx.context.adapter
@@ -242,13 +242,13 @@ export const registerNumberAuth = () => {
             ctx.context.secret
           )
           if (!sessionToken) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const sessionData =
             await ctx.context.internalAdapter.findSession(sessionToken)
           if (!sessionData) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const { password } = ctx.body
@@ -267,8 +267,7 @@ export const registerNumberAuth = () => {
           if (existingAccount?.password) {
             return ctx.json(
               {
-                error:
-                  '비밀번호가 이미 설정되어 있습니다. 변경하려면 change-password를 사용하세요.'
+                error: 'Та нууц үгээ өмнө үүсгэсэн байна.'
               },
               { status: 400 }
             )
@@ -304,7 +303,7 @@ export const registerNumberAuth = () => {
 
           return ctx.json({
             success: true,
-            message: '비밀번호가 설정되었습니다.'
+            message: 'Амжилттай солигдсон.'
           })
         }
       ),
@@ -323,13 +322,13 @@ export const registerNumberAuth = () => {
             ctx.context.secret
           )
           if (!sessionToken) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const sessionData =
             await ctx.context.internalAdapter.findSession(sessionToken)
           if (!sessionData) {
-            return ctx.json({ error: '로그인이 필요합니다.' }, { status: 401 })
+            return ctx.json({ error: 'Нэвтрэх шаардлагатай.' }, { status: 401 })
           }
 
           const { currentPassword, newPassword } = ctx.body
@@ -348,8 +347,7 @@ export const registerNumberAuth = () => {
           if (!credentialAccount?.password) {
             return ctx.json(
               {
-                error:
-                  '비밀번호가 설정되어 있지 않습니다. 먼저 비밀번호를 설정하세요.'
+                error: 'Нууц үг тохируулаагүй байна. Эхлээд нууц үгээ тохируулна уу.'
               },
               { status: 400 }
             )
@@ -363,7 +361,7 @@ export const registerNumberAuth = () => {
 
           if (!isValid) {
             return ctx.json(
-              { error: '현재 비밀번호가 일치하지 않습니다.' },
+              { error: 'Нууц үг тохирохгүй байна.' },
               { status: 401 }
             )
           }
@@ -383,7 +381,7 @@ export const registerNumberAuth = () => {
 
           return ctx.json({
             success: true,
-            message: '비밀번호가 변경되었습니다.'
+            message: 'Нууц үг амжилттай солигдсон.'
           })
         }
       )
