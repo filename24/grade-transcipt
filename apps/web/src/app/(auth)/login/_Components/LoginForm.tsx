@@ -1,7 +1,13 @@
 'use client'
 import { Fingerprint, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useActionState, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {
+  useActionState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import { toast } from 'sonner'
 
 import { loginWithRegister } from '@/app/(auth)/login/actions'

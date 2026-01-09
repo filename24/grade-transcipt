@@ -381,7 +381,11 @@ export function parseUserAgent(userAgent?: string): {
   deviceType: 'desktop' | 'mobile'
 } {
   if (!userAgent) {
-    return { browser: 'Unknown Browser', os: 'Unknown OS', deviceType: 'desktop' }
+    return {
+      browser: 'Unknown Browser',
+      os: 'Unknown OS',
+      deviceType: 'desktop'
+    }
   }
 
   let browser = 'Unknown Browser'

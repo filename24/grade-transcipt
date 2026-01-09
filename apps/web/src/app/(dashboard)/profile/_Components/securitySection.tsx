@@ -16,10 +16,7 @@ export default function SecuritySection() {
     const checkPasswordStatus = async () => {
       try {
         const result = await authClient.hasPassword()
-        if (
-          result.data &&
-          'hasPassword' in result.data
-        ) {
+        if (result.data && 'hasPassword' in result.data) {
           setHasPassword(result.data.hasPassword)
         }
       } catch (error) {
