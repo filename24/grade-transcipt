@@ -47,6 +47,16 @@ const data = {
           url: '/admin/grade/export'
         }
       ]
+    },
+    {
+      title: 'Users',
+      url: '#',
+      items: [
+        {
+          title: 'User list',
+          url: '/admin/users'
+        }
+      ]
     }
   ],
   teacher: [
