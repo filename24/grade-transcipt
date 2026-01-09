@@ -347,7 +347,8 @@ export const registerNumberAuth = () => {
           if (!credentialAccount?.password) {
             return ctx.json(
               {
-                error: 'Нууц үг тохируулаагүй байна. Эхлээд нууц үгээ тохируулна уу.'
+                error:
+                  'Нууц үг тохируулаагүй байна. Эхлээд нууц үгээ тохируулна уу.'
               },
               { status: 400 }
             )
