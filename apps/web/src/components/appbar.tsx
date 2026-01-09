@@ -4,7 +4,7 @@ import { BarChart3, FileCheck, Home } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { Session } from 'next-auth'
+import type { authClient } from '@/utils/auth-client'
 
 import { cn, getUserDefaultAvatarUrl } from '@/utils'
 import { CDN_ENDPOINT } from '@/utils/constants'
@@ -27,7 +27,11 @@ const subTabs = [
   }
 ]
 
-export function BottomTabBar({ session }: { session: Session | null }) {
+export function BottomTabBar({
+  session
+}: {
+  session: typeof authClient.$Infer.Session | null
+}) {
   const pathname = usePathname()
 
   return (

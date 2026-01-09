@@ -46,24 +46,26 @@ export default function PersonalInfo({ userData }: { userData: ExtendedUser }) {
               </span>
             </div>
 
-            <div className="grid gap-1">
-              <h2 className="font-medium text-lg">Регистрийн дугаар</h2>
-              <div>
-                <span className="mr-2 text-sm">
-                  {isVisible
-                    ? userData.registerNumber.toUpperCase()
-                    : userData.registerNumber.slice(0, 2).toUpperCase() +
-                      '*'.repeat(userData.registerNumber.length - 2)}
-                </span>
-                <button
-                  type="button"
-                  className={'text-link text-sm hover:underline'}
-                  onClick={() => setIsVisible(!isVisible)}
-                >
-                  {isVisible ? 'нуух' : 'харах'}
-                </button>
+            {userData.registerNumber && (
+              <div className="grid gap-1">
+                <h2 className="font-medium text-lg">Регистрийн дугаар</h2>
+                <div>
+                  <span className="mr-2 text-sm">
+                    {isVisible
+                      ? userData.registerNumber.toUpperCase()
+                      : userData.registerNumber.slice(0, 2).toUpperCase() +
+                        '*'.repeat(userData.registerNumber.length - 2)}
+                  </span>
+                  <button
+                    type="button"
+                    className={'text-link text-sm hover:underline'}
+                    onClick={() => setIsVisible(!isVisible)}
+                  >
+                    {isVisible ? 'нуух' : 'харах'}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {(userData.firstNameMgl || userData.lastNameMgl) && (

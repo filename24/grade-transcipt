@@ -46,7 +46,7 @@ export default function ({ userData }: { userData: User }) {
   const [avatarUrl, setAvatarUrl] = useState(
     userData.avatar
       ? `${CDN_ENDPOINT}/avatar/${userData.avatar}.png`
-      : getUserDefaultAvatarUrl(userData.systemId)
+      : getUserDefaultAvatarUrl(userData.systemId ?? '0')
   )
   const cropperRef = useRef<ReactCropperElement>(null)
   const form = useForm<{ avatar: File | undefined }>()
@@ -79,10 +79,15 @@ export default function ({ userData }: { userData: User }) {
   }
 
   const onSubmit = async () => {
+    if (!userData.systemId) {
+      return toast.error('Хэрэглэгчийн мэдээлэл олдсонгүй.')
+    }
+
     setIsLoading(true)
     const cropData = getCropData()
 
     if (!cropData) {
+      setIsLoading(false)
       return toast.error('Зураг олдсонгүй. Та дахин оролдон уу')
     }
 
@@ -103,13 +108,18 @@ export default function ({ userData }: { userData: User }) {
   }
 
   const removeProfile = async () => {
+    const systemId = userData.systemId
+    if (!systemId) {
+      return toast.error('Хэрэглэгчийн мэдээлэл олдсонгүй.')
+    }
+
     setIsLoading(true)
 
-    deleteAvatar(userData.systemId)
+    deleteAvatar(systemId)
       .then((payload) => {
         toast.success(payload?.message)
 
-        setAvatarUrl(getUserDefaultAvatarUrl(userData.registerNumber))
+        setAvatarUrl(getUserDefaultAvatarUrl(systemId))
 
         setIsDialogOpen(false)
         setIsLoading(false)

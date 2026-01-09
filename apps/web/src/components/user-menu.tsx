@@ -3,8 +3,8 @@
 import { LogOut, User2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
+import { authClient } from '@/utils/auth-client'
+import { useRouter } from 'next/navigation'
 
 import {
   DropdownMenu,
@@ -17,7 +17,12 @@ import {
 import { getUserDefaultAvatarUrl } from '@/utils'
 import { CDN_ENDPOINT } from '@/utils/constants'
 
-export default function UserMenu({ session }: { session: Session | null }) {
+export default function UserMenu({
+  session
+}: {
+  session: typeof authClient.$Infer.Session | null
+}) {
+  const router = useRouter()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -45,8 +50,14 @@ export default function UserMenu({ session }: { session: Session | null }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => {
-            signOut()
+          onClick={async () => {
+            await authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push('/login')
+                }
+              }
+            })
           }}
         >
           <div className="flex gap-1">

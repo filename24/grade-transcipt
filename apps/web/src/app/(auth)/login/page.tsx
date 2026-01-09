@@ -1,13 +1,16 @@
 import { RegisterLoginForm } from './_Components/LoginForm'
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 export default async function Login({
   searchParams
 }: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
   const params = await searchParams
 
   if (session) {

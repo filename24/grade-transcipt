@@ -1,6 +1,7 @@
 'use client'
 import { LogOut } from 'lucide-react'
-import { signOut } from 'next-auth/react'
+import { authClient } from '@/utils/auth-client'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -16,11 +17,18 @@ import {
 
 export default function DangerZone() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const router = useRouter()
 
-  function logout() {
+  async function logout() {
     setIsDialogOpen(false)
 
-    signOut()
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push('/login')
+        }
+      }
+    })
   }
   return (
     <Card>

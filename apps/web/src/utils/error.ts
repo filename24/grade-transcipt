@@ -1,4 +1,4 @@
-import { CredentialsSignin } from 'next-auth'
+// import { CredentialsSignin } from 'next-auth'
 
 export enum ErrorCode {
   INVALID_INPUT = 'INVALID_INPUT',
@@ -29,10 +29,11 @@ export class GradeError extends Error {
   }
 }
 
-export class GradeAuthError extends CredentialsSignin {
+export class GradeAuthError extends Error {
   code = 'GradeError'
-  constructor(message?: string, _errorOptions?: { statusCode: number }) {
+  constructor(message?: string) {
     super(message)
+    this.name = 'GradeAuthError'
     this.message = message ?? 'Authentication error'
   }
 }

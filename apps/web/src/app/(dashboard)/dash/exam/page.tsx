@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
-import { auth } from '@/utils/auth'
+import { auth } from '@/utils/better-auth'
 import { getStudentExams } from '@/utils/fetch'
 
 import ExamLayout from './_Components/ExamLayout'
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
 }
 
 export default async function GradePage() {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
   if (!session?.user?.name) {
     return redirect('/login')

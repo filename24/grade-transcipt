@@ -2,9 +2,9 @@
 import { ChevronUp, User2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import type { Session } from 'next-auth'
+import { usePathname, useRouter } from 'next/navigation'
 import type * as React from 'react'
+import { authClient } from '@/utils/auth-client'
 
 import {
   DropdownMenu,
@@ -27,7 +27,6 @@ import {
   SidebarMenuItem,
   SidebarRail
 } from '@/components/ui/sidebar'
-import { signOut } from '@/utils/auth'
 
 const data = {
   admin: [
@@ -76,8 +75,11 @@ const data = {
 export function AppSidebar({
   session,
   ...props
-}: React.ComponentProps<typeof Sidebar> & { session: Session | null }) {
+}: React.ComponentProps<typeof Sidebar> & {
+  session: typeof authClient.$Infer.Session | null
+}) {
   const pathname = usePathname()
+  const router = useRouter()
 
   return (
     <Sidebar {...props}>
@@ -151,7 +153,17 @@ export function AppSidebar({
                   <DropdownMenuItem>
                     <Link href="/profile">Хувийн мэдээлэл</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => signOut()}>
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      await authClient.signOut({
+                        fetchOptions: {
+                          onSuccess: () => {
+                            router.push('/login')
+                          }
+                        }
+                      })
+                    }}
+                  >
                     Гарах
                   </DropdownMenuItem>
                 </DropdownMenuContent>
