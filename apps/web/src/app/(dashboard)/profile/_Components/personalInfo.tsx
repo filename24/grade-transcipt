@@ -1,6 +1,6 @@
 'use client'
 
-import type { User } from '@gt/database'
+import type { User } from '@gt/database/browser'
 import localFont from 'next/font/local' // 1. 폰트 로드 기능
 import { useState } from 'react'
 
