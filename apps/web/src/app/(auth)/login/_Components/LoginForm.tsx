@@ -20,6 +20,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/utils'
@@ -154,11 +155,10 @@ export function RegisterLoginForm({
               {showPassword && (
                 <div className="grid gap-3">
                   <Label htmlFor="password">Нууц үг</Label>
-                  <Input
+                  <PasswordInput
                     ref={passwordRef}
                     id="password"
                     name="password"
-                    type="password"
                     placeholder="Нууц үгээ оруулна уу"
                     autoComplete="current-password"
                     required
@@ -235,64 +235,3 @@ export function RegisterLoginForm({
     </div>
   )
 }
-
-// export function EsisLoginForm({
-//   className,
-//   ...props
-// }: React.ComponentPropsWithoutRef<'div'>) {
-//   const [state, action, pending] = useActionState(loginWithEsis, undefined)
-
-//   if (state?.message) {
-//     toast.error(state.message)
-//   }
-//   return (
-//     <div className={cn('flex flex-col gap-6', className)} {...props}>
-//       <Card>
-//         <CardHeader>
-//           <CardTitle className="text-2xl">ESIS системээр нэвтрэх</CardTitle>
-//           <CardDescription>Регистрийн дугаараа оруулна уу.</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <form action={action}>
-//             <div className="flex flex-col gap-6">
-//               <div className="grid gap-2">
-//                 <Label htmlFor="username">ESIS нэвтрэх нэр</Label>
-//                 <Input
-//                   id="username"
-//                   name="username"
-//                   type="text"
-//                   placeholder="es12345678"
-//                   required
-//                 />
-
-//                 <Label htmlFor="password">Нууц үг</Label>
-//                 <Input
-//                   id="password"
-//                   name="password"
-//                   type="password"
-//                   placeholder="Нууц үг"
-//                   required
-//                 />
-//                 {state?.errors?.password && (
-//                   <p className="text-red-400 text-sm">
-//                     {state.errors.password}
-//                   </p>
-//                 )}
-//               </div>
-//               <Button type="submit" disabled={pending} className="w-full">
-//                 {pending ? (
-//                   <>
-//                     <Loader2 className="animate-spin" />
-//                     Түр хүлээнэ үү...
-//                   </>
-//                 ) : (
-//                   'Нэвтрэх'
-//                 )}
-//               </Button>
-//             </div>
-//           </form>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   )
-// }

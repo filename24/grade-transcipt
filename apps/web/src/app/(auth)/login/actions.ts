@@ -57,16 +57,6 @@ export async function loginWithRegister(
   redirect('/dash')
 }
 
-export async function loginWithEsis(
-  _state: EsisLoginFormState,
-  _formData: FormData
-): Promise<EsisLoginFormState> {
-  // TODO: Implement ESIS login migration
-  return {
-    message: 'ESIS login needs migration.'
-  }
-}
-
 export type RegisterLoginFormState =
   | {
       errors?: {
@@ -76,14 +66,5 @@ export type RegisterLoginFormState =
       message?: string
       requiresPassword?: boolean
       registerNumber?: string
-    }
-  | undefined
-
-export type EsisLoginFormState =
-  | {
-      errors?: {
-        password?: string[]
-      }
-      message?: string
     }
   | undefined
