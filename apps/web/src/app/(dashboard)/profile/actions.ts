@@ -1,5 +1,6 @@
 'use server'
 
+import * as Sentry from '@sentry/nextjs'
 import prisma, { DeleteObjectCommand, PutObjectCommand, s3 } from '@gt/database'
 import { revalidateTag } from 'next/cache'
 import type { z } from 'zod'
@@ -34,8 +35,10 @@ export async function uploadAvatar(
   try {
     await s3.send(command)
   } catch (error) {
-    console.error('S3 Error: ', error)
-
+    Sentry.captureException(error, {
+      tags: { feature: 'profile-avatar', service: 's3', operation: 'upload' },
+      extra: { userId, filename }
+    })
     throw new Error('Серверийн алдаа гарлаа. Та дараа дахин оролдон уу.')
   }
 
@@ -49,7 +52,14 @@ export async function uploadAvatar(
       }
     })
   } catch (error) {
-    console.error('Prisma error: ', error)
+    Sentry.captureException(error, {
+      tags: {
+        feature: 'profile-avatar',
+        service: 'prisma',
+        operation: 'upload'
+      },
+      extra: { userId, filename }
+    })
     const deleteCommand = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: filename
@@ -93,7 +103,14 @@ export async function deleteAvatar(
       }
     })
   } catch (error) {
-    console.error('Prisma error: ', error)
+    Sentry.captureException(error, {
+      tags: {
+        feature: 'profile-avatar',
+        service: 'prisma',
+        operation: 'delete'
+      },
+      extra: { systemId, avatarId: user.avatar }
+    })
     const deleteCommand = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: `avatar/${user.avatar}.png`

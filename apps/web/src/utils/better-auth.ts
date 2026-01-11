@@ -4,7 +4,9 @@ import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
+import { admin } from 'better-auth/plugins'
 
+import { ac, ADMIN, STUDENT, TEACHER } from './auth-permissions'
 import { registerNumberAuth } from './auth-plugins/register-number'
 
 const normalizeOrigin = (val?: string) =>
@@ -33,6 +35,16 @@ export const auth = betterAuth({
         process.env.NEXT_PUBLIC_APP_URL ||
         normalizeOrigin(process.env.VERCEL_URL) ||
         'http://localhost:3000'
+    }),
+    admin({
+      ac,
+      roles: {
+        ADMIN,
+        TEACHER,
+        STUDENT
+      },
+      defaultRole: 'STUDENT',
+      defaultBanReason: 'Banned by admin'
     }),
     nextCookies()
   ],
@@ -90,7 +102,6 @@ export const auth = betterAuth({
   appName: 'Grade Transcript',
   user: {
     additionalFields: {
-      role: { type: 'string' },
       systemId: { type: 'string' },
       avatar: { type: 'string', required: false },
       banner: { type: 'string', required: false },

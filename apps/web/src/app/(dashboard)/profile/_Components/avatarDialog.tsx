@@ -1,6 +1,6 @@
 'use client'
 
-import type { User } from '@gt/database'
+import type { User } from '@gt/database/browser'
 import { Loader2, Pencil } from 'lucide-react'
 import { useRef, useState } from 'react'
 import Cropper, { type ReactCropperElement } from 'react-cropper'

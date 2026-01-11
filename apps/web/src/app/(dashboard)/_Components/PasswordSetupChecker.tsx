@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { useEffect, useState } from 'react'
 
 import { authClient } from '@/utils/auth-client'
@@ -47,7 +48,10 @@ export default function PasswordSetupChecker() {
           setShowModal(true)
         }
       } catch (error) {
-        console.error('Failed to check password status:', error)
+        Sentry.captureException(error, {
+          level: 'warning',
+          tags: { feature: 'password-setup', operation: 'check-status' }
+        })
       }
     }
 

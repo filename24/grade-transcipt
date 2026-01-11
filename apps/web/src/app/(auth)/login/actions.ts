@@ -1,5 +1,6 @@
 'use server'
 
+import * as Sentry from '@sentry/nextjs'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -48,23 +49,17 @@ export async function loginWithRegister(
       }
     }
   } catch (error: unknown) {
-    console.error(error)
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'auth-login' },
+      extra: { registerNumber: loginData.data.registerNumber }
+    })
     return {
       message: 'Нэвтрэхэд алдаа гарлаа.'
     }
   }
 
   redirect('/dash')
-}
-
-export async function loginWithEsis(
-  _state: EsisLoginFormState,
-  _formData: FormData
-): Promise<EsisLoginFormState> {
-  // TODO: Implement ESIS login migration
-  return {
-    message: 'ESIS login needs migration.'
-  }
 }
 
 export type RegisterLoginFormState =
@@ -76,14 +71,5 @@ export type RegisterLoginFormState =
       message?: string
       requiresPassword?: boolean
       registerNumber?: string
-    }
-  | undefined
-
-export type EsisLoginFormState =
-  | {
-      errors?: {
-        password?: string[]
-      }
-      message?: string
     }
   | undefined

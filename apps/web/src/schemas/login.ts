@@ -7,8 +7,3 @@ export const RegisterLoginSchema = z.object({
     .toLowerCase(),
   password: z.string().optional()
 })
-
-export const EsisLoginSchema = z.object({
-  username: z.string().toLowerCase(),
-  password: z.string().min(8, 'Нууц үг багадаа 8 тэмдэгт байх ёстой.')
-})

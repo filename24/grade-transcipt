@@ -1,6 +1,6 @@
 'use client'
 
-import type { Grade } from '@gt/database'
+import type { Grade } from '@gt/database/browser'
 
 import {
   Card,

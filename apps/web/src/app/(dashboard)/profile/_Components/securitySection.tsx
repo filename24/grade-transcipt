@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { useEffect, useState } from 'react'
 
 import { authClient } from '@/utils/auth-client'
@@ -20,7 +21,13 @@ export default function SecuritySection() {
           setHasPassword(result.data.hasPassword)
         }
       } catch (error) {
-        console.error('Failed to check password status:', error)
+        Sentry.captureException(error, {
+          level: 'warning',
+          tags: {
+            feature: 'security-section',
+            operation: 'check-password-status'
+          }
+        })
       } finally {
         setIsLoading(false)
       }

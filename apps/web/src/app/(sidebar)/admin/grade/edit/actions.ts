@@ -1,4 +1,6 @@
 'use server'
+
+import * as Sentry from '@sentry/nextjs'
 import prisma from '@gt/database'
 import type { GradeStatusType } from '@gt/esis'
 import type { z } from 'zod'
@@ -46,7 +48,14 @@ export async function editGradeData(data: z.infer<typeof EditGradeSchema>) {
 
     throw new TypeError('action is undefined')
   } catch (error) {
-    console.error('Error updating grades:', error)
+    Sentry.captureException(error, {
+      tags: { feature: 'admin-grade-edit', action: data.action },
+      extra: {
+        classCode: `${data.className} ${data.classType}`,
+        classGrade: data.classGrade,
+        semester: data.semester
+      }
+    })
     throw error
   }
 }

@@ -2,22 +2,33 @@
 
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from './ui/button'
 
 function ThemeSwitcher() {
-  const { setTheme, theme } = useTheme()
-  const [isDark, setIsDark] = useState(theme === 'dark')
+  const { setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggleTheme = () => {
-    setIsDark(!isDark)
-    setTheme(isDark ? 'light' : 'dark')
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+  }
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="icon" disabled>
+        <span className="h-4 w-4" />
+      </Button>
+    )
   }
 
   return (
     <Button onClick={toggleTheme} variant="outline" size="icon">
-      {isDark ? <Sun /> : <Moon />}
+      {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
     </Button>
   )
 }

@@ -1,9 +1,7 @@
-// import { PrismaClient } from '../generated/prisma'
-// import { withAccelerate } from '@prisma/extension-accelerate'
-
 import { S3Client } from '@aws-sdk/client-s3'
-import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { Redis } from '@upstash/redis'
+import { PrismaClient } from '../generated/prisma/client'
 
 const globalForDatabase = global as unknown as {
   prisma: PrismaClient
@@ -24,7 +22,8 @@ const s3 =
     }
   })
 
-const prisma = globalForDatabase.prisma || new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+const prisma = globalForDatabase.prisma || new PrismaClient({ adapter })
 
 const redis =
   globalForDatabase.redis || Redis.fromEnv({ enableAutoPipelining: false })
@@ -36,6 +35,5 @@ if (process.env.NODE_ENV !== 'production') globalForDatabase.prisma = prisma
 if (process.env.NODE_ENV !== 'production') globalForDatabase.redis = redis
 if (process.env.NODE_ENV !== 'production') globalForDatabase.s3 = s3
 
-// export * from '../generated/prisma'
 export * from '@aws-sdk/client-s3'
-export * from '@prisma/client'
+export * from '../generated/prisma/client'

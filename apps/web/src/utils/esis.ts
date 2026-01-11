@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { redis } from '@gt/database'
 import { ESISClient } from '@gt/esis'
 
@@ -29,7 +30,9 @@ async function refreshToken() {
       return newToken
     }
   } catch (error) {
-    console.error('Token refresh failed:', error)
+    Sentry.captureException(error, {
+      tags: { feature: 'esis', operation: 'token-refresh' }
+    })
     throw error
   }
 }
@@ -62,7 +65,9 @@ export async function connectEsis() {
     }
     return newToken
   } catch (error) {
-    console.error('[ESIS ERROR] Connection failed:', error)
+    Sentry.captureException(error, {
+      tags: { feature: 'esis', operation: 'connection' }
+    })
     throw error
   }
 }
@@ -79,14 +84,18 @@ if (!esis.isReady()) {
       esis.emit('debug', 'ESIS server connected successfully')
     })
     .catch((error) => {
-      console.error('[ESIS ERROR] Failed to connect to ESIS server:', error)
+      Sentry.captureException(error, {
+        level: attempts >= RETRY_LIMIT ? 'error' : 'warning',
+        tags: { feature: 'esis', operation: 'init-connection' },
+        extra: {
+          attempts,
+          maxAttempts: RETRY_LIMIT,
+          willRetry: attempts < RETRY_LIMIT
+        }
+      })
       if (attempts < RETRY_LIMIT) {
         attempts++
         setTimeout(connectEsis, RETRY_DELAY) // Retry after 5 seconds
-      } else {
-        console.error(
-          '[ESIS ERROR] Max connection attempts reached. Exiting...'
-        )
       }
     })
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Key, Loader2, Shield } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -47,7 +48,10 @@ export default function PasswordManager({
         onPasswordStatusChange?.(status)
       }
     } catch (err) {
-      console.error('Failed to check password status:', err)
+      Sentry.captureException(err, {
+        level: 'warning',
+        tags: { feature: 'password-manager', operation: 'check-status' }
+      })
     } finally {
       setIsLoading(false)
     }
@@ -94,7 +98,10 @@ export default function PasswordManager({
       setHasPassword(true)
       onPasswordStatusChange?.(true)
     } catch (err) {
-      console.error('Password set error:', err)
+      Sentry.captureException(err, {
+        level: 'warning',
+        tags: { feature: 'password-manager', operation: 'set-password' }
+      })
       setError('Нууц үг тохируулахад алдаа гарлаа.')
     } finally {
       setIsSubmitting(false)
@@ -137,7 +144,10 @@ export default function PasswordManager({
       setChangeNewPassword('')
       setChangeConfirmPassword('')
     } catch (err) {
-      console.error('Password change error:', err)
+      Sentry.captureException(err, {
+        level: 'warning',
+        tags: { feature: 'password-manager', operation: 'change-password' }
+      })
       setError('Нууц үг солиход алдаа гарлаа.')
     } finally {
       setIsSubmitting(false)

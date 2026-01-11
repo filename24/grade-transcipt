@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 
 import 'handsontable/styles/handsontable.min.css'
 import 'handsontable/styles/ht-theme-main.min.css'
-import { type Grade, Status } from '@gt/database'
+import { Status, type Grade } from '@gt/database/browser'
 import type { GradeStatus } from '@gt/esis'
 import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { Loader2 } from 'lucide-react'

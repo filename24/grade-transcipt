@@ -1,5 +1,5 @@
 'use client'
-import type { Grade } from '@gt/database'
+import type { Grade } from '@gt/database/browser'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts'

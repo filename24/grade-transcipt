@@ -35,7 +35,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import type { Grade } from '@gt/database'
+import type { Grade } from '@gt/database/browser'
 import { GradeStateDialog } from './ChangeStateDialog'
 
 export type GradeTableData = Pick<
