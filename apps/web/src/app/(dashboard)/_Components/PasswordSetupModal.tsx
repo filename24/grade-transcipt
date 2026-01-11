@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Loader2, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -69,7 +70,10 @@ export default function PasswordSetupModal({
       onOpenChange(false)
       onSuccess?.()
     } catch (err) {
-      console.error('Password setup error:', err)
+      Sentry.captureException(err, {
+        level: 'warning',
+        tags: { feature: 'password-setup', operation: 'set-password' }
+      })
       setError('Нууц үг тохируулахад алдаа гарлаа.')
     } finally {
       setIsLoading(false)

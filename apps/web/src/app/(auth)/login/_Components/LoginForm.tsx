@@ -1,4 +1,6 @@
 'use client'
+
+import * as Sentry from '@sentry/nextjs'
 import { Fingerprint, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import {
@@ -107,7 +109,10 @@ export function RegisterLoginForm({
         toast.error(errorMsg)
       }
     } catch (error) {
-      console.error('Passkey login error:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'auth-login', operation: 'passkey' }
+      })
       toast.error('Passkey нэвтрэлт амжилтгүй боллоо.')
     } finally {
       setPasskeyLoading(false)

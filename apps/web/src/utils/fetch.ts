@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
 import type {
@@ -201,8 +202,11 @@ export async function fetchTestData(
         })
         fetchedData.push(student)
       } catch (e) {
-        console.error(student)
-        console.error(e)
+        Sentry.captureException(e, {
+          level: 'warning',
+          tags: { feature: 'fetch-test-data', operation: 'force-edit' },
+          extra: { testId: student.testId, systemId: student.systemId }
+        })
       }
     }
   }
@@ -229,9 +233,14 @@ export async function fetchTestData(
             })
             fetchedData.push(student)
           } catch (e) {
-            console.error(student)
-            console.log('origin:', originStudent)
-            console.error(e)
+            Sentry.captureException(e, {
+              level: 'warning',
+              tags: { feature: 'fetch-test-data', operation: 'edit' },
+              extra: {
+                testId: student.testId,
+                originTestId: originStudent?.testId
+              }
+            })
           }
         }
       }
@@ -407,8 +416,11 @@ export async function fetchStudentByRegisterNumber(registerNumber: string) {
     }
     return null
   } catch (error) {
-    console.error('Error fetching student by registerNumber:', error)
-
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'fetch-student', operation: 'by-register-number' },
+      extra: { registerNumber }
+    })
     return null
   }
 }

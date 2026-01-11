@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Loader2, LogOut, Monitor, Smartphone, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -60,7 +61,10 @@ export default function SessionManager() {
         setCurrentSessionToken(currentSession.data.session.token)
       }
     } catch (error) {
-      console.error('Failed to fetch sessions:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'session-manager', operation: 'fetch' }
+      })
     } finally {
       setIsLoading(false)
     }
@@ -97,7 +101,10 @@ export default function SessionManager() {
         setSessions(sessions.filter((s) => s.token !== token))
       }
     } catch (error) {
-      console.error('Failed to revoke session:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'session-manager', operation: 'revoke' }
+      })
       toast.error('Тус хандалтыг устгахад алдаа гарлаа.')
     } finally {
       setRevokingToken(null)
@@ -122,7 +129,10 @@ export default function SessionManager() {
       // Keep only current session
       setSessions(sessions.filter((s) => s.token === currentSessionToken))
     } catch (error) {
-      console.error('Failed to revoke other sessions:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'session-manager', operation: 'revoke-others' }
+      })
       toast.error('Бусад хандалт устгахад алдаа гарлаа.')
     } finally {
       setIsRevokingOthers(false)

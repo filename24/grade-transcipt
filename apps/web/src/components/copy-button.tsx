@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Check, Clipboard } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -23,7 +24,10 @@ export function CopyButton({
       toast.success('Амжилттай хууллаа')
       setIsCopied(true)
     } catch (error) {
-      console.error('Fail', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'copy-button', operation: 'clipboard-copy' }
+      })
     }
   }
 

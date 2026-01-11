@@ -1,5 +1,6 @@
 'use server'
 
+import * as Sentry from '@sentry/nextjs'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -48,7 +49,11 @@ export async function loginWithRegister(
       }
     }
   } catch (error: unknown) {
-    console.error(error)
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'auth-login' },
+      extra: { registerNumber: loginData.data.registerNumber }
+    })
     return {
       message: 'Нэвтрэхэд алдаа гарлаа.'
     }

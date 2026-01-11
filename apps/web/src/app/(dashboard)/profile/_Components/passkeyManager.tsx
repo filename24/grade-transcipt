@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Edit2, Fingerprint, Loader2, Plus, Shield, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -70,7 +71,10 @@ export default function PasskeyManager({
         setPasskeys(result.data as Passkey[])
       }
     } catch (error) {
-      console.error('Failed to fetch passkeys:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'passkey-manager', operation: 'fetch' }
+      })
     } finally {
       setIsLoading(false)
     }
@@ -137,7 +141,10 @@ export default function PasskeyManager({
       setNewPasskeyName('')
       fetchPasskeys()
     } catch (error) {
-      console.error('Failed to add passkey:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'passkey-manager', operation: 'add' }
+      })
       toast.error('Passkey нэмэхэд алдаа гарлаа.')
     } finally {
       setIsAdding(false)
@@ -161,7 +168,11 @@ export default function PasskeyManager({
       toast.success('Passkey амжилттай устгагдлаа!')
       setPasskeys(passkeys.filter((p) => p.id !== id))
     } catch (error) {
-      console.error('Failed to delete passkey:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'passkey-manager', operation: 'delete' },
+        extra: { passkeyId: id }
+      })
       toast.error('Passkey устгахад алдаа гарлаа.')
     } finally {
       setDeletingId(null)
@@ -196,7 +207,11 @@ export default function PasskeyManager({
       setEditingPasskey(null)
       setEditName('')
     } catch (error) {
-      console.error('Failed to update passkey:', error)
+      Sentry.captureException(error, {
+        level: 'warning',
+        tags: { feature: 'passkey-manager', operation: 'update' },
+        extra: { passkeyId: editingPasskey.id }
+      })
       toast.error('Passkey засахад алдаа гарлаа.')
     } finally {
       setIsUpdating(false)

@@ -1,5 +1,6 @@
 'use server'
 
+import * as Sentry from '@sentry/nextjs'
 import '@gt/database'
 import prisma, { type Grade } from '@gt/database'
 
@@ -62,7 +63,14 @@ export async function createGrades(
       message: `Дүнг амжилттай хадгаллаа. ${payload.count} дүн хадгалагдсан байна.`
     }
   } catch (error) {
-    console.error('Error saving grades:', error)
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'admin-grade-create' },
+      extra: {
+        gradeCount: gradeData.length,
+        resolvedCount: reslovedData.length
+      }
+    })
     return {
       errors: {
         message: 'Дүнг хадгалахад алдаа гарлаа. Дүнг шалгаад дахин оролдоно уу.'
