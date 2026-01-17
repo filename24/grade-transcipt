@@ -7,8 +7,8 @@ import type { z } from 'zod'
 
 import { uploadAvatarSchema } from '@/schemas/uploadAvatar'
 import { SnowflakeId } from '@/utils'
-import { auth } from '@/utils/better-auth';
-import { headers } from 'next/headers';
+import { auth } from '@/utils/better-auth'
+import { headers } from 'next/headers'
 
 export async function uploadAvatar(
   data: z.infer<typeof uploadAvatarSchema>
@@ -45,10 +45,9 @@ export async function uploadAvatar(
   }
 
   try {
-
     await auth.api.updateUser({
       body: {
-        avatar: avatarId,
+        avatar: avatarId
       },
       headers: await headers()
     })
