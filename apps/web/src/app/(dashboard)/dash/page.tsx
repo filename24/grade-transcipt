@@ -1,5 +1,6 @@
 import prisma from '@gt/database'
 import { ArrowRight, Shield, Terminal } from 'lucide-react'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -9,7 +10,6 @@ import { makeDashboardMessage } from '@/utils'
 import { auth } from '@/utils/better-auth'
 import { EXAM_DATE } from '@/utils/constants'
 import { getStudentGrade } from '@/utils/fetch'
-import { headers } from 'next/headers'
 
 import GradeAverage from './_Components/GradeAverage'
 import GradePieChart from './_Components/GradePieChart'
@@ -98,7 +98,7 @@ export default async function DashboardPage({
         </Alert>
       )}
 
-      {EXAM_DATE.START <= now ? (
+      {EXAM_DATE.START <= now && (
         <Alert>
           <Terminal />
           <AlertTitle>Нэмэлт мэдээ</AlertTitle>
@@ -115,23 +115,6 @@ export default async function DashboardPage({
             </Link>
           </AlertDescription>
         </Alert>
-      ) : (
-        !params?.academicYear && (
-          <Alert>
-            <Terminal />
-            <AlertTitle>Мэдэгдэл</AlertTitle>
-            <AlertDescription>
-              <p>
-                2024-2025 оны хичээлийн жилийн дүнгийн мэдээллийг 9-р сарын
-                20-ноос хойш архивлагдсан тул{' '}
-                <Link href={'/dash?academicYear=2024'} className="text-link">
-                  энд дарж
-                </Link>{' '}
-                харна уу.
-              </p>
-            </AlertDescription>
-          </Alert>
-        )
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
