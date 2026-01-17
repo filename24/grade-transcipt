@@ -14,6 +14,22 @@
 
 ---
 
+## Screenshots
+
+### Desktop
+
+| Dashboard | Profile |
+|-----------|---------|
+| ![Dashboard](docs/desktop-dash.png) | ![Profile](docs/desktop-profile.png) |
+
+### Mobile
+
+| Dashboard | Grades | Profile |
+|-----------|--------|---------|
+| ![Dashboard](docs/mobile-dash.jpg) | ![Grades](docs/mobile-grade.jpg) | ![Profile](docs/mobile-profile.jpg) |
+
+---
+
 ## Tech Stack
 
 *   **Framework:** [Next.js](https://nextjs.org/) (React)
