@@ -106,7 +106,6 @@ export const auth = betterAuth({
       avatar: { type: 'string', required: false },
       banner: { type: 'string', required: false },
       currectAcademicLevel: { type: 'number' },
-      registerNumber: { type: 'string' },
       classId: { type: 'string' },
       schoolId: { type: 'string' }
     }
