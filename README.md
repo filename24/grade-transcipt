@@ -4,7 +4,7 @@
 
 **Knea - Grade Transcript** is a web application designed to help Mongolian students view and manage their academic records. It securely connects to the official Mongolian Ministry of Education's ESIS API to fetch and display grade information in a user-friendly dashboard.
 
-## ✨ Features
+## Features
 
 *   **Secure ESIS Integration:** Securely fetches student grade data using ESIS API.
 *   **Interactive Dashboard:** View your grades, GPA, and academic progress through an intuitive and visual dashboard.
@@ -14,7 +14,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 *   **Framework:** [Next.js](https://nextjs.org/) (React)
 *   **Monorepo:** [Turborepo](https://turbo.build/) & [pnpm](https://pnpm.io/)
@@ -25,7 +25,7 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
@@ -68,7 +68,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 This project is a monorepo using pnpm workspaces.
 
@@ -81,6 +81,6 @@ This project is a monorepo using pnpm workspaces.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
