@@ -41,7 +41,7 @@ export default async function Profile() {
   }
   return (
     <main>
-      <div className="px-6 py-4">
+      <div className="px-2">
         {/* Avatar and Status */}
         <AvatarDialog userData={userData} />
 

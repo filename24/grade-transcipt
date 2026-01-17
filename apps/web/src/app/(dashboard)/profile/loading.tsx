@@ -3,7 +3,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 export default function ProfileLoading() {
   return (
     <main>
-      <div className="px-6 py-4">
+      <div className="px-2">
         {/* Avatar and Status */}
         <div className="relative mb-4 w-fit">
           <Skeleton className="size-24 rounded-full" />
