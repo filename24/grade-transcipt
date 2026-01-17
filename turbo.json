@@ -21,7 +21,8 @@
       "outputs": [
         "dist/**",
         ".next/**",
-        "!.next/cache/**"
+        "!.next/cache/**",
+        "!.next/dev/**"
       ],
       "env": [
         "DATABASE_URL",
@@ -65,7 +66,14 @@
       "dependsOn": [
         "^generate"
       ],
-      "cache": false
+      "inputs": [
+        "prisma/schema.prisma",
+        "generated/prisma/**/**.ts"
+      ],
+      "outputs": [
+        "generated/**"
+      ],
+      "cache": true
     },
     "lint": {
       "cache": false

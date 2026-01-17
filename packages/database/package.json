@@ -19,15 +19,16 @@
   },
   "devDependencies": {
     "@gt/tsconfig": "workspace:*",
-    "@types/node": "^22.15.29",
+    "@types/node": "catalog:",
     "prisma": "catalog:",
-    "tsup": "^8.3.6",
-    "tsx": "^4.19.2"
+    "tsup": "catalog:",
+    "tsx": "catalog:"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "catalog:",
     "@prisma/adapter-pg": "catalog:",
     "@prisma/client": "catalog:",
-    "@upstash/redis": "catalog:"
+    "@upstash/redis": "catalog:",
+    "dotenv": "17.2.3"
   }
 }
