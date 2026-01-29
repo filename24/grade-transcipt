@@ -35,6 +35,10 @@ const data = {
       url: '#',
       items: [
         {
+          title: 'Student grade lookup',
+          url: '/admin/grade/student'
+        },
+        {
           title: 'Edit a grade data',
           url: '/admin/grade/edit'
         },
