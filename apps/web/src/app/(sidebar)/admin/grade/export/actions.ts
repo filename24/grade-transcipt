@@ -51,9 +51,8 @@ export async function fetchStudentGradesAction(
     // 3. ESIS에 없는 년도 찾기
     const start = Number.parseInt(startYear, 10)
     const end = Number.parseInt(endYear, 10)
-    const requestedYears = Array.from(
-      { length: end - start + 1 },
-      (_, i) => String(start + i)
+    const requestedYears = Array.from({ length: end - start + 1 }, (_, i) =>
+      String(start + i)
     )
 
     const esisYears = new Set(

@@ -264,7 +264,10 @@ export default function GradeExportPage() {
       averageRow.push(average, '')
 
       const startCol = 2 + idx * 2
-      merges.push({ s: { r: avgRowIndex, c: startCol }, e: { r: avgRowIndex, c: startCol + 1 } })
+      merges.push({
+        s: { r: avgRowIndex, c: startCol },
+        e: { r: avgRowIndex, c: startCol + 1 }
+      })
     })
 
     rows.push(averageRow)
