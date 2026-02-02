@@ -68,7 +68,7 @@ interface YearOption {
 const mongolFont = localFont({
   src: '../../../../../../public/fonts/cmdashitseden.ttf',
   display: 'swap',
-  variable: '--font-mongol' // 필요한 경우 Tailwind 변수로 사용 가능
+  variable: '--font-mongol'
 })
 
 export default function GradeExportPage() {
@@ -111,14 +111,33 @@ export default function GradeExportPage() {
   ): ProcessedData | null => {
     if (!records || records.length === 0) return null
 
-    const uniqueLevels = Array.from(
-      new Set(records.map((r) => Number.parseInt(r.academicLevel)))
-    ).sort((a, b) => a - b)
+    const parsedLevels = records.map((r) => {
+      const parts = r.academicLevel.split('_S')
+      return {
+        level: Number.parseInt(parts[0]),
+        semester: parts[1] ? Number.parseInt(parts[1]) : null,
+        original: r.academicLevel
+      }
+    })
+
+    const uniqueLevelKeys = Array.from(
+      new Set(parsedLevels.map((p) => p.original))
+    ).sort((a, b) => {
+      const aData = a.split('_S')
+      const bData = b.split('_S')
+      const aLevel = Number.parseInt(aData[0])
+      const bLevel = Number.parseInt(bData[0])
+
+      if (aLevel !== bLevel) return aLevel - bLevel
+
+      const aSemester = aData[1] ? Number.parseInt(aData[1]) : 0
+      const bSemester = bData[1] ? Number.parseInt(bData[1]) : 0
+      return aSemester - bSemester
+    })
 
     const groupedSubjects: Record<string, GroupedSubject> = {}
 
     records.forEach((r) => {
-      const level = Number.parseInt(r.academicLevel)
       const groupKey = `${r.classCode}_${r.isCompulsory ? 'comp' : 'elec'}`
 
       if (!groupedSubjects[groupKey]) {
@@ -130,40 +149,60 @@ export default function GradeExportPage() {
           grades: {}
         }
       }
-      groupedSubjects[groupKey].grades[level] = {
+
+      const levelKey = r.academicLevel
+      groupedSubjects[groupKey].grades[levelKey as unknown as number] = {
         point: r.point,
         grade: r.grade
       }
     })
 
-    const sortedSubjects = Object.values(groupedSubjects).sort((a, b) => {
-      if (a.isCompulsory !== b.isCompulsory) {
-        return a.isCompulsory ? -1 : 1
+    const compulsorySubjects = Object.values(groupedSubjects)
+      .filter((s) => s.isCompulsory)
+      .sort((a, b) => a.id - b.id)
+
+    const electiveSubjects = Object.values(groupedSubjects)
+      .filter((s) => !s.isCompulsory)
+      .sort((a, b) => a.id - b.id)
+
+    const headers = ['№', 'Хичээлийн нэр']
+    const subHeaders = ['', '']
+    const merges: XLSX.Range[] = [
+      { s: { r: 0, c: 0 }, e: { r: 1, c: 0 } },
+      { s: { r: 0, c: 1 }, e: { r: 1, c: 1 } }
+    ]
+    const cols: XLSX.ColInfo[] = [{ wch: 5 }, { wch: 20.4 }]
+
+    uniqueLevelKeys.forEach((levelKey, idx) => {
+      const parts = levelKey.split('_S')
+      const level = parts[0]
+      const semester = parts[1]
+
+      let headerText = `${level}-р анги`
+      if (semester) {
+        headerText = `${level}-р анги
+/ ${semester}-р хагас жил /`
       }
-      return a.id - b.id
-    })
 
-    const headers = ['Хичээлийн нэр']
-    const subHeaders = ['']
-    const merges: XLSX.Range[] = [{ s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }]
-    const cols: XLSX.ColInfo[] = [{ wch: 30 }]
-
-    uniqueLevels.forEach((level, idx) => {
-      headers.push(`${level}-р анги`, '')
+      headers.push(headerText, '')
       subHeaders.push('Дүн', 'Үнэлгээ')
 
-      const startCol = 1 + idx * 2
+      const startCol = 2 + idx * 2
       merges.push({ s: { r: 0, c: startCol }, e: { r: 0, c: startCol + 1 } })
-      cols.push({ wch: 6 }, { wch: 6 })
+      cols.push({ wch: 6.85 }, { wch: 6.85 })
     })
 
     const rows: (string | number)[][] = []
+    const totalCols = 2 + uniqueLevelKeys.length * 2
 
-    sortedSubjects.forEach((subj) => {
-      const row: (string | number)[] = [subj.name]
+    compulsorySubjects.forEach((subj, index) => {
+      const row: (string | number)[] = [
+        index + 1,
+        subj.name.replace('/ Сонгон судлах /', '').trim()
+      ]
 
-      uniqueLevels.forEach((level) => {
-        const info = subj.grades[level]
+      uniqueLevelKeys.forEach((levelKey) => {
+        const info = subj.grades[levelKey as unknown as number]
         if (info) {
           row.push(info.point, info.grade)
         } else {
@@ -172,6 +211,63 @@ export default function GradeExportPage() {
       })
       rows.push(row)
     })
+
+    if (electiveSubjects.length > 0) {
+      const separatorRow: (string | number)[] = ['Сонгосон хичээлүүд']
+      for (let i = 1; i < totalCols; i++) {
+        separatorRow.push('')
+      }
+      rows.push(separatorRow)
+
+      const sepRowIndex = rows.length + 1
+      merges.push({
+        s: { r: sepRowIndex, c: 0 },
+        e: { r: sepRowIndex, c: totalCols - 1 }
+      })
+
+      electiveSubjects.forEach((subj, index) => {
+        const row: (string | number)[] = [
+          index + 1,
+          subj.name.replace('/ Сонгон судлах /', '').trim()
+        ]
+
+        uniqueLevelKeys.forEach((levelKey) => {
+          const info = subj.grades[levelKey as unknown as number]
+          if (info) {
+            row.push(info.point, info.grade)
+          } else {
+            row.push('', '')
+          }
+        })
+        rows.push(row)
+      })
+    }
+
+    const averageRow: (string | number)[] = ['Дундаж', '']
+    const allSubjects = [...compulsorySubjects, ...electiveSubjects]
+    const avgRowIndex = rows.length + 2
+
+    merges.push({ s: { r: avgRowIndex, c: 0 }, e: { r: avgRowIndex, c: 1 } })
+
+    uniqueLevelKeys.forEach((levelKey, idx) => {
+      const levelPoints = allSubjects
+        .map((subj) => subj.grades[levelKey as unknown as number]?.point)
+        .filter((p): p is number => p !== undefined)
+
+      const average =
+        levelPoints.length > 0
+          ? Math.round(
+              levelPoints.reduce((sum, p) => sum + p, 0) / levelPoints.length
+            )
+          : ''
+
+      averageRow.push(average, '')
+
+      const startCol = 2 + idx * 2
+      merges.push({ s: { r: avgRowIndex, c: startCol }, e: { r: avgRowIndex, c: startCol + 1 } })
+    })
+
+    rows.push(averageRow)
 
     return { headers, subHeaders, rows, merges, cols }
   }
@@ -195,13 +291,20 @@ export default function GradeExportPage() {
   }
 
   const handleFetchGrades = async () => {
-    if (!student?.PERSON_ID) return
+    if (
+      !student?.PERSON_ID ||
+      !student?.ACADEMIC_YEAR ||
+      !student?.ACADEMIC_LEVEL
+    )
+      return
 
     setLoading(true)
     const res = await fetchStudentGradesAction(
       String(student.PERSON_ID),
       startYear,
-      endYear
+      endYear,
+      student.ACADEMIC_YEAR,
+      student.ACADEMIC_LEVEL
     )
     setLoading(false)
 
@@ -227,6 +330,24 @@ export default function GradeExportPage() {
 
     worksheet['!merges'] = preview.merges
     worksheet['!cols'] = preview.cols
+
+    const avgRowIndex = 1 + preview.rows.length
+    worksheet['!rows'] = [{ hpt: 40 }, { hpt: 20 }]
+    worksheet['!rows'][avgRowIndex] = { hpt: 34 }
+
+    const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1')
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C })
+      if (!worksheet[cellAddress]) continue
+
+      worksheet[cellAddress].s = {
+        alignment: {
+          wrapText: true,
+          vertical: 'center',
+          horizontal: 'center'
+        }
+      }
+    }
 
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Transcript')
@@ -301,7 +422,6 @@ export default function GradeExportPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex min-h-[140px] flex-row items-start justify-between">
-                    {/* [좌측] 기본 정보 (키릴 문자) */}
                     <div className="flex flex-1 flex-col space-y-4 py-2">
                       <div className="flex max-w-11/12 items-center justify-between">
                         <span className="text-muted-foreground text-sm">
@@ -337,10 +457,8 @@ export default function GradeExportPage() {
                       </div>
                     </div>
 
-                    {/* [우측] 몽골어 전통 문자 (폰트 적용 및 성/이름 분리) */}
                     {(student.FIRST_NAME_MGL || student.LAST_NAME_MGL) && (
                       <div className="flex h-full items-start gap-4 px-4">
-                        {/* 성 (Last Name) */}
                         {student.LAST_NAME_MGL && (
                           <div
                             className={`${mongolFont.className} foreground/80 select-none text-xl leading-none`}
@@ -353,7 +471,6 @@ export default function GradeExportPage() {
                           </div>
                         )}
 
-                        {/* 이름 (First Name) */}
                         {student.FIRST_NAME_MGL && (
                           <div
                             className={`${mongolFont.className} foreground select-none text-xl leading-none`}
@@ -449,7 +566,7 @@ export default function GradeExportPage() {
                         <TableRow>
                           {preview.headers.map((h, i) => {
                             if (h === '') return null
-                            const colSpan = i === 0 ? 1 : 2
+                            const colSpan = i === 0 || i === 1 ? 1 : 2
                             return (
                               <TableHead
                                 key={i}
