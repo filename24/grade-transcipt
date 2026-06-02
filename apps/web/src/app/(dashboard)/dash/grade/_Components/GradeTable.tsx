@@ -1,6 +1,6 @@
 'use client'
 
-import { type CourseCode, GradeStatus, type GradeStatusType } from '@gt/esis'
+import type { CourseCode, GradeStatusType } from '@gt/esis'
 import {
   type ColumnDef,
   flexRender,
@@ -12,7 +12,7 @@ import {
 import { ArrowUpDown } from 'lucide-react'
 import { useState } from 'react'
 
-import { Badge } from '@/components/ui/badge'
+import { GradeStatusBadge } from '@/components/GradeStatusBadge'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -109,46 +109,11 @@ export const columns: ColumnDef<GradeTableData>[] = [
     header: () => {
       return <p className="text-center">Төлөв</p>
     },
-    cell: ({ row }) => {
-      const grade = row.getValue('status') as GradeStatusType
-      const formatted = GradeStatus[grade]
-
-      return (
-        <>
-          <div className="grid w-full justify-center">
-            {grade === 'APPROVED' ? (
-              <Badge
-                variant="secondary"
-                className="bg-[#c0f1b6] text-[#548164] dark:bg-[#375841] dark:text-[#64d88d]"
-              >
-                {formatted}
-              </Badge>
-            ) : grade === 'NEW' ? (
-              <Badge
-                variant="secondary"
-                className="bg-[#c1e6f4] text-[#487CA5] dark:bg-[#2f4469] dark:text-[#63a1fc]"
-              >
-                {formatted}
-              </Badge>
-            ) : grade === 'PENDING' ? (
-              <Badge
-                variant="secondary"
-                className="bg-[#eedeaa] text-[#C29343] dark:bg-[#836534] dark:text-[#e4ab43]"
-              >
-                {formatted}
-              </Badge>
-            ) : (
-              <Badge
-                variant="secondary"
-                className="bg-[#f6baba] text-[#C4554D] dark:bg-[#673932] dark:text-[#e66359]"
-              >
-                {formatted}
-              </Badge>
-            )}
-          </div>
-        </>
-      )
-    }
+    cell: ({ row }) => (
+      <div className="grid w-full justify-center">
+        <GradeStatusBadge status={row.getValue('status') as GradeStatusType} />
+      </div>
+    )
   }
 ]
 
