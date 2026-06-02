@@ -14,31 +14,27 @@ export async function createGrades(
   gradeData: GradeData[]
 ): Promise<GetUnelgeeDataFormState> {
   const reslovedData: Omit<Grade, 'id'>[] = []
+  // 첫 실패에서 중단하지 않고 못 찾은 학생 이름을 모두 모은다.
+  const missingNames: string[] = []
   try {
     const users = await prisma.user.findMany()
-    for (let index = 0; index < gradeData.length; index++) {
-      const item = gradeData[index]
-      const user = users.find((user) => user.name === item.displayName)
+    const usersByName = new Map(users.map((user) => [user.name, user]))
 
-      if (!item.point) {
+    for (const item of gradeData) {
+      // 점수가 없거나 0인 행(빈 행 포함)은 건너뛴다.
+      if (!item.point || item.point === 0) {
         continue
       }
-      if (item.point === 0) {
-        continue
-      }
+
+      const user = usersByName.get(item.displayName)
       if (!user) {
-        return {
-          errors: {
-            message: `Сурагчын мэдээлэл олдсонгүй. Нэр: ${item.displayName}`
-          }
-        }
+        missingNames.push(item.displayName)
+        continue
       }
 
       reslovedData.push({
         displayName: item.displayName,
-        registerNumber:
-          users.find((user) => user.name === item.displayName)
-            ?.registerNumber || '',
+        registerNumber: user.registerNumber || '',
         classCode: item.classCode,
         classGrade: item.classGrade,
         point: Number(item.point),
@@ -50,9 +46,18 @@ export async function createGrades(
         semester: CURRECT_SEMESTER + 1,
         teacherName: null,
         termId: null,
-        systemId:
-          users.find((user) => user.name === item.displayName)?.systemId || ''
+        systemId: user.systemId || ''
       })
+    }
+
+    // 못 찾은 학생이 하나라도 있으면 저장하지 않고 전체 목록을 한 번에 알린다.
+    if (missingNames.length > 0) {
+      const uniqueNames = [...new Set(missingNames)]
+      return {
+        errors: {
+          message: `Сурагчын мэдээлэл олдсонгүй (${uniqueNames.length}): ${uniqueNames.join(', ')}`
+        }
+      }
     }
 
     const payload = await prisma.grade.createMany({
