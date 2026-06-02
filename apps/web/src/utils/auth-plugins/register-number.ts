@@ -4,6 +4,7 @@ import { createAuthEndpoint } from 'better-auth/api'
 import { z } from 'zod'
 
 import { SCHOOL_ID, STUDENT_GROUP_ID } from '../constants'
+import { splitDisplayName } from '../name'
 
 const registerNumberSchema = z.object({
   registerNumber: z
@@ -89,6 +90,12 @@ export const registerNumberAuth = () => {
               }
 
               // Create new user
+              // displayName("성 이니셜.이름")에서 firstName/lastName을 채운다.
+              // (이름순 정렬·검색을 위해 필요. 채우지 않으면 legacy 필드가 빈 값으로 남음)
+              const { firstName, lastName } = splitDisplayName(
+                gradeData.displayName
+              )
+
               user = await adapter.create<{
                 id: string
                 name: string
@@ -100,6 +107,8 @@ export const registerNumberAuth = () => {
                 schoolId: string
                 currectAcademicLevel: number
                 emailVerified: boolean
+                firstName: string
+                lastName: string
                 createdAt: Date
                 updatedAt: Date
               }>({
@@ -116,6 +125,8 @@ export const registerNumberAuth = () => {
                   currectAcademicLevel: Number(
                     gradeData.classGrade.replace(/\D/g, '')
                   ),
+                  firstName,
+                  lastName,
                   createdAt: new Date(),
                   updatedAt: new Date()
                 }

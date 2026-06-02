@@ -6,7 +6,7 @@ import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
 import { admin } from 'better-auth/plugins'
 
-import { ac, ADMIN, STUDENT, TEACHER } from './auth-permissions'
+import { ADMIN, ac, STUDENT, TEACHER } from './auth-permissions'
 import { registerNumberAuth } from './auth-plugins/register-number'
 
 const normalizeOrigin = (val?: string) =>
@@ -108,7 +108,12 @@ export const auth = betterAuth({
       currectAcademicLevel: { type: 'number' },
       registerNumber: { type: 'string' },
       classId: { type: 'string' },
-      schoolId: { type: 'string' }
+      schoolId: { type: 'string' },
+      // firstName/lastName(이름·성)을 Better Auth가 인지하도록 등록한다.
+      // adapter.create 시 영속화되고 listUsers의 sortBy로도 사용 가능해진다.
+      // (DB는 NOT NULL이지만 다른 생성 경로 영향 최소화를 위해 required: false)
+      firstName: { type: 'string', required: false },
+      lastName: { type: 'string', required: false }
     }
   }
 })

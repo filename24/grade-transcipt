@@ -75,6 +75,14 @@ export function UserTable() {
 
   const fetchUsers = React.useCallback(async () => {
     setLoading(true)
+    // 서버 측 정렬. 'name' 컬럼은 표시값("성 이니셜.이름")이 아니라
+    // 이름 컬럼(firstName) 기준으로 정렬해야 성이 아닌 이름순이 된다.
+    const sort = sorting[0]
+    const sortBy = sort
+      ? sort.id === 'name'
+        ? 'firstName'
+        : sort.id
+      : undefined
     try {
       const result = await authClient.admin.listUsers({
         query: {
@@ -82,18 +90,21 @@ export function UserTable() {
           offset: pagination.pageIndex * pagination.pageSize,
           searchValue: searchValue || undefined,
           searchField: 'name',
-          searchOperator: 'contains'
+          searchOperator: 'contains',
+          ...(sortBy
+            ? { sortBy, sortDirection: sort?.desc ? 'desc' : 'asc' }
+            : {})
         }
       })
       if (result.data) {
         setUsers(result.data.users as UserData[])
         setTotal(result.data.total)
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch users')
     }
     setLoading(false)
-  }, [pagination.pageIndex, pagination.pageSize, searchValue])
+  }, [pagination.pageIndex, pagination.pageSize, searchValue, sorting])
 
   React.useEffect(() => {
     fetchUsers()
@@ -238,6 +249,7 @@ export function UserTable() {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     manualPagination: true,
+    manualSorting: true,
     pageCount: Math.ceil(total / pagination.pageSize),
     state: {
       sorting,

@@ -44,6 +44,7 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { resolveClassCode } from '@/utils'
+import { givenNameSort } from '@/utils/name'
 
 import DeleteGradeDialog from './DeleteGradeDialog'
 import EditGradeDialog from './EditGradeDialog'
@@ -89,7 +90,8 @@ export default function StudentGradeTable({
           </Button>
         )
       },
-      cell: ({ row }) => <div>{row.getValue('displayName')}</div>
+      cell: ({ row }) => <div>{row.getValue('displayName')}</div>,
+      sortingFn: givenNameSort
     },
     {
       accessorKey: 'classCode',
