@@ -283,6 +283,49 @@ export async function getStudentGrade(
   return data
 }
 
+/**
+ * 같은 반(classGrade)·학기·학년도에서 "전체 예상 과목 수"를 추정해 반환한다.
+ * 수동으로 입력된 Grade 데이터만으로 추정해야 하므로(ESIS 수강 과목 조회가
+ * deprecated), 같은 반 학생들 중 개별 학생이 가진 distinct classCode 수의
+ * 최댓값을 전체 과목 수로 간주한다.
+ *
+ * 합집합(union)이 아니라 학생별 최댓값을 쓰는 이유: 선택과목 편차나 일부
+ * 학생의 데이터 노이즈로 합집합이 부풀려지면 정상적으로 모든 과목 성적이 나온
+ * 학생도 "완료"로 표시되지 않기 때문이다. 가장 과목이 많은 학생을 기준 삼으면
+ * 이 편차에 강건하다. 성적이 하나도 없으면 0을 반환한다.
+ */
+export async function getGradeSubjectCount(
+  classGrade: string,
+  semester: number,
+  academicYear: string
+): Promise<number> {
+  const grades = await prisma.grade.findMany({
+    where: {
+      classGrade,
+      semester,
+      academicYear
+    },
+    select: { systemId: true, classCode: true }
+  })
+
+  // 학생(systemId)별 distinct classCode 집합을 만든 뒤 그 크기의 최댓값을 구한다.
+  const subjectsByStudent = new Map<string, Set<string>>()
+  for (const grade of grades) {
+    const subjects = subjectsByStudent.get(grade.systemId) ?? new Set<string>()
+    subjects.add(grade.classCode)
+    subjectsByStudent.set(grade.systemId, subjects)
+  }
+
+  let maxCount = 0
+  for (const subjects of subjectsByStudent.values()) {
+    if (subjects.size > maxCount) {
+      maxCount = subjects.size
+    }
+  }
+
+  return maxCount
+}
+
 export const getStudentDataWithName = unstable_cache(
   async (name: string) => {
     const data = await prisma.user.findFirst({

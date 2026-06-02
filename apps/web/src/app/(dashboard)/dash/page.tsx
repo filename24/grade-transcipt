@@ -8,8 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { buttonVariants } from '@/components/ui/button'
 import { makeDashboardMessage } from '@/utils'
 import { auth } from '@/utils/better-auth'
-import { EXAM_DATE } from '@/utils/constants'
-import { getStudentGrade } from '@/utils/fetch'
+import { CURRECT_ACADEMIC_YEAR, EXAM_DATE } from '@/utils/constants'
+import { getGradeSubjectCount, getStudentGrade } from '@/utils/fetch'
 
 import GradeAverage from './_Components/GradeAverage'
 import GradePieChart from './_Components/GradePieChart'
@@ -45,6 +45,18 @@ export default async function DashboardPage({
     params?.academicYear
   )
 
+  // 학생 본인 성적에서 학년/학년도를 도출해 같은 학년의 전체 과목 수(분모)를 계산한다.
+  // 성적이 하나도 없으면 학년을 알 수 없고, 이 경우 완료 공지 자체를 표시하지 않으므로 0으로 둔다.
+  const academicYear = params?.academicYear ?? CURRECT_ACADEMIC_YEAR
+  const classGrade =
+    semester1Grade[0]?.classGrade ?? semester2Grade[0]?.classGrade
+  const [semester1Total, semester2Total] = classGrade
+    ? await Promise.all([
+        getGradeSubjectCount(classGrade, 1, academicYear),
+        getGradeSubjectCount(classGrade, 2, academicYear)
+      ])
+    : [0, 0]
+
   // Check if user has password set
   const credentialAccount = await prisma.account.findFirst({
     where: {
@@ -73,7 +85,12 @@ export default async function DashboardPage({
       </div>
 
       <div className="grid gap-4">
-        <GradeAverage semester1={semester1Grade} semester2={semester2Grade} />
+        <GradeAverage
+          semester1={semester1Grade}
+          semester2={semester2Grade}
+          semester1Total={semester1Total}
+          semester2Total={semester2Total}
+        />
       </div>
 
       {!hasPassword && (

@@ -15,10 +15,15 @@ import { CURRECT_ACADEMIC_YEAR } from '@/utils/constants'
 
 export default function GradeAverage({
   semester1,
-  semester2
+  semester2,
+  semester1Total,
+  semester2Total
 }: {
   semester1: Grade[]
   semester2: Grade[]
+  // 같은 학년에서 성적이 입력된 전체 과목 수(분모). 0이면 아직 학년 과목 수를 알 수 없음.
+  semester1Total: number
+  semester2Total: number
 }) {
   const ACADEMIC_YEAR = semester1[0]?.academicYear || CURRECT_ACADEMIC_YEAR
   const academicYear = `${ACADEMIC_YEAR}-${Number(ACADEMIC_YEAR) + 1}`
@@ -47,7 +52,7 @@ export default function GradeAverage({
 
             {semester1.length === 0 ? undefined : (
               <CardDescription className="text-xs">
-                {semester1.length === 20
+                {semester1Total > 0 && semester1.length >= semester1Total
                   ? 'Бүх хичээлийн дүн гарж дууссан байна.'
                   : `Одоогоор ${semester1.length} хичээлийн дүн гарсан байна.`}
               </CardDescription>
@@ -66,7 +71,7 @@ export default function GradeAverage({
             </p>
             {semester2.length === 0 ? undefined : (
               <CardDescription className="text-xs">
-                {semester2.length === 19
+                {semester2Total > 0 && semester2.length >= semester2Total
                   ? 'Бүх хичээлийн дүн гарж дууссан байна.'
                   : `Одоогоор ${semester2.length} хичээлийн дүн гарсан байна.`}
               </CardDescription>
