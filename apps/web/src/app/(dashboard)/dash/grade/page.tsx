@@ -1,6 +1,7 @@
-import { GradeStatus, SubjectName } from '@gt/esis'
+import { GradeStatus } from '@gt/esis'
 import { Terminal } from 'lucide-react'
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -13,10 +14,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
-import { resolveClassCode } from '@/utils'
+import { getSubjectSortId, resolveClassCode } from '@/utils'
 import { auth } from '@/utils/better-auth'
 import { getStudentGrade } from '@/utils/fetch'
-import { headers } from 'next/headers'
 
 import GradeLayout from './_Components/GradeLayout'
 import type { GradeTableData } from './_Components/GradeTable'
@@ -79,18 +79,11 @@ export default async function GradePage({
     })
   )
 
-  const getSubjectId = (name: string) => {
-    const isElective = name.includes(' / Сонгон судлах /')
-    const cleanName = name.replace(' / Сонгон судлах /', '').trim()
-    const subject = SubjectName.find((s) => s.subjectName === cleanName)
-    return (subject ? subject.subjectAreaId : 9999) + (isElective ? 10000 : 0)
-  }
-
   semester1Data.sort(
-    (a, b) => getSubjectId(a.className) - getSubjectId(b.className)
+    (a, b) => getSubjectSortId(a.className) - getSubjectSortId(b.className)
   )
   semester2Data.sort(
-    (a, b) => getSubjectId(a.className) - getSubjectId(b.className)
+    (a, b) => getSubjectSortId(a.className) - getSubjectSortId(b.className)
   )
 
   return (

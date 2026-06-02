@@ -1,5 +1,5 @@
 import type { Grade } from '@gt/database'
-import { CourseCode } from '@gt/esis'
+import { CourseCode, SubjectName } from '@gt/esis'
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -22,6 +22,19 @@ export function resolveClassCode(classCode: string) {
   const [className, section] = classCode.split(' ')
 
   return `${CourseCode[className as keyof typeof CourseCode]} ${section === 'сонгон' ? '/ Сонгон судлах /' : ''}`
+}
+
+/**
+ * /dash/grade 와 동일한 과목 정렬 우선순위 계산.
+ * 과목 영역 ID(subjectAreaId) 순으로 정렬하되 선택 과목(Сонгон судлах)은 뒤로 보낸다.
+ * 매칭되지 않는 과목은 9999로 두어 항상 마지막에 위치시킨다.
+ * @param subjectName resolveClassCode 결과처럼 해석된 과목 이름
+ */
+export function getSubjectSortId(subjectName: string): number {
+  const isElective = subjectName.includes(' / Сонгон судлах /')
+  const cleanName = subjectName.replace(' / Сонгон судлах /', '').trim()
+  const subject = SubjectName.find((s) => s.subjectName === cleanName)
+  return (subject ? subject.subjectAreaId : 9999) + (isElective ? 10000 : 0)
 }
 
 export function calcGPA(grades: GradePointOnly[]): number {
