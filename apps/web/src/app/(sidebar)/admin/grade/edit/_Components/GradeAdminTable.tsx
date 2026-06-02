@@ -1,7 +1,9 @@
 'use client'
 
-import * as React from 'react'
+import type { Grade } from '@gt/database/browser'
+import type { GradeStatusType } from '@gt/esis'
 import {
+  type Column,
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -13,20 +15,18 @@ import {
   useReactTable,
   type VisibilityState
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, ChevronDown } from 'lucide-react'
+import * as React from 'react'
 
+import { GradeStatusBadge } from '@/components/GradeStatusBadge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -35,20 +35,58 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import type { Grade } from '@gt/database/browser'
-import { GradeStateDialog } from './ChangeStateDialog'
+import { usePersistentState } from '@/hooks/use-persistent-state'
+import { givenNameSort } from '@/utils/name'
+
+import { BulkActionToolbar } from './BulkActionToolbar'
+import { GradeFilterBar } from './GradeFilterBar'
+import { GradeScopeSelector } from './GradeScopeSelector'
+
+const COLUMN_VISIBILITY_KEY = 'admin-grade-edit:column-visibility'
+
+// 컬럼 표시 토글 드롭다운에서 보여줄 라벨 (몽골어).
+const COLUMN_LABELS: Record<string, string> = {
+  displayName: 'Нэр',
+  classCode: 'Хичээл',
+  classGrade: 'Анги',
+  point: 'Оноо',
+  grade: 'Үнэлгээ',
+  status: 'Төлөв',
+  academicYear: 'Хичээлийн жил',
+  semester: 'Хагас жил'
+}
 
 export type GradeTableData = Pick<
   Grade,
+  | 'id'
   | 'academicYear'
   | 'displayName'
   | 'classCode'
+  | 'classGrade'
   | 'semester'
   | 'point'
   | 'status'
   | 'grade'
-  | 'registerNumber'
 >
+
+// classCode는 "<과목키> <유형>" 형식(예: "МХЛ заавал").
+// 과목(subject)과 유형(type=заавал/сонгон)을 각각 부분 일치로 결합 필터링한다.
+export type ClassCodeFilterValue = {
+  subject?: string
+  type?: string
+}
+
+const sortableHeader =
+  (label: string) =>
+  ({ column }: { column: Column<GradeTableData> }) => (
+    <Button
+      variant="ghost"
+      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    >
+      {label}
+      <ArrowUpDown />
+    </Button>
+  )
 
 export const columns: ColumnDef<GradeTableData>[] = [
   {
@@ -73,154 +111,97 @@ export const columns: ColumnDef<GradeTableData>[] = [
     enableSorting: false,
     enableHiding: false
   },
-
   {
     accessorKey: 'displayName',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Name
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="">{row.getValue('displayName')}</div>
+    header: sortableHeader('Нэр'),
+    cell: ({ row }) => <div>{row.getValue('displayName')}</div>,
+    sortingFn: givenNameSort
   },
-
   {
     accessorKey: 'classCode',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          과목
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="">{row.getValue('classCode')}</div>
+    header: sortableHeader('Хичээл'),
+    cell: ({ row }) => <div>{row.getValue('classCode')}</div>,
+    filterFn: (row, columnId, value: ClassCodeFilterValue) => {
+      const code = String(row.getValue(columnId))
+      if (value.subject && !code.includes(value.subject)) {
+        return false
+      }
+      if (value.type && !code.includes(value.type)) {
+        return false
+      }
+      return true
+    }
+  },
+  {
+    accessorKey: 'classGrade',
+    header: sortableHeader('Анги'),
+    cell: ({ row }) => <div>{row.getValue('classGrade')}</div>,
+    filterFn: 'equalsString'
   },
   {
     accessorKey: 'point',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          점수
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-
-    cell: ({ row }) => <div className="">{row.getValue('point')}</div>
+    header: sortableHeader('Оноо'),
+    cell: ({ row }) => <div>{row.getValue('point')}</div>
   },
   {
     accessorKey: 'grade',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          등급
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="">{row.getValue('grade')}</div>
+    header: sortableHeader('Үнэлгээ'),
+    cell: ({ row }) => <div>{row.getValue('grade')}</div>
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: 'Төлөв',
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
-    )
+      <GradeStatusBadge
+        status={row.getValue('status') as GradeStatusType | null}
+      />
+    ),
+    filterFn: 'equalsString'
   },
   {
     accessorKey: 'academicYear',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Academic year
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="">{row.getValue('academicYear')}</div>
+    header: sortableHeader('Хичээлийн жил'),
+    cell: ({ row }) => <div>{row.getValue('academicYear')}</div>
   },
   {
     accessorKey: 'semester',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Semester
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="">{row.getValue('semester')}</div>
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.classCode)}
-            >
-              Copy classCode
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    }
+    header: sortableHeader('Хагас жил'),
+    cell: ({ row }) => <div>{row.getValue('semester')}</div>
   }
 ]
 
-export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
+interface GradeAdminTableProps {
+  data: GradeTableData[]
+  academicYears: string[]
+  semesters: number[]
+  academicYear: string
+  semester: number
+}
+
+export function GradeAdminTable({
+  data,
+  academicYears,
+  semesters,
+  academicYear,
+  semester
+}: GradeAdminTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    usePersistentState<VisibilityState>(COLUMN_VISIBILITY_KEY, {})
   const [rowSelection, setRowSelection] = React.useState({})
 
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0, //initial page index
-    pageSize: 50 //default page size
+    pageIndex: 0,
+    pageSize: 50
   })
 
   const table = useReactTable({
     data,
     columns,
+    getRowId: (row) => row.id,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -239,26 +220,38 @@ export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
     }
   })
 
-  return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter class code..."
-          value={
-            (table.getColumn('classCode')?.getFilterValue() as string) ?? ''
-          }
-          onChange={(event) =>
-            table.getColumn('classCode')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+  const filteredRows = table.getFilteredRowModel().rows
+  const selectedRows = table.getFilteredSelectedRowModel().rows
+  const selectedIds = selectedRows.map((row) => row.original.id)
+  const showSelectAllFiltered =
+    selectedIds.length > 0 && selectedIds.length < filteredRows.length
 
-        <GradeStateDialog />
+  const selectAllFiltered = () => {
+    const next: Record<string, boolean> = {}
+    for (const row of filteredRows) {
+      next[row.id] = true
+    }
+    table.setRowSelection(next)
+  }
+
+  return (
+    <div className="w-full space-y-4">
+      <React.Suspense fallback={null}>
+        <GradeScopeSelector
+          academicYears={academicYears}
+          semesters={semesters}
+          academicYear={academicYear}
+          semester={semester}
+        />
+      </React.Suspense>
+
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <GradeFilterBar table={table} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+            <Button variant="outline">
+              Багана <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -269,19 +262,37 @@ export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {COLUMN_LABELS[column.id] ?? column.id}
                   </DropdownMenuCheckboxItem>
                 )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <BulkActionToolbar
+        selectedIds={selectedIds}
+        onDone={() => table.resetRowSelection()}
+      />
+
+      {showSelectAllFiltered && (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <span>Энэ хуудасны {selectedIds.length} мөр сонгогдсон.</span>
+          <Button
+            variant="link"
+            className="h-auto p-0"
+            onClick={selectAllFiltered}
+          >
+            Шүүлтэд тохирох бүх {filteredRows.length} мөрийг сонгох
+          </Button>
+        </div>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -325,17 +336,17 @@ export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Үр дүн олдсонгүй.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-muted-foreground text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {selectedRows.length} / {filteredRows.length} мөр сонгосон.
         </div>
         <div className="space-x-2">
           <Button
@@ -344,7 +355,7 @@ export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            Өмнөх
           </Button>
           <Button
             variant="outline"
@@ -352,7 +363,7 @@ export function GradeAdminTable({ data }: { data: GradeTableData[] }) {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            Дараах
           </Button>
         </div>
       </div>
