@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 
 import 'handsontable/styles/handsontable.min.css'
 import 'handsontable/styles/ht-theme-main.min.css'
-import { Status, type Grade } from '@gt/database/browser'
+import { type Grade, Status } from '@gt/database/browser'
 import type { GradeStatus } from '@gt/esis'
 import { NumericCellType, registerCellType } from 'handsontable/cellTypes'
 import { Loader2 } from 'lucide-react'
@@ -63,13 +63,15 @@ export default function GradeTable() {
     )
   }, [config])
 
-  if (state?.message) {
-    toast.success(state.message)
-  }
-
-  if (state?.errors?.message) {
-    toast.error(state.errors.message)
-  }
+  // 토스트는 렌더 중이 아니라 state 변경 시에만 한 번씩 띄운다 (중복 호출 방지).
+  useEffect(() => {
+    if (state?.message) {
+      toast.success(state.message)
+    }
+    if (state?.errors?.message) {
+      toast.error(state.errors.message)
+    }
+  }, [state])
 
   return (
     <form
