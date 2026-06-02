@@ -71,7 +71,13 @@ export default function StudentGradeSearch() {
         </div>
       )}
 
-      {grades && <StudentGradeTable data={grades} onUpdate={handleSearch} />}
+      {grades && (
+        <StudentGradeTable
+          data={grades}
+          onUpdate={handleSearch}
+          registerNumber={searched ? registerNumber.toLowerCase() : undefined}
+        />
+      )}
     </div>
   )
 }

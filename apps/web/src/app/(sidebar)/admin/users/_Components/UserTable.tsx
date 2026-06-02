@@ -42,6 +42,7 @@ import { BanUserDialog } from './BanUserDialog'
 import { SessionsDialog } from './SessionsDialog'
 import { SetPasswordDialog } from './SetPasswordDialog'
 import { UserDetailDialog } from './UserDetailDialog'
+import UserGradesSheet from './UserGradesSheet'
 
 export interface UserData {
   id: string
@@ -134,9 +135,20 @@ export function UserTable() {
           </Button>
         )
       },
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue('name')}</div>
-      )
+      cell: ({ row }) => {
+        const user = row.original
+        return (
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{user.name}</span>
+            {user.registerNumber && (
+              <UserGradesSheet
+                registerNumber={user.registerNumber}
+                userName={user.name}
+              />
+            )}
+          </div>
+        )
+      }
     },
     {
       accessorKey: 'email',
