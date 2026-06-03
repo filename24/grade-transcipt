@@ -1,7 +1,8 @@
 import prisma from '@gt/database'
-import { resolveClassCode } from '@/utils'
-import { auth } from '@/utils/better-auth'
 import { headers } from 'next/headers'
+
+import { getSubjectSortId, resolveClassCode } from '@/utils'
+import { auth } from '@/utils/better-auth'
 
 export async function GET(
   _request: Request,
@@ -53,8 +54,9 @@ export async function GET(
             point
           }
         })
-        .sort((a, b) =>
-          a.className.toLowerCase().localeCompare(b.className.toLowerCase())
+        .sort(
+          (a, b) =>
+            getSubjectSortId(a.className) - getSubjectSortId(b.className)
         )
     )
   return Response.json({
