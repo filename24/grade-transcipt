@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
 import type {
@@ -10,6 +9,7 @@ import type {
   StudentExamPayload,
   SubjectCourseData
 } from '@gt/esis'
+import * as Sentry from '@sentry/nextjs'
 import axios from 'axios'
 import { unstable_cache } from 'next/cache'
 
@@ -101,6 +101,36 @@ export async function getGradeData(registerNumber: string) {
 
 export type FetchType = 'create' | 'edit' | 'forceEdit'
 
+// ESIS 세션별 성적 조회를 동시에 보낼 최대 개수. 순차 호출은 세션 수가 많으면
+// Hobby 플랜의 60초 함수 제한을 초과하므로 병렬화하되, ESIS 부하/레이트리밋을
+// 막기 위해 동시성을 제한한다.
+const EXAM_FETCH_CONCURRENCY = 5
+
+/**
+ * items를 limit개씩 동시에 처리하며 mapper 결과를 입력 순서대로 모은다.
+ * 외부 라이브러리 없이 동작하는 간단한 bounded-concurrency 헬퍼.
+ */
+async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  limit: number,
+  mapper: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length)
+  let cursor = 0
+
+  async function worker(): Promise<void> {
+    while (cursor < items.length) {
+      const index = cursor++
+      results[index] = await mapper(items[index], index)
+    }
+  }
+
+  const workerCount = Math.min(limit, items.length)
+  await Promise.all(Array.from({ length: workerCount }, () => worker()))
+
+  return results
+}
+
 export async function fetchStudentTests(groupId: string) {
   if (!esis.isReady()) {
     await connectEsis()
@@ -109,21 +139,35 @@ export async function fetchStudentTests(groupId: string) {
     `/svc/api/hub/service/exam/component/sessions/${groupId}`,
     { cache: 'force-cache' }
   )
+
+  // 세션별 성적 조회를 병렬화한다. 한 세션이 실패해도 전체가 중단되지 않도록
+  // 개별 오류는 Sentry에 보고하고 빈 배열로 대체한다.
+  const payloadsPerSession = await mapWithConcurrency(
+    examSchedules,
+    EXAM_FETCH_CONCURRENCY,
+    async (examSchedule) => {
+      try {
+        return await esis.get<ResponseData<StudentExamPayload[]>>(
+          `/svc/api/hub/service/exam/candidate/grades/${groupId}/${examSchedule.TEST_COMPONENT_SESSION_ID}`
+        )
+      } catch (error) {
+        Sentry.captureException(error, {
+          level: 'warning',
+          tags: { feature: 'fetch-test-data', operation: 'fetch-session' },
+          extra: {
+            groupId,
+            sessionId: examSchedule.TEST_COMPONENT_SESSION_ID
+          }
+        })
+        return [] as StudentExamPayload[]
+      }
+    }
+  )
+
   const studentExamData: Omit<Prisma.ExamCreateManyInput, 'id'>[] = []
 
-  for (let index = 0; index < examSchedules.length; index++) {
-    const examSchedule = examSchedules[index]
-
-    const examPayloads = await esis.get<ResponseData<StudentExamPayload[]>>(
-      `/svc/api/hub/service/exam/candidate/grades/${groupId}/${examSchedule.TEST_COMPONENT_SESSION_ID}`
-    )
-
-    if (examPayloads.length === 0) {
-      continue
-    }
-    for (let innerIndex = 0; innerIndex < examPayloads.length; innerIndex++) {
-      const examData = examPayloads[innerIndex]
-
+  for (const examPayloads of payloadsPerSession) {
+    for (const examData of examPayloads) {
       studentExamData.push({
         academicLevel: examData.ACADEMIC_LEVEL,
         grade: examData.GRADE_CODE,
@@ -178,15 +222,26 @@ export async function fetchTestData(
     })
 
   if (type === 'create') {
-    const existingTestIds = originData.map((exam) => exam.testId)
-    const newExams = studentExams.filter(
-      (exam) => !existingTestIds.includes(exam.testId)
-    )
+    const existingTestIds = new Set(originData.map((exam) => exam.testId))
+
+    // testId는 unique 제약이므로, DB에 이미 있는 건과 배치 내부 중복을 모두
+    // 걸러낸다. 중복이 하나라도 남으면 createMany가 통째로 롤백된다.
+    const seenTestIds = new Set<string>()
+    const newExams = studentExams.filter((exam) => {
+      if (existingTestIds.has(exam.testId) || seenTestIds.has(exam.testId)) {
+        return false
+      }
+      seenTestIds.add(exam.testId)
+      return true
+    })
 
     if (newExams.length === 0) return 0
 
+    // 동시 실행 등으로 그 사이 같은 testId가 들어와도 배치 전체가 실패하지
+    // 않도록 skipDuplicates로 방어한다.
     const data = await prisma.exam.createMany({
-      data: newExams
+      data: newExams,
+      skipDuplicates: true
     })
 
     return data.count
