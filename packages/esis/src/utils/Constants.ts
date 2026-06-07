@@ -1,5 +1,7 @@
 export const ESIS_BASE_URL = 'https://hub.esis.edu.mn'
 
+export const ESIS_V2_BASE_URL = 'https://hubv2.esis.edu.mn'
+
 export const SubjectName = [
   {
     subjectAreaId: 163,

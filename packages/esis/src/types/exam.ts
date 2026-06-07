@@ -145,3 +145,119 @@ export interface StudentExamPayload {
    */
   APPROVAL_STATUS_NAME: string
 }
+
+/**
+ * ESIS v2 시험 세션 정보 (camelCase). v2 응답은 institutionId 쿼리가 필수다.
+ */
+export interface ExamSessionV2 {
+  /**
+   * 테스트 컴포넌트 세션의 고유 식별자
+   */
+  testComponentSessionId: number
+  /**
+   * 등급 체계 ID
+   */
+  gradeSchemeId: number
+  /**
+   * 학년
+   */
+  academicLevel: string
+  /**
+   * 시험 이름 (키릴)
+   */
+  examName: string
+  /**
+   * 시험 이름 (전통 몽골 문자)
+   */
+  examNameMgl: string
+  /**
+   * 시험 유형 (예: "Заавал"는 필수)
+   */
+  examType: string
+  /**
+   * 시험 시작 일시 (예: "2026-06-05 08:00:00")
+   */
+  beginDateTime: string
+  /**
+   * 시험 종료 일시
+   */
+  endDateTime: string
+  /**
+   * 최대 점수
+   */
+  maxScore: number
+  /**
+   * 행 번호
+   */
+  rowNo: number
+}
+
+/**
+ * ESIS v2 시험 후보자 성적 (camelCase).
+ *
+ * v1과 달리 후보자별 고유 컴포넌트 ID(TEST_CAND_COMPONENT_ID)가 없으므로,
+ * 한 학생의 한 시험 결과는 `testComponentSessionId` + `personId` 조합으로
+ * 식별해야 한다.
+ */
+export interface ExamCandidateGradeV2 {
+  /**
+   * 테스트 컴포넌트 세션 ID
+   */
+  testComponentSessionId: number
+  /**
+   * 시험 ID
+   */
+  examId: number
+  /**
+   * 시험 이름 (키릴)
+   */
+  examName: string
+  /**
+   * 시험 유형
+   */
+  examType: string
+  /**
+   * 학년
+   */
+  academicLevel: string
+  /**
+   * 학년 이름 (예: "12-р анги")
+   */
+  academicLevelName: string
+  /**
+   * 개인 식별자
+   */
+  personId: number
+  /**
+   * 시험 점수
+   */
+  score: number
+  /**
+   * 백분위 점수
+   */
+  percentage: number
+  /**
+   * 등급 ID
+   */
+  gradeId: number
+  /**
+   * 등급 (예: "VIII")
+   */
+  gradeLevel: string
+  /**
+   * 출석 사유 코드 (예: "CAME")
+   */
+  attendanceReasonCode: string
+  /**
+   * 출석 사유 이름
+   */
+  attendanceReasonName: string
+  /**
+   * 승인 상태 코드 (예: "APPROVED")
+   */
+  approvalStatusCode: string
+  /**
+   * 승인 상태 이름
+   */
+  approvalStatusName: string
+}

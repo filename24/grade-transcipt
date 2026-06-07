@@ -171,5 +171,6 @@ export interface ClientEventsTypes {
 }
 
 export * from './client/Client'
+export * from './client/ClientV2'
 export * from './utils/Constants'
 export * from './types'
