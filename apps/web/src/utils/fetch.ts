@@ -1,12 +1,12 @@
 import type { Exam, Grade, Prisma, UnelgeeSubjects } from '@gt/database'
 import prisma from '@gt/database'
 import type {
-  ExamSession,
+  ExamCandidateGradeV2,
+  ExamSessionV2,
   GradeStatusType,
   GroupStudent,
   ResponseData,
   Student,
-  StudentExamPayload,
   SubjectCourseData
 } from '@gt/esis'
 import * as Sentry from '@sentry/nextjs'
@@ -20,8 +20,9 @@ import type {
 } from '@/types/unelgee'
 
 import { resolveClassCode, toSentenceCase } from '.'
-import { CURRECT_ACADEMIC_YEAR } from './constants'
+import { CURRECT_ACADEMIC_YEAR, SCHOOL_ID } from './constants'
 import esis, { connectEsis } from './esis'
+import esisV2 from './esis-v2'
 
 export const getStudentGradeRecords = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {
@@ -132,12 +133,11 @@ async function mapWithConcurrency<T, R>(
 }
 
 export async function fetchStudentTests(groupId: string) {
-  if (!esis.isReady()) {
-    await connectEsis()
-  }
-  const examSchedules = await esis.get<ResponseData<ExamSession[]>>(
-    `/svc/api/hub/service/exam/component/sessions/${groupId}`,
-    { cache: 'force-cache' }
+  // ESIS v2 시험 서비스로 이전됨. v2는 인증 불필요 프록시를 쓰며
+  // institutionId 쿼리가 필수다.
+  const examSchedules = await esisV2.get<ResponseData<ExamSessionV2[]>>(
+    `/svc/api/hub/v2/service/exam/component/sessions/${groupId}`,
+    { institutionId: SCHOOL_ID }
   )
 
   // 세션별 성적 조회를 병렬화한다. 한 세션이 실패해도 전체가 중단되지 않도록
@@ -147,8 +147,9 @@ export async function fetchStudentTests(groupId: string) {
     EXAM_FETCH_CONCURRENCY,
     async (examSchedule) => {
       try {
-        return await esis.get<ResponseData<StudentExamPayload[]>>(
-          `/svc/api/hub/service/exam/candidate/grades/${groupId}/${examSchedule.TEST_COMPONENT_SESSION_ID}`
+        return await esisV2.get<ResponseData<ExamCandidateGradeV2[]>>(
+          `/svc/api/hub/v2/service/exam/candidate/grades/${groupId}/${examSchedule.testComponentSessionId}`,
+          { institutionId: SCHOOL_ID }
         )
       } catch (error) {
         Sentry.captureException(error, {
@@ -156,10 +157,10 @@ export async function fetchStudentTests(groupId: string) {
           tags: { feature: 'fetch-test-data', operation: 'fetch-session' },
           extra: {
             groupId,
-            sessionId: examSchedule.TEST_COMPONENT_SESSION_ID
+            sessionId: examSchedule.testComponentSessionId
           }
         })
-        return [] as StudentExamPayload[]
+        return [] as ExamCandidateGradeV2[]
       }
     }
   )
@@ -169,14 +170,15 @@ export async function fetchStudentTests(groupId: string) {
   for (const examPayloads of payloadsPerSession) {
     for (const examData of examPayloads) {
       studentExamData.push({
-        academicLevel: examData.ACADEMIC_LEVEL,
-        grade: examData.GRADE_CODE,
-        name: examData.EXAM_NAME,
-        point: examData.PERCENTILE,
-        status: examData.APPROVAL_STATUS as GradeStatusType,
-        systemId: String(examData.PERSON_ID),
-        testId: String(examData.TEST_CAND_COMPONENT_ID),
-        type: examData.EXAM_TYPE
+        academicLevel: examData.academicLevel,
+        grade: examData.gradeLevel,
+        name: examData.examName,
+        point: examData.percentage,
+        status: examData.approvalStatusCode as GradeStatusType,
+        systemId: String(examData.personId),
+        // v2에는 후보자별 고유 ID가 없으므로 세션ID+개인ID로 합성한다.
+        testId: `${examData.testComponentSessionId}_${examData.personId}`,
+        type: examData.examType
       })
     }
   }
