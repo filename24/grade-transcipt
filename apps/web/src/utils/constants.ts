@@ -61,7 +61,7 @@ export const FREE_LEARNING_WEEK = [
 ]
 
 export const EXAM_DATE = {
-  START: new Date('2026-06-8'),
+  START: new Date('2026-06-05'),
   END: new Date('2026-06-12')
 }
 
