@@ -78,14 +78,32 @@ model User {
   lastName  String
   type      UserType @default(ESIS)
 
-  grades   Grade[]
-  exams    Exam[]
-  accounts Account[]
-  sessions Session[]
-  passkeys Passkey[]
+  grades    Grade[]
+  exams     Exam[]
+  accounts  Account[]
+  sessions  Session[]
+  passkeys  Passkey[]
+  userInfos UserInfo[]
 
   @@index([firstName, lastName])
   @@map("user")
+}
+
+model UserInfo {
+  id        String   @id @default(uuid())
+  userId    String
+  // 항목 이름 (예: "수능 수험번호")
+  name      String
+  // 값
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 동일 유저에 같은 항목 재입력 시 upsert로 갱신
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("user_info")
 }
 
 enum UserType {
