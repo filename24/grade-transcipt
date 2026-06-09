@@ -43,6 +43,7 @@ import { SessionsDialog } from './SessionsDialog'
 import { SetPasswordDialog } from './SetPasswordDialog'
 import { UserDetailDialog } from './UserDetailDialog'
 import UserGradesSheet from './UserGradesSheet'
+import UserInfoSheet from './UserInfoSheet'
 
 export interface UserData {
   id: string
@@ -146,6 +147,7 @@ export function UserTable() {
                 userName={user.name}
               />
             )}
+            <UserInfoSheet userId={user.id} userName={user.name} />
           </div>
         )
       }

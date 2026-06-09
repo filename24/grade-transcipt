@@ -59,6 +59,10 @@ const data = {
         {
           title: 'User list',
           url: '/admin/users'
+        },
+        {
+          title: 'Additional info',
+          url: '/admin/users/info'
         }
       ]
     }

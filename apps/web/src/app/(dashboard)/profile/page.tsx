@@ -1,3 +1,4 @@
+import prisma from '@gt/database'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -5,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/utils/better-auth'
 import { getUser, getUserInfoById } from '@/utils/fetch'
 
+import AdditionalInfo from './_Components/additionalInfo'
 import AvatarDialog from './_Components/avatarDialog'
 import DangerZone from './_Components/dangerZone'
 import PersonalInfo, { type ExtendedUser } from './_Components/personalInfo'
@@ -39,6 +41,15 @@ export default async function Profile() {
     firstNameMgl: systemData?.FIRST_NAME_MGL,
     lastNameMgl: systemData?.LAST_NAME_MGL
   }
+
+  // 어드민이 수동 입력한 추가 정보 (읽기 전용 노출)
+  const additionalInfo = session?.user?.id
+    ? await prisma.userInfo.findMany({
+        where: { userId: session.user.id },
+        orderBy: { name: 'asc' }
+      })
+    : []
+
   return (
     <main>
       <div className="px-2">
@@ -54,6 +65,10 @@ export default async function Profile() {
           <PersonalInfo userData={userExtendedData} />
 
           {systemData && <SystemInfo systemData={systemData} />}
+
+          {additionalInfo.length > 0 && (
+            <AdditionalInfo items={additionalInfo} />
+          )}
         </div>
 
         <div className="mb-2">
