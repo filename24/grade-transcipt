@@ -190,7 +190,16 @@ export class ESISClient<
       )
     }
 
-    const data = (await response.json()) as Data
+    const data = (await response.json()) as Data & { message?: string }
+
+    // ESIS는 오류도 HTTP 200 + 에러 엔벨로프로 내려주는 경우가 있어
+    // SUCCESS_CODE/메시지를 검증하지 않으면 RESULT가 조용히 undefined로 샌다.
+    // (ClientV2와 동일한 안전장치)
+    if (data.SUCCESS_CODE !== 200 || data.message) {
+      throw new Error(
+        data.message ?? data.RESPONSE_MESSAGE ?? 'ESIS request failed'
+      )
+    }
 
     return data.RESULT
   }

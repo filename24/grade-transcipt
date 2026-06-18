@@ -1,26 +1,63 @@
 'use server'
 
-import * as Sentry from '@sentry/nextjs'
 import prisma from '@gt/database'
+import type { GraduateStudentInfoV2 } from '@gt/esis'
+import * as Sentry from '@sentry/nextjs'
 
+import { resolveClassCode } from '@/utils'
+import { GRADUATE_ACADEMIC_LEVEL } from '@/utils/constants'
 import {
+  type ExportStudent,
   fetchStudentByRegisterNumber,
+  getGraduateInfoByRegisterNumber,
   getStudentGradeRecords,
   type StudentGradeRecord
 } from '@/utils/fetch'
-import { resolveClassCode } from '@/utils'
+
+// 졸업생 검색 결과(API-000249)를 export 화면 공통 형태로 변환한다.
+// academicLevel 미제공 → 졸업 학년(12)으로, conferAcademicYear → 학년도로 매핑.
+function graduateToExportStudent(
+  graduate: GraduateStudentInfoV2,
+  regNum: string
+): ExportStudent {
+  return {
+    PERSON_ID: String(graduate.personId),
+    FIRST_NAME: graduate.firstName,
+    LAST_NAME: graduate.lastName,
+    REGISTER: graduate.personRegNumber ?? regNum,
+    ACADEMIC_YEAR: graduate.conferAcademicYear,
+    ACADEMIC_LEVEL: GRADUATE_ACADEMIC_LEVEL,
+    ACADEMIC_LEVEL_NAME: 'Төгссөн',
+    INSTITUTION_NAME: graduate.institutionName,
+    conferAcademicYear: graduate.conferAcademicYear,
+    conferDate: graduate.conferDate,
+    degreeNidNumber: graduate.degreeNidNumber
+  }
+}
 
 export async function searchStudentAction(regNum: string) {
+  // 등록번호(РД)는 항상 대문자로 정규화한다(키릴 대문자 + 숫자).
+  const normalizedRegNum = regNum.toUpperCase()
   try {
-    const student = await fetchStudentByRegisterNumber(regNum)
+    // 1. 기본 방법: 재학생 검색
+    const student = await fetchStudentByRegisterNumber(normalizedRegNum)
+    if (student) {
+      return { success: true, data: student as ExportStudent }
+    }
 
-    if (!student) {
+    // 2. 폴백: 못 찾으면 졸업생 정보(API-000249)로 검색
+    const graduate = await getGraduateInfoByRegisterNumber(normalizedRegNum)
+    if (graduate) {
       return {
-        success: false,
-        error: 'Сурагч олдсонгүй (학생을 찾을 수 없습니다).'
+        success: true,
+        data: graduateToExportStudent(graduate, normalizedRegNum)
       }
     }
-    return { success: true, data: student }
+
+    return {
+      success: false,
+      error: 'Сурагч олдсонгүй (학생을 찾을 수 없습니다).'
+    }
   } catch (error) {
     Sentry.captureException(error)
     return { success: false, error: 'Системийн алдаа (시스템 오류 발생).' }

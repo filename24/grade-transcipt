@@ -74,6 +74,12 @@ export const CURRECT_ACADEMIC_YEAR = '2025' as const
 export const STUDENT_GROUP_ID = '100005190720739'
 export const SCHOOL_ID = '40301'
 
+/**
+ * 졸업생 학년 (API-000249는 academicLevel을 제공하지 않음).
+ * 몽골 бүрэн дунд(완전 중등) 졸업 = 12학년이므로 성적 학년 역산의 기준으로 쓴다.
+ */
+export const GRADUATE_ACADEMIC_LEVEL = '12'
+
 export type SemesterLevel = 1 | 2 | 3
 export type EducationLevel = keyof typeof SEMESTER_DATE
 

@@ -4,9 +4,11 @@ import type {
   ExamCandidateGradeV2,
   ExamSessionV2,
   GradeStatusType,
+  GraduateStudentInfoV2,
   GroupStudent,
   ResponseData,
   Student,
+  StudentRegisterV2,
   SubjectCourseData
 } from '@gt/esis'
 import * as Sentry from '@sentry/nextjs'
@@ -24,7 +26,7 @@ import { CURRECT_ACADEMIC_YEAR, SCHOOL_ID } from './constants'
 import esis, { connectEsis } from './esis'
 import esisV2 from './esis-v2'
 
-export const getStudentGradeRecords = unstable_cache(
+const getStudentGradeRecordsCached = unstable_cache(
   async (userId: string): Promise<StudentGradeRecord[]> => {
     if (!esis.isReady()) {
       await connectEsis()
@@ -33,6 +35,12 @@ export const getStudentGradeRecords = unstable_cache(
       `/svc/api/hub/student/course/grade/${userId}`,
       { cache: 'force-cache' }
     )
+
+    // RESULT 누락 등으로 배열이 아니면 throw해서 unstable_cache가
+    // 빈 결과를 7일간 캐시(poison)하지 않도록 한다. 처리는 wrapper에서.
+    if (!Array.isArray(rawRecords)) {
+      throw new Error('ESIS student course grade returned no array')
+    }
 
     const record: StudentGradeRecord[] = rawRecords
       .map((record) => {
@@ -75,6 +83,23 @@ export const getStudentGradeRecords = unstable_cache(
   ['record'],
   { revalidate: 60 * 60 * 24 * 7, tags: ['record'] }
 )
+
+export async function getStudentGradeRecords(
+  userId: string
+): Promise<StudentGradeRecord[]> {
+  try {
+    return await getStudentGradeRecordsCached(userId)
+  } catch (error) {
+    // ESIS 통신 실패/빈 응답 시 크래시 대신 빈 배열로 degrade.
+    // throw는 캐시되지 않으므로 다음 요청에서 자동 재시도된다.
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'esis', operation: 'getStudentGradeRecords' },
+      extra: { userId }
+    })
+    return []
+  }
+}
 
 export interface StudentGradeRecord {
   id: number
@@ -485,19 +510,86 @@ export async function getUserInfoById(
   groupId: string,
   systemId?: string
 ): Promise<GroupStudent | GroupStudent[] | undefined> {
-  const groupStudents = await esis.get<ResponseData<GroupStudent[]>>(
-    `/svc/api/hub/group/student/list/${groupId}`,
-    { cache: 'force-cache' }
-  )
-
-  if (systemId) {
-    const student = groupStudents.find(
-      (s) => String(s.PERSON_ID) === String(systemId)
+  try {
+    const groupStudents = await esis.get<ResponseData<GroupStudent[]>>(
+      `/svc/api/hub/group/student/list/${groupId}`,
+      { cache: 'force-cache' }
     )
-    return student
-  }
 
-  return groupStudents
+    // ESIS가 RESULT를 누락한 응답(세션 만료, 권한 없는 groupId 등)을 200으로
+    // 내려주면 groupStudents가 undefined가 될 수 있다. .find() 호출 전 방어.
+    if (!Array.isArray(groupStudents)) {
+      Sentry.captureMessage('ESIS group student list returned no array', {
+        level: 'warning',
+        tags: { feature: 'esis', operation: 'getUserInfoById' },
+        extra: { groupId, systemId, received: typeof groupStudents }
+      })
+      return systemId ? undefined : []
+    }
+
+    if (systemId) {
+      const student = groupStudents.find(
+        (s) => String(s.PERSON_ID) === String(systemId)
+      )
+      return student
+    }
+
+    return groupStudents
+  } catch (error) {
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'esis', operation: 'getUserInfoById' },
+      extra: { groupId, systemId }
+    })
+    return systemId ? undefined : []
+  }
+}
+
+// v2 프록시는 POST로 동작해 Next fetch 캐시(force-cache)가 듣지 않으므로
+// unstable_cache로 함수 결과 자체를 강제 캐싱한다. registerNumber가 캐시 키에
+// 포함된다. 불량/실패 응답은 throw해서 캐시에 박히지 않도록 하고(wrapper에서
+// 처리), 'student-register-info' 태그로 무효화할 수 있다.
+const getStudentInfoByRegisterNumberCached = unstable_cache(
+  async (registerNumber: string): Promise<StudentRegisterV2 | undefined> => {
+    const result = await esisV2.get<ResponseData<StudentRegisterV2[]>>(
+      `/svc/api/hub/v2/student/${encodeURIComponent(registerNumber.toLocaleUpperCase())}`,
+      { institutionId: SCHOOL_ID }
+    )
+
+    if (!Array.isArray(result) || result.length === 0) {
+      return undefined
+    }
+
+    return result[0]
+  },
+  ['student-register-info'],
+  { revalidate: 60 * 60 * 24 * 7, tags: ['student-register-info'] }
+)
+
+/**
+ * 등록번호(РД)로 학생 시스템 정보를 조회한다. (API-000144, ESIS v2)
+ *
+ * `getUserInfoById`는 groupId(classId) 기반이라 졸업해서 그룹에 속하지 않는
+ * 학생은 조회가 불가능했다. 이 함수는 등록번호로 검색하므로 졸업생도
+ * 시스템 정보를 가져올 수 있다. 결과는 unstable_cache로 강제 캐싱된다.
+ */
+export async function getStudentInfoByRegisterNumber(
+  registerNumber: string
+): Promise<StudentRegisterV2 | undefined> {
+  // 등록번호(РД)는 항상 대문자로 정규화한다(키릴 대문자 + 숫자).
+  const normalized = registerNumber.toUpperCase()
+  try {
+    return await getStudentInfoByRegisterNumberCached(normalized)
+  } catch (error) {
+    // 통신 실패/불량 응답 시 크래시 대신 undefined로 degrade.
+    // throw는 캐시되지 않으므로 다음 요청에서 자동 재시도된다.
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'esis', operation: 'getStudentInfoByRegisterNumber' },
+      extra: { registerNumber: normalized }
+    })
+    return undefined
+  }
 }
 
 export async function fetchStudentByRegisterNumber(registerNumber: string) {
@@ -505,9 +597,12 @@ export async function fetchStudentByRegisterNumber(registerNumber: string) {
     await connectEsis()
   }
 
+  // 등록번호(РД)는 항상 대문자로 정규화한다(키릴 대문자 + 숫자).
+  const normalized = registerNumber.toUpperCase()
+
   try {
     const response = await esis.get<ResponseData<Student[]>>(
-      `/svc/api/hub/students/${registerNumber}`,
+      `/svc/api/hub/students/${normalized}`,
       { cache: 'force-cache' }
     )
 
@@ -519,8 +614,78 @@ export async function fetchStudentByRegisterNumber(registerNumber: string) {
     Sentry.captureException(error, {
       level: 'warning',
       tags: { feature: 'fetch-student', operation: 'by-register-number' },
-      extra: { registerNumber }
+      extra: { registerNumber: normalized }
     })
     return null
   }
+}
+
+// 졸업생 정보(API-000249)도 v2 프록시(POST)라 Next fetch 캐시가 듣지 않아
+// unstable_cache로 강제 캐싱한다. registerNumber가 캐시 키에 포함된다.
+const getGraduateInfoByRegisterNumberCached = unstable_cache(
+  async (
+    registerNumber: string
+  ): Promise<GraduateStudentInfoV2 | undefined> => {
+    // 스펙상 username 쿼리가 required지만 실제로는 선택사항이라 생략한다.
+    const result = await esisV2.get<ResponseData<GraduateStudentInfoV2[]>>(
+      `/svc/api/hub/v2/student/graduate/info/${encodeURIComponent(registerNumber)}`
+    )
+
+    if (!Array.isArray(result) || result.length === 0) {
+      return undefined
+    }
+
+    return result[0]
+  },
+  ['graduate-info'],
+  { revalidate: 60 * 60 * 24 * 7, tags: ['graduate-info'] }
+)
+
+/**
+ * 등록번호(РД)로 졸업생 정보를 조회한다. (API-000249, ESIS v2)
+ *
+ * 기본 학생 검색(`fetchStudentByRegisterNumber`)에서 찾지 못한 졸업생을
+ * 조회하기 위한 폴백이다. 결과는 unstable_cache로 강제 캐싱된다.
+ */
+export async function getGraduateInfoByRegisterNumber(
+  registerNumber: string
+): Promise<GraduateStudentInfoV2 | undefined> {
+  // 등록번호(РД)는 항상 대문자로 정규화한다(키릴 대문자 + 숫자).
+  const normalized = registerNumber.toUpperCase()
+  try {
+    return await getGraduateInfoByRegisterNumberCached(normalized)
+  } catch (error) {
+    Sentry.captureException(error, {
+      level: 'warning',
+      tags: { feature: 'esis', operation: 'getGraduateInfoByRegisterNumber' },
+      extra: { registerNumber: normalized }
+    })
+    return undefined
+  }
+}
+
+/**
+ * 성적 export 화면에서 다루는 학생 정보. 기본 검색 결과(`Student`)와 졸업생
+ * 검색 결과(API-000249)를 모두 담을 수 있는 공통 형태. 졸업생 전용 필드
+ * (conferAcademicYear/conferDate/degreeNidNumber)는 선택적으로 노출된다.
+ */
+export type ExportStudent = Pick<
+  Student,
+  | 'PERSON_ID'
+  | 'FIRST_NAME'
+  | 'LAST_NAME'
+  | 'REGISTER'
+  | 'ACADEMIC_YEAR'
+  | 'ACADEMIC_LEVEL'
+  | 'ACADEMIC_LEVEL_NAME'
+  | 'INSTITUTION_NAME'
+> & {
+  FIRST_NAME_MGL?: string
+  LAST_NAME_MGL?: string
+  /** 졸업 학년도 (API-000249) */
+  conferAcademicYear?: string
+  /** 졸업 일자 (API-000249) */
+  conferDate?: string
+  /** 학위/졸업 증서 번호 (API-000249) */
+  degreeNidNumber?: string
 }

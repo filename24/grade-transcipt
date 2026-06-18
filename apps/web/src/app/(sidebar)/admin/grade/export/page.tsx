@@ -1,6 +1,5 @@
 'use client'
 
-import type { Student } from '@gt/esis'
 import { FileSpreadsheet, Search, User } from 'lucide-react'
 import localFont from 'next/font/local'
 import { useState } from 'react'
@@ -40,7 +39,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import type { StudentGradeRecord } from '@/utils/fetch'
+import { formatDateToYYYYMMDD } from '@/utils'
+import type { ExportStudent, StudentGradeRecord } from '@/utils/fetch'
 
 import { fetchStudentGradesAction, searchStudentAction } from './actions'
 
@@ -73,7 +73,7 @@ const mongolFont = localFont({
 
 export default function GradeExportPage() {
   const [registerNumber, setRegisterNumber] = useState('')
-  const [student, setStudent] = useState<Student | undefined>(undefined)
+  const [student, setStudent] = useState<ExportStudent | undefined>(undefined)
   const [preview, setPreview] = useState<ProcessedData | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const [startYear, setStartYear] = useState('2022')
@@ -458,6 +458,38 @@ export default function GradeExportPage() {
                           {student.INSTITUTION_NAME}
                         </span>
                       </div>
+
+                      {/* 졸업생(API-000249) 전용 정보 */}
+                      {student.degreeNidNumber && (
+                        <>
+                          <div className="flex max-w-11/12 items-center justify-between">
+                            <span className="text-muted-foreground text-sm">
+                              Төгссөн хичээлийн жил:
+                            </span>
+                            <span className="font-semibold text-sm">
+                              {student.conferAcademicYear}
+                            </span>
+                          </div>
+                          <div className="flex max-w-11/12 items-center justify-between">
+                            <span className="text-muted-foreground text-sm">
+                              Төгссөн огноо:
+                            </span>
+                            <span className="font-semibold text-sm">
+                              {student.conferDate
+                                ? formatDateToYYYYMMDD(student.conferDate)
+                                : '-'}
+                            </span>
+                          </div>
+                          <div className="flex max-w-11/12 items-center justify-between">
+                            <span className="text-muted-foreground text-sm">
+                              Гэрчилгээний дугаар:
+                            </span>
+                            <span className="font-semibold text-sm">
+                              {student.degreeNidNumber}
+                            </span>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {(student.FIRST_NAME_MGL || student.LAST_NAME_MGL) && (
