@@ -52,7 +52,7 @@
     "sonner": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwindcss-animate": "catalog:",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "xlsx": "file:../../vendor/xlsx-0.20.3.tgz",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -62,8 +62,8 @@
     "@tailwindcss/postcss": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
     "eslint": "catalog:",
     "eslint-config-next": "catalog:",
     "jest": "catalog:",
