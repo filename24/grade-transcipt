@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "@gt/tsconfig": "workspace:*",
-    "tsup": "catalog:"
+    "tsup": "catalog:",
+    "@types/node": "catalog:"
   },
   "dependencies": {
     "@vladfrangu/async_event_emitter": "catalog:",
